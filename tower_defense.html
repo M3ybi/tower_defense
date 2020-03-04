@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <title>Tower Defense</title>
+  <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
+  <script src="js/aframe-super-shooter-kit.min.js"></script>
+  <script src="js/vr_controller_mapping.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
+  <script
+    src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+  <script src="js/shoot.js"></script>
+  
+</head>
+
+<body>
+  <a-scene>
+    <a-entity id="bulletTemplate" bullet="speed:30" geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.1" material="color: orange">
+    </a-entity>
+
+
+    <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
+
+    <!-- <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" position="0 0 -1"></a-entity> -->
+
+    <a-assets id="model">
+
+      <img id="boxTexture" src="img/DRN.png">
+      <img id="sky" src="img/moon.jpg">
+      <a-asset-item id="drone-green-obj" src="img/obj/bestDrone.obj"></a-asset-item>
+      <a-asset-item id="drone-green-mtl" src="img/obj/bestDrone.mtl"></a-asset-item>
+      <a-asset-item id="drone-red-obj" src="img/obj/sphereDrone.obj"></a-asset-item>
+      <a-asset-item id="drone-red-mtl" src="img/obj/sphereDrone.mtl"></a-asset-item>
+      <a-asset-item id="indicator-obj" src="img/obj/droneMarker.obj"></a-asset-item>
+      <a-asset-item id="indicator-mtl" src="img/obj/droneMarker.mtl"></a-asset-item>
+      <a-asset-item id="marker-red-obj" src="img/obj/droneMarkerRed.obj"></a-asset-item>
+      <a-asset-item id="marker-red-mtl" src="img/obj/droneMarkerRed.mtl"></a-asset-item>
+      <a-asset-item id="marker-green-obj" src="img/obj/droneMarkerGreen.obj"></a-asset-item>
+      <a-asset-item id="marker-green-mtl" src="img/obj/droneMarkerGreen.mtl"></a-asset-item>
+
+      <img id="boxTexture2" src="https://i.imgur.com/mYmmbrp.jpg">
+    </a-assets>
+
+
+
+    <a-sky color="#333"></a-sky>
+    <a-entity id="scena"></a-entity>
+    <a-camera id="camera" camera look-controls wasd-controls></a-camera>
+    <a-plane id="circle" geometry="primitive: circle; radius: 10; segments: 8" src="#boxTexture" height="20" width="20" rotation="-90 0 0" scale="0.3 0.3 0.3">
+      <a-plane src="#boxTexture" geometry="primitive: box; width: 1; height: 2; depth: 25" position="0 12 -1" rotation="90 -90 0" scale="0.3 0.3 0.3" shooter click-to-shoot></a-plane>
+      <a-cursor id="cursor" color="green"></a-cursor>
+    </a-plane>
+
+    
+
+      
+
+    
+    <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
+  </a-scene>
+  <script type="text/javascript" src="cordova.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/scene_build.js"></script>
+  <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
+  <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
+</body>
+
+</html>
