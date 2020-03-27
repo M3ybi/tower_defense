@@ -70,6 +70,55 @@
           </select>
         </div>
 
+        
+        <div>
+          <form>
+            <div class="row">
+              <div class="col">
+                Episodes Count
+                <input
+                  type="text"
+                  class="form-control"
+                  id="ep_count"
+                  disabled
+                />
+              </div>
+              <div class="col">
+                Episode duration
+                <input type="text" class="form-control" id="ep_dur" disabled />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                Number of targets
+                <input
+                  type="text"
+                  class="form-control"
+                  id="num_of_tar"
+                  disabled
+                />
+              </div>
+              <div class="col">
+                Number of distractors
+                <input
+                  type="text"
+                  class="form-control"
+                  id="num_of_dis"
+                  disabled
+                />
+              </div>
+              <div class="col">
+                Targets diff
+                <input type="text" class="form-control" id="tar_diff" />
+              </div>
+
+              <div class="col">
+                Distractor diff
+                <input type="text" class="form-control" id="dis_diff" />
+              </div>
+            </div>
+          </form>
+        </div>
         <div class="form-group">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="gridCheck" />
@@ -77,49 +126,6 @@
               Save data (in progress...)
             </label>
           </div>
-        </div>
-        <div>
-          <form>
-            <div class="row">
-              <div class="col">
-                Episodes Count
-                <input type="text" class="form-control" id="ep_count" />
-              </div>
-              <div class="col">
-                Episode duration
-                <input type="text" class="form-control" id="ep_dur" />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                Number of targets
-                <input type="text" class="form-control" id="num_of_tar" />
-              </div>
-              <div class="col">
-                Number of distractors
-                <input type="text" class="form-control" id="num_of_dis" />
-              </div>
-              <div class="col">
-                Targets diff
-                <input
-                  type="text"
-                  class="form-control"
-                  id="tar_diff"
-                  disabled
-                />
-              </div>
-
-              <div class="col">
-                Distractor diff
-                <input
-                  type="text"
-                  class="form-control"
-                  id="dis_diff"
-                  disabled
-                />
-              </div>
-            </div>
-          </form>
         </div>
         <button type="submit" onclick="toGame()" class="btn btn-primary">
           Play!
@@ -129,7 +135,6 @@
 
     <script type="text/javascript" src="cordova.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/set_game.js"></script>
 
     <script
       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
