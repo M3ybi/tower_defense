@@ -11,20 +11,21 @@ function toGame() {
   let username = document.getElementById("username").value;
   let level = document.getElementById("select_level").value;
   let episode_count = document.getElementById("ep_count").value;
-let episode_duration = document.getElementById("ep_dur").value;
-let tar_diff = document.getElementById("tar_diff").value;
-let dis_diff = document.getElementById("dis_diff").value;
-let number_of_targets = document.getElementById("num_of_tar").value;
-let number_of_document.getElementById("num_of_dis").value = number_of_distractors;
+  let episode_duration = document.getElementById("ep_dur").value;
+  let tar_diff = document.getElementById("tar_diff").value;
+  let dis_diff = document.getElementById("dis_diff").value;
+  let number_of_targets = document.getElementById("num_of_tar").value;
+  let number_of_distractors = document.getElementById("num_of_dis").value;
   localStorage.setItem("username", username);
   localStorage.setItem("level", level);
-    localStorage.setItem("episode_count", episode_count);
-  localStorage.setItem("level", level);
-  localStorage.setItem("level", level);
-  localStorage.setItem("level", level);
-  localStorage.setItem("level", level);
+  localStorage.setItem("episode_count", episode_count);
+  localStorage.setItem("episode_duration", episode_duration);
+  localStorage.setItem("tar_diff", tar_diff);
+  localStorage.setItem("dis_diff", dis_diff);
+  localStorage.setItem("number_of_targets", number_of_targets);
+  localStorage.setItem("number_of_distractors", number_of_distractors);
 
-  console.log(level);
+  console.log(level,username,episode_count,episode_duration,tar_diff,dis_diff,number_of_targets,number_of_distractors);
   window.open("tower_defense.html");
 }
 
