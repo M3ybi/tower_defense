@@ -18,39 +18,7 @@
     src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
 <!--   <script src="js/shoot.js"></script> -->
    <script>
-    /**
-     * Click mouse to shoot.
-     */
-    AFRAME.registerComponent('click-to-shoot', {
-      init: function () {
-        document.body.addEventListener('mousedown', () => { this.el.emit('shoot'); });
-      }
-    });
-
-    /**
-     * Change color when hit.
-     */
- AFRAME.registerComponent('hit-handler', {
-      dependencies: ['material'],
-
-      init: function () {
-        var color;
-        var el = this.el;
-        color = new THREE.Color();
-        color.set('#666');
-        el.components.material.material.color.copy(color);
-        el.addEventListener('hit', () => {
-          color.addScalar(0.05);
-          el.components.material.material.color.copy(color);
-          console.log(el);
-        });
-
-        el.addEventListener('die', () => {
-          color.setRGB(1, 0, 0);
-          el.components.material.material.color.copy(color);
-        });
-      }
-    });
+ 
   </script>
 </head>
 
@@ -58,7 +26,6 @@
   <a-scene>
     <a-entity id="bulletTemplate" bullet="speed:30" geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.1" material="color: orange">
     </a-entity>
-    <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity>
 
 
     <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
