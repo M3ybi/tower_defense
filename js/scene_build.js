@@ -4,10 +4,11 @@ document.querySelector("#model").addEventListener("model-loaded", function() {
 let score_episode_red = 0;
 let score_episode_green = 0;
 let marker_hide_timer = 2000;
-let targets = 5; //default
 let counter = 0; //default
-let target_number = 2; //default
-let episodes = 26; //default
+let targets = 
+let distractor_number = localStorage.getItem("number_of_distractors");
+let target_number = localStorage.getItem("number_of_targets"); //default
+let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = 10000; //default
 let time_to_destroy_targets = 8000; //default
 var ring = document.getElementsByClassName("ring");
@@ -22,23 +23,11 @@ let marker_green_obj = "#marker-green-obj";
 let marker_green_mtl = "#marker-green-mtl";
 let red_target = target_number;
 let green_target = targets - target_number;
-function load_setup() {
-  if (current_level === "1") {
-    targets = 2;
-    target_number = 1;
-    episodes = 26;
-    time_to_destroy_targets = 18000;
-    episode_duration = 19000;
-    marker_hide_timer = 3000;
-    red_target = target_number;
-    green_target = targets - target_number;
-  }
-  //next levels
-}
+let targets = 
 console.log(window.localStorage.getItem("level"));
 
 window.onload = function() {
-  load_setup();
+
 
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
@@ -94,9 +83,7 @@ window.onload = function() {
       ring_id++;
       red_target++;
     }
-    console.log(targets - t);
-    for (let i = 0; i < targets - target_number; i++) {
-      console.log("objekt netrafam");
+    for (let i = 0; i < distractor_number; i++) {
       var x = Math.floor(Math.random() * 20 - 15);
       var y = Math.floor(Math.random() * 8 + 1);
       document.getElementById("scena").innerHTML +=
@@ -143,7 +130,6 @@ window.onload = function() {
       var rings_id = 20;
       for (let i = 0; i < targets; i++) {
         if (document.getElementById(k) != null) {
-          console.log(document.getElementById(k));
           document
             .getElementById(k)
             .parentNode.removeChild(document.getElementById(k));
