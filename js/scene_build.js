@@ -162,8 +162,8 @@ window.onload = function() {
   }, episode_duration);
 
   function game() {
-    console.log("" + score_episode_red);
-    
+    console.log("score_red " + score_episode_red);
+    console.log("score_green " + score_episode_green);
     build();
     marker_hide();
   }
@@ -195,6 +195,7 @@ AFRAME.registerComponent("hit-handler", {
     el.addEventListener("die", () => {
       if (object.className == "target-red") {
         score_episode_red++;
+        score();
       }
       if (object.className == "target-green") {
         score_episode_green++;
@@ -207,3 +208,9 @@ AFRAME.registerComponent("hit-handler", {
     // });
   }
 });
+
+function score(){
+  if(score_episode_red > 1){
+    score_episode_red = 1;
+  }
+}
