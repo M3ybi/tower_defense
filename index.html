@@ -18,6 +18,7 @@
     <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <script src="js/set_level.js"></script>
   </head>
 
   <body>
@@ -69,15 +70,7 @@
             <option value="30">30</option>
           </select>
         </div>
-        <!-- <div class="form-group">
-        <label for="inputAddress2">Address 2</label>
-        <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputCity">City</label>
-          <input type="text" class="form-control" id="inputCity">
-        </div> -->
+        
 
         <div class="form-group">
           <div class="form-check">
@@ -92,56 +85,30 @@
             <div class="row">
               <div class="col">
                 Episodes Count
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="First name"
-                  id="ep_count"
-                />
+                <input type="text" class="form-control" id="ep_count" />
               </div>
               <div class="col">
                 Episode duration
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Last name"
-                  id="ep_dur"
-                />
+                <input type="text" class="form-control" id="ep_dur" />
               </div>
             </div>
             <div class="row">
               <div class="col">
-                d
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="First name"
-                />
+                Number of targets
+                <input type="text" class="form-control" id="num_of_tar" />
               </div>
               <div class="col">
-                d
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Last name"
-                />
+                Number of distractors
+                <input type="text" class="form-control" id="num_of_dis" />
               </div>
               <div class="col">
-                d
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="First name"
-                />
+                Targets diff
+                <input type="text" class="form-control" id="tar_diff" disabled/>
               </div>
 
               <div class="col">
-                d
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="First name"
-                />
+                Distractor diff
+                <input type="text" class="form-control" id="dis_diff" disabled/>
               </div>
             </div>
           </form>
