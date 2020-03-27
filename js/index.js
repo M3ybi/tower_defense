@@ -31,23 +31,58 @@ if (cur_level > 20) {
   episode_duration = 10;
 }
 if (cur_level <= 2) {
+  number_of_targets = 2;
 }
 if (
-  cur_level == 3 &&
-  cur_level == 4 &&
-  cur_level == 5 &&
-  cur_level == 11 &&
-  cur_level == 12 &&
+  cur_level == 3 ||
+  cur_level == 4 ||
+  cur_level == 5 ||
+  cur_level == 11 ||
+  cur_level == 12 ||
   cur_level == 21
 ) {
+  number_of_targets = 3;
 }
-if(cur_level == 6,7,8,9,13,14,17,22,23,26)
+if (
+  cur_level == 6 ||
+  cur_level == 7 ||
+  cur_level == 8 ||
+  cur_level == 9 ||
+  cur_level == 13 ||
+  cur_level == 14 ||
+  cur_level == 17 ||
+  cur_level == 22 ||
+  cur_level == 23 ||
+  cur_level == 26
+) {
+  number_of_targets = 4;
+}
+if (
+  cur_level == 10 ||
+  cur_level == 15 ||
+  cur_level == 16 ||
+  cur_level == 18 ||
+  cur_level == 19 ||
+  cur_level == 20 ||
+  cur_level == 24 ||
+  cur_level == 25 ||
+  cur_level == 27 ||
+  cur_level == 28 ||
+  cur_level == 29
+) {
+  number_of_targets = 5;
+}
+if (cur_level == 30) {
+  number_of_targets = 6;
+}
 //
 //
 document.getElementById("ep_count").value = episodes_count;
 document.getElementById("ep_dur").value = episode_duration;
 document.getElementById("tar_diff").value = tar_diff;
 document.getElementById("dis_diff").value = dis_diff;
+document.getElementById("num_of_tar").value = number_of_targets;
+
 //
 document.getElementById("select_level").onchange = function() {
   cur_level = e.options[e.selectedIndex].text;
@@ -64,6 +99,52 @@ document.getElementById("select_level").onchange = function() {
     episodes_count = 36;
     episode_duration = 10;
   }
+  if (cur_level <= 2) {
+  number_of_targets = 2;
+}
+if (
+  cur_level == 3 ||
+  cur_level == 4 ||
+  cur_level == 5 ||
+  cur_level == 11 ||
+  cur_level == 12 ||
+  cur_level == 21
+) {
+  number_of_targets = 3;
+}
+if (
+  cur_level == 6 ||
+  cur_level == 7 ||
+  cur_level == 8 ||
+  cur_level == 9 ||
+  cur_level == 13 ||
+  cur_level == 14 ||
+  cur_level == 17 ||
+  cur_level == 22 ||
+  cur_level == 23 ||
+  cur_level == 26
+) {
+  number_of_targets = 4;
+}
+if (
+  cur_level == 10 ||
+  cur_level == 15 ||
+  cur_level == 16 ||
+  cur_level == 18 ||
+  cur_level == 19 ||
+  cur_level == 20 ||
+  cur_level == 24 ||
+  cur_level == 25 ||
+  cur_level == 27 ||
+  cur_level == 28 ||
+  cur_level == 29
+) {
+  number_of_targets = 5;
+}
+if (cur_level == 30) {
+  number_of_targets = 6;
+}
   document.getElementById("ep_count").value = episodes_count;
   document.getElementById("ep_dur").value = episode_duration;
+  document.getElementById("num_of_tar").value = number_of_targets;
 };
