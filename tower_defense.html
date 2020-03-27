@@ -38,9 +38,11 @@
     init: function () {
         var el = this.el;
         var element = this.data;
-        var object = document.getElementById(element.id);
-        el.addEventListener('hit', () => {
-            object.parentNode.removeChild(object);
+        var object = document.getElementById(el.id);
+        el.addEventListener('die', () => {
+            console.log(el)
+            // object.parentNode.removeChild(object);
+          entityEl.parentNode.removeChild(entityEl);
         });
 
         // el.addEventListener('die', () => {
@@ -53,7 +55,7 @@
 
 <body>
   <a-scene>
-    <a-entity id="bulletTemplate" bullet="speed:30" geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.1" material="color: orange">
+    <a-entity id="bulletTemplate" bullet="speed:60" geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.1" material="color: orange">
     </a-entity>
 
 

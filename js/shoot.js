@@ -16,7 +16,7 @@ AFRAME.registerComponent('hit-handler', {
         var object = document.getElementById(element.id);
         var object_red = object.className;
         el.addEventListener('hit', () => {
-            console.log(object.className);
+            console.log(el);
             object.parentNode.removeChild(object);
         });
 

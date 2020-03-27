@@ -56,7 +56,7 @@ window.onload = function () {
             var y = Math.floor((Math.random() * 8) + 1);
             document.getElementById("scena").innerHTML +=
                 "<a-obj-model id='" + object_id + "' class='target-red' target='healthPoints:1; static:false' src=" + object_red_obj + " mtl=" + object_red_mtl + " " +
-                "scale='0.28 0.28 0.28' position='" + x + " " + y + " " + z + "' hit-handler='id:"+ object_id +"" + object_id + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'></a-obj-model>" +
+                "scale='0.28 0.28 0.28' position='" + x + " " + y + " " + z + "' hit-handler='id:" + object_id + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'></a-obj-model>" +
                 "<a-obj-model id='" + ring_id + "' class='ring' src=" + marker_red_obj + " mtl=" + marker_red_mtl + " scale='0.28 0.28 0.28'" +
                 "position='" + x + " " + y + " " + z + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'>" +
                 "</a-obj-model>";
