@@ -55,7 +55,7 @@ window.onload = function () {
             var x = Math.floor((Math.random() * 20) - 15);
             var y = Math.floor((Math.random() * 8) + 1);
             document.getElementById("scena").innerHTML +=
-                "<a-obj-model id='" + object_id + "' class='target' target='healthPoints:1; static:false' src=" + object_red_obj + " mtl=" + object_red_mtl + " " +
+                "<a-obj-model id='" + object_id + "' class='target-red' target='healthPoints:1; static:false' src=" + object_red_obj + " mtl=" + object_red_mtl + " " +
                 "scale='0.28 0.28 0.28' position='" + x + " " + y + " " + z + "' hit-handler='id:" + object_id + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'></a-obj-model>" +
                 "<a-obj-model id='" + ring_id + "' class='ring' src=" + marker_red_obj + " mtl=" + marker_red_mtl + " scale='0.28 0.28 0.28'" +
                 "position='" + x + " " + y + " " + z + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'>" +
@@ -72,7 +72,7 @@ window.onload = function () {
             var x = Math.floor((Math.random() * 20) - 15);
             var y = Math.floor((Math.random() * 8) + 1);
             document.getElementById("scena").innerHTML +=
-                "<a-obj-model id='" + object_id + "' class='target' target='healthPoints:1; static:false' src=" + object_green_obj + " mtl=" + object_green_mtl + " " +
+                "<a-obj-model id='" + object_id + "' class='target-green' target='healthPoints:1; static:false' src=" + object_green_obj + " mtl=" + object_green_mtl + " " +
                 "scale='0.28 0.28 0.28' position='" + x + " " + y + " " + z + "' hit-handler='id:" + object_id + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'></a-obj-model>" +
                 "<a-obj-model id='" + ring_id + "' class='ring' src=" + marker_green_obj + " mtl=" + marker_green_mtl + " scale='0.28 0.28 0.28'" +
                 "position='" + x + " " + y + " " + z + "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'>" +
@@ -122,3 +122,30 @@ window.onload = function () {
 
 
 
+
+AFRAME.registerComponent('click-to-shoot', {
+    init: function () {
+        document.body.addEventListener('mousedown', () => { this.el.emit('shoot'); });
+    }
+});
+
+AFRAME.registerComponent('hit-handler', {
+    schema: {
+        id: { type: 'string', default: 1 },
+    },
+
+    init: async function () {
+        var el = this.el;
+        var element = this.data;
+        var object = document.getElementById(element.id);
+        var object_red = object.className;
+        el.addEventListener('hit', () => {
+            console.log(object);
+            object.parentNode.removeChild(object);
+        });
+
+        // el.addEventListener('die', () => {
+        //     object.parentNode.removeChild(object);
+        // });
+    }
+});
