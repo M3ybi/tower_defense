@@ -164,6 +164,8 @@ window.onload = function() {
   function game() {
     console.log("score_red " + score_episode_red);
     console.log("score_green " + score_episode_green);
+    console.log("episode_red " + target_number);
+    console.log("episode_green " + targets);           
     build();
     marker_hide();
   }
@@ -193,14 +195,15 @@ AFRAME.registerComponent("hit-handler", {
     var element = this.data;
     var object = document.getElementById(el.id);
     el.addEventListener("die", () => {
-      if (object.className == "target-red") {
-        score_episode_red++;
-        score();
+      if (this.el.parentNode) {
+        el.parentNode.removeChild(el);
+        if (object.className == "target-green") {
+          score_episode_green++;
+        }
+        if (object.className == "target-red") {
+          score_episode_red++;
+        }
       }
-      if (object.className == "target-green") {
-        score_episode_green++;
-      }
-      el.parentNode.removeChild(el);
     });
 
     // el.addEventListener('die', () => {
@@ -209,8 +212,4 @@ AFRAME.registerComponent("hit-handler", {
   }
 });
 
-function score(){
-  if(score_episode_red > 1){
-    score_episode_red = 1;
-  }
-}
+
