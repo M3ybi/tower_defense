@@ -30,6 +30,8 @@ function load_setup() {
     time_to_destroy_targets = 18000;
     episode_duration = 19000;
     marker_hide_timer = 3000;
+    red_target = target_number;
+    green_target = targets - target_number;
   }
   //next levels
 }
