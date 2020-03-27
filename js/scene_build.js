@@ -20,8 +20,8 @@ let object_green_obj = "#drone-green-obj";
 let object_green_mtl = "#drone-green-mtl";
 let marker_green_obj = "#marker-green-obj";
 let marker_green_mtl = "#marker-green-mtl";
-let green_target = 0;
-let red_target = 0;
+let red_target = target_number;
+let green_target = targets - target_number;
 function load_setup() {
   if (current_level === "1") {
     targets = 2;
@@ -169,7 +169,7 @@ window.onload = function() {
     console.log("score_red " + score_episode_red);
     console.log("score_green " + score_episode_green);
     console.log("episode_red " + red_target);
-    console.log("episode_green " + green_target);    
+    console.log("episode_green " + green_target);
     build();
     marker_hide();
   }
@@ -209,11 +209,5 @@ AFRAME.registerComponent("hit-handler", {
         }
       }
     });
-
-    // el.addEventListener('die', () => {
-    //     object.parentNode.removeChild(object);
-    // });
   }
 });
-
-
