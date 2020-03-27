@@ -5,12 +5,12 @@ let score_episode_red = 0;
 let score_episode_green = 0;
 let marker_hide_timer = 2000;
 let counter = 0; //default
-let targets = 
+
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
 let episodes = localStorage.getItem("episode_count"); //default
-let episode_duration = 10000; //default
-let time_to_destroy_targets = 8000; //default
+let episode_duration = localStorage.getItem("episode_duration"); //default
+let time_to_destroy_targets = episode_duration - 200; //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let object_red_obj = "#drone-red-obj";
@@ -22,13 +22,11 @@ let object_green_mtl = "#drone-green-mtl";
 let marker_green_obj = "#marker-green-obj";
 let marker_green_mtl = "#marker-green-mtl";
 let red_target = target_number;
-let green_target = targets - target_number;
-let targets = 
+let green_target = distractor_number;
+let targets = distractor_number + target_number;
 console.log(window.localStorage.getItem("level"));
-
+console.log(targets);
 window.onload = function() {
-
-
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
       setTimeout(function() {
@@ -62,7 +60,9 @@ window.onload = function() {
         z +
         "' hit-handler='id:" +
         object_id +
-        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'></a-obj-model>" +
+        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: " +
+        episode_duration +
+        "; loop: false'></a-obj-model>" +
         "<a-obj-model id='" +
         ring_id +
         "' class='ring' src=" +
@@ -76,7 +76,9 @@ window.onload = function() {
         y +
         " " +
         z +
-        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'>" +
+        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: " +
+        episode_duration +
+        "; loop: false'>" +
         "</a-obj-model>";
       t++;
       object_id++;
@@ -102,7 +104,9 @@ window.onload = function() {
         z +
         "' hit-handler='id:" +
         object_id +
-        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'></a-obj-model>" +
+        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: " +
+        episode_duration +
+        "; loop: false'></a-obj-model>" +
         "<a-obj-model id='" +
         ring_id +
         "' class='ring' src=" +
@@ -116,7 +120,9 @@ window.onload = function() {
         y +
         " " +
         z +
-        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: 8000; loop: false'>" +
+        "' animation='property: object3D.position.z; to: 2; dir: alternate; dur: " +
+        episode_duration +
+        "; loop: false'>" +
         "</a-obj-model>";
       object_id++;
       ring_id++;

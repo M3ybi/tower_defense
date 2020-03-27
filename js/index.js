@@ -33,15 +33,15 @@ var e = document.getElementById("select_level");
 cur_level = e.options[e.selectedIndex].text;
 if (cur_level <= 10) {
   episodes_count = 26;
-  episode_duration = 15;
+  episode_duration = 15000;
 }
 if (cur_level > 10 && cur_level <= 20) {
   episodes_count = 32;
-  episode_duration = 12;
+  episode_duration = 12000;
 }
 if (cur_level > 20) {
   episodes_count = 36;
-  episode_duration = 10;
+  episode_duration = 10000;
 }
 if (cur_level <= 2) {
   number_of_targets = 2;
@@ -147,16 +147,16 @@ document.getElementById("select_level").onchange = function() {
   cur_level = e.options[e.selectedIndex].text;
   if (cur_level <= 10) {
     episodes_count = 26;
-    episode_duration = 15;
+    episode_duration = 15000;
   }
 
   if (cur_level > 10 && cur_level <= 20) {
     episodes_count = 32;
-    episode_duration = 12;
+    episode_duration = 12000;
   }
   if (cur_level > 20) {
     episodes_count = 36;
-    episode_duration = 10;
+    episode_duration = 10000;
   }
   if (cur_level <= 2) {
     number_of_targets = 2;
