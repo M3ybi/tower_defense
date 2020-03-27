@@ -21,7 +21,7 @@ if (cur_level > 20) {
 if(cur_level <= 30){
   number_of_distractors = 7;
   number_of_targets = 6;
-  if(cur_level == 29 && cur){
+  if(cur_level == 29 && cur_level == 25){
     number_of_targets = 5;
   }
   if(cur_level == 28){
@@ -32,6 +32,9 @@ if(cur_level <= 30){
   }
   if(cur_level == 26){
     number_of_targets = 4;
+  }
+  if(cur_level == 24){
+    number_of_distractors = 4;
   }
 }
 if(cur_level )
