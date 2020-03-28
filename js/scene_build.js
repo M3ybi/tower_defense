@@ -9,7 +9,6 @@ let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
 let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
-let time_to_destroy_targets = episode_duration; //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let object_red_obj = "#drone-red-obj";
@@ -23,15 +22,12 @@ let marker_green_mtl = "#marker-green-mtl";
 let red_target = target_number;
 let green_target = distractor_number;
 let targets = distractor_number + target_number;
-let episode_duration_full = episode_duration;
+let episode_duration_full = parseInt(episode_duration) + 3000;
 console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
 window.onload = function() {
-  episode_duration_full = parseInt(localStorage.getItem("episode_duration"));
-  localStorage.setItem("episode_duration", episode_duration_full+2000);
-  console.log(episode_duration_full);
-
+  
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
       setTimeout(function() {
