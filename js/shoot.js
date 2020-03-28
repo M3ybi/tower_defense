@@ -1,27 +1,33 @@
-
-AFRAME.registerComponent('click-to-shoot', {
-    init: function () {
-        document.body.addEventListener('mousedown', () => { this.el.emit('shoot'); });
-    }
+AFRAME.registerComponent("click-to-shoot", {
+  init: function() {
+    document.body.addEventListener("mousedown", () => {
+      this.el.emit("shoot");
+    });
+  }
 });
 
-AFRAME.registerComponent('hit-handler', {
-    schema: {
-        id: { type: 'string', default: 1 },
-    },
+/**
+ * Change color when hit.
+ */
+AFRAME.registerComponent("hit-handler", {
+  schema: {
+    id: { type: "string" }
+  },
 
-    init: function () {
-        var el = this.el;
-        var element = this.data;
-        var object = document.getElementById(element.id);
-        var object_red = object.className;
-        el.addEventListener('hit', () => {
-            console.log(el);
-            object.parentNode.removeChild(object);
-        });
-
-        // el.addEventListener('die', () => {
-        //     object.parentNode.removeChild(object);
-        // });
-    }
+  init: function() {
+    var el = this.el;
+    var element = this.data;
+    var object = document.getElementById(el.id);
+    el.addEventListener("die", () => {
+      if (this.el.parentNode) {
+        el.parentNode.removeChild(el);
+        if (object.className == "target-green") {
+          score_episode_green++;
+        }
+        if (object.className == "target-red") {
+          score_episode_red++;
+        }
+      }
+    });
+  }
 });

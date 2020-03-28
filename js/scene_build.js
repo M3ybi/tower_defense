@@ -10,7 +10,7 @@ let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
 let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
-let time_to_destroy_targets = episode_duration - 200; //default
+let time_to_destroy_targets = episode_duration - 300; //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let object_red_obj = "#drone-red-obj";
@@ -169,37 +169,3 @@ window.onload = function() {
   game();
   delete_target();
 };
-
-AFRAME.registerComponent("click-to-shoot", {
-  init: function() {
-    document.body.addEventListener("mousedown", () => {
-      this.el.emit("shoot");
-    });
-  }
-});
-
-/**
- * Change color when hit.
- */
-AFRAME.registerComponent("hit-handler", {
-  schema: {
-    id: { type: "string" }
-  },
-
-  init: function() {
-    var el = this.el;
-    var element = this.data;
-    var object = document.getElementById(el.id);
-    el.addEventListener("die", () => {
-      if (this.el.parentNode) {
-        el.parentNode.removeChild(el);
-        if (object.className == "target-green") {
-          score_episode_green++;
-        }
-        if (object.className == "target-red") {
-          score_episode_red++;
-        }
-      }
-    });
-  }
-});
