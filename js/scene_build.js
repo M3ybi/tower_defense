@@ -3,14 +3,13 @@ document.querySelector("#model").addEventListener("model-loaded", function() {
 });
 let score_episode_red = 0;
 let score_episode_green = 0;
-let marker_hide_timer = 2000;
+let marker_hide_timer = 3000;
 let counter = 0; //default
-
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
 let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
-let time_to_destroy_targets = episode_duration - 300; //default
+let time_to_destroy_targets = episode_duration; //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let object_red_obj = "#drone-red-obj";
@@ -24,9 +23,15 @@ let marker_green_mtl = "#marker-green-mtl";
 let red_target = target_number;
 let green_target = distractor_number;
 let targets = distractor_number + target_number;
+let episode_duration_full = episode_duration;
+console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
 window.onload = function() {
+  episode_duration_full = parseInt(localStorage.getItem("episode_duration"));
+  localStorage.setItem("episode_duration", episode_duration_full+2000);
+  console.log(episode_duration_full);
+
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
       setTimeout(function() {
@@ -146,7 +151,7 @@ window.onload = function() {
           .parentNode.removeChild(document.getElementById(rings_id));
         rings_id++;
       }
-    }, time_to_destroy_targets);
+    }, episode_duration);
   }
 
   var myvar = setInterval(function() {
@@ -155,7 +160,7 @@ window.onload = function() {
     delete_target();
     counter++;
     console.log(counter);
-  }, episode_duration);
+  }, episode_duration_full);
 
   function game() {
     console.log("score_red " + score_episode_red);
