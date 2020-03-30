@@ -89,14 +89,21 @@
       </a-assets>
       <a-sky color="#333"></a-sky>
       <a-entity id="scena"></a-entity>
-      <a-camera camera look-controls wasd-controls-enabled="false"> </a-camera>
-      <a-cursor
+      <a-camera
         id="camera"
+        camera
+        look-controls
+        wasd-controls-enabled="false"
+        mouse-cursor
+      >
+      </a-camera>
+      <a-cursor
+        cursor
         shooter
         click-to-shoot
         wasd-controls="wsAxis: y; wsInverted: true"
         color="green"
-        scale="1 1 1"
+        scale="10 10 10"
       ></a-cursor>
       <a-plane
         id="circle"
