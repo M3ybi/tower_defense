@@ -90,8 +90,8 @@
       <a-sky color="#333"></a-sky>
       <a-entity id="scena"></a-entity>
       <a-camera id="camera" camera look-controls wasd-controls-enabled="false">
-        <a-cursor id="cursor" color="green" wasd-controls="wsaxis:z"></a-cursor>
       </a-camera>
+
       <a-entity
         cursor="fuse: true; fuseTimeout: 500"
         position="0 0 -1"
@@ -117,7 +117,14 @@
           position="0 12 -1"
           rotation="90 -90 0"
           scale="0.3 0.3 0.3"
-        ></a-plane>
+        >
+          <a-cursor
+            id="cursor"
+            color="green"
+            wasd-controls="wsaxis:z"
+                    position="-0.024 0.159 -12.784"
+          ></a-cursor>
+        </a-plane>
       </a-plane>
 
       <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
