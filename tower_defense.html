@@ -1,67 +1,122 @@
 <!DOCTYPE html>
 
 <html>
+  <head>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
+    />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>Tower Defense</title>
+    <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
+    <script src="js/aframe-super-shooter-kit.min.js"></script>
+    <script src="js/vr_controller_mapping.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
+    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
 
-<head>
-  <meta name="format-detection" content="telephone=no">
-  <meta name="msapplication-tap-highlight" content="no">
-  <meta name="viewport"
-    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-  <link rel="stylesheet" type="text/css" href="css/index.css">
-  <title>Tower Defense</title>
-  <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
-  <script src="js/aframe-super-shooter-kit.min.js"></script>
-  <script src="js/vr_controller_mapping.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
-  <script
-    src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
-  <script src="js/shoot.js"></script>
-  
-</head>
+    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <script src="js/shoot.js"></script>
+  </head>
 
-<body>
-  <a-scene>
-    <a-entity id="bulletTemplate" bullet="speed:30" geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.1" material="color: orange">
-    </a-entity>
+  <body>
+    <a-scene>
+      
 
+      <a-entity
+        id="bulletTemplate"
+        bullet="speed:30"
+        geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.1"
+        material="color: orange"
+      >
+      </a-entity>
 
-    <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
+      <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
 
-    <!-- <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" position="0 0 -1"></a-entity> -->
+      <!-- <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" position="0 0 -1"></a-entity> -->
 
-    <a-assets id="model">
+      <a-assets id="model">
+        <img
+          id="boxTexture"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FDRN.png?v=1583343395782"
+        />
+        <img
+          id="sky"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fmoon.jpg?v=1583343395162"
+        />
+        <a-asset-item
+          id="drone-green-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FbestDrone.obj?v=1583343426308"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-green-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FbestDrone.mtl?v=1583343426014"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-red-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FsphereDrone.obj?v=1583343433266"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-red-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FsphereDrone.mtl?v=1583343432443"
+        ></a-asset-item>
+        <a-asset-item
+          id="indicator-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarker.obj?v=1583343436312"
+        ></a-asset-item>
+        <a-asset-item
+          id="indicator-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarker.mtl?v=1583343436047"
+        ></a-asset-item>
+        <a-asset-item
+          id="marker-red-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerRed.obj?v=1583343428283"
+        ></a-asset-item>
+        <a-asset-item
+          id="marker-red-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerRed.mtl?v=1583343427967"
+        ></a-asset-item>
+        <a-asset-item
+          id="marker-green-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.obj?v=1583343427667"
+        ></a-asset-item>
+        <a-asset-item
+          id="marker-green-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.mtl?v=1583343436628"
+        ></a-asset-item>
 
-      <img id="boxTexture" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FDRN.png?v=1583343395782">
-      <img id="sky" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fmoon.jpg?v=1583343395162">
-      <a-asset-item id="drone-green-obj" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FbestDrone.obj?v=1583343426308"></a-asset-item>
-      <a-asset-item id="drone-green-mtl" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FbestDrone.mtl?v=1583343426014"></a-asset-item>
-      <a-asset-item id="drone-red-obj" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FsphereDrone.obj?v=1583343433266"></a-asset-item>
-      <a-asset-item id="drone-red-mtl" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FsphereDrone.mtl?v=1583343432443"></a-asset-item>
-      <a-asset-item id="indicator-obj" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarker.obj?v=1583343436312"></a-asset-item>
-      <a-asset-item id="indicator-mtl" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarker.mtl?v=1583343436047"></a-asset-item>
-      <a-asset-item id="marker-red-obj" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerRed.obj?v=1583343428283"></a-asset-item>
-      <a-asset-item id="marker-red-mtl" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerRed.mtl?v=1583343427967"></a-asset-item>
-      <a-asset-item id="marker-green-obj" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.obj?v=1583343427667"></a-asset-item>
-      <a-asset-item id="marker-green-mtl" src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.mtl?v=1583343436628"></a-asset-item>
+        <img id="boxTexture2" src="https://i.imgur.com/mYmmbrp.jpg" />
+      </a-assets>
+      <a-sky color="#333"></a-sky>
+      <a-entity id="scena"></a-entity>
+      <a-camera id="camera" camera look-controls wasd-controls>
+        <a-cursor id="cursor" color="green" shooter click-to-shoot></a-cursor>
+      </a-camera>
+      <a-plane
+        id="circle"
+        geometry="primitive: circle; radius: 10; segments: 8"
+        src="#boxTexture"
+        height="20"
+        width="20"
+        rotation="-90 0 0"
+        scale="0.3 0.3 0.3"
+      >
+        <a-plane
+          src="#boxTexture"
+          geometry="primitive: box; width: 1; height: 2; depth: 25"
+          position="0 12 -1"
+          rotation="90 -90 0"
+          scale="0.3 0.3 0.3"
+        ></a-plane>
+      </a-plane>
 
-      <img id="boxTexture2" src="https://i.imgur.com/mYmmbrp.jpg">
-    </a-assets>
-    <a-sky color="#333"></a-sky>
-    <a-entity id="scena"></a-entity>
-    <a-camera id="camera" camera look-controls wasd-controls>
-          <a-cursor id="cursor" color="green" shooter click-to-shoot></a-cursor>
-</a-camera>
-    <a-plane id="circle" geometry="primitive: circle; radius: 10; segments: 8" src="#boxTexture" height="20" width="20" rotation="-90 0 0" scale="0.3 0.3 0.3">
-      <a-plane src="#boxTexture" geometry="primitive: box; width: 1; height: 2; depth: 25" position="0 12 -1" rotation="90 -90 0" scale="0.3 0.3 0.3" ></a-plane>
-    </a-plane>
-
-    <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
-  </a-scene>
-<!--   <script src="js/index.js"></script> -->
-  <script src="js/scene_build.js"></script>
-  <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
-  <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
-</body>
-
+      <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
+    </a-scene>
+    <!--   <script src="js/index.js"></script> -->
+    <script src="js/scene_build.js"></script>
+    <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
+    <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
+  </body>
 </html>
