@@ -30,7 +30,6 @@
         material="color: orange"
       >
       </a-entity>
-      
 
       <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
 
@@ -90,7 +89,13 @@
       </a-assets>
       <a-sky color="#333"></a-sky>
       <a-entity id="scena"></a-entity>
-      <a-camera id="camera" camera look-controls wasd-controls-enabled="false">
+      <a-camera
+        
+        id="camera"
+        camera
+        look-controls
+        wasd-controls-enabled="false"
+      >
         <a-cursor
           click-to-shoot
           wasd-controls
@@ -109,8 +114,6 @@
         scale="0.3 0.3 0.3"
       >
         <a-plane
-          shooter
-          click-to-shoot
           id="gun"
           wasd-controls-enabled="false"
           src="#boxTexture"
@@ -119,7 +122,6 @@
           rotation="90 -90 0"
           scale="0.3 0.3 0.3"
           ><a-cursor
-            shooter
             click-to-shoot
             wasd-controls="acceleration:2000"
             id="cursor"
