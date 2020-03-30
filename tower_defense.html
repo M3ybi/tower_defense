@@ -89,19 +89,7 @@
       </a-assets>
       <a-sky color="#333"></a-sky>
       <a-entity id="scena"></a-entity>
-      <a-camera
-        
-        id="camera"
-        camera
-        look-controls
-        wasd-controls-enabled="false"
-      >
-        <a-cursor
-          click-to-shoot
-          wasd-controls
-          id="cursor"
-          color="green"
-        ></a-cursor>
+      <a-camera id="camera" camera look-controls wasd-controls-enabled="false">
       </a-camera>
 
       <a-plane
@@ -113,7 +101,9 @@
         rotation="-90 0 0"
         scale="0.3 0.3 0.3"
       >
+        <a-entity wasd-controls geometry="primitive: box" material="color: red">
         <a-plane
+          shooter
           id="gun"
           wasd-controls-enabled="false"
           src="#boxTexture"
@@ -128,7 +118,7 @@
             color="green"
             scale="100 100 100"
           ></a-cursor>
-        </a-plane>
+        </a-plane></a-entity>
       </a-plane>
 
       <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
