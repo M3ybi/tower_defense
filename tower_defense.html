@@ -30,6 +30,7 @@
         material="color: orange"
       >
       </a-entity>
+      
 
       <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
 
@@ -108,6 +109,8 @@
         scale="0.3 0.3 0.3"
       >
         <a-plane
+          shooter
+          click-to-shoot
           id="gun"
           wasd-controls-enabled="false"
           src="#boxTexture"
