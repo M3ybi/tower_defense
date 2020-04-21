@@ -36,18 +36,19 @@
         scale="5 5 1"
         color="White"
       ></a-text>
-      <a-text
+      <!--       <a-box
         position="0 5 -15"
+        rotation="-0.5 0 0"
         color="red"
         scale="3 2 1"
-        text="value: HELLO"
-      ></a-text>
+        text="value: HELLO; zOffset=-10"
+      ></a-box> -->
       <a-entity
-                        position="0 5 -15"
-
-  geometry="primitive: box; width: 4; height: auto"
-  material="color: blue" scale="3 2 1" 
-  text="value: This text will be 4 units wide."></a-entity>
+        geometry="primitive: plane; width: 2; height: 2"
+        position="0 5 -15"
+        material="color: red"
+        text="value: START!; color:white; width:2; height:2"
+      ></a-entity>
       <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
 
       <!-- <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" position="0 0 -1"></a-entity> -->
