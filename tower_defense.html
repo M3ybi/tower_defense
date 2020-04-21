@@ -30,7 +30,12 @@
         material="color: orange"
       >
       </a-entity>
-
+      <a-text
+        text="value: This text will be 4 units wide."
+        position="-8 10 -15"
+        scale="5 5 1"
+        color="White"
+      ></a-text>
       <!-- <a-entity class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity> -->
 
       <!-- <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" position="0 0 -1"></a-entity> -->
@@ -95,16 +100,16 @@
         look-controls
         wasd-controls-enabled="false"
         mouse-cursor
-      ><a-cursor
-        cursor
-        shooter
-        click-to-shoot
-        wasd-controls="wsAxis: y; wsInverted: true"
-        color="red"
-        scale="1 1 1"
-      ></a-cursor>
+        ><a-cursor
+          cursor
+          shooter
+          click-to-shoot
+          wasd-controls="wsAxis: y; wsInverted: true"
+          color="red"
+          scale="1 1 1"
+        ></a-cursor>
       </a-camera>
-      
+
       <a-plane
         id="circle"
         geometry="primitive: circle; radius: 10; segments: 8"
@@ -127,7 +132,7 @@
       <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
     </a-scene>
     <!--   <script src="js/index.js"></script> -->
-    <script src="js/scene_build.js"></script>
+<!--     <script src="js/scene_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
   </body>
