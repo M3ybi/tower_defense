@@ -26,6 +26,13 @@ let episode_duration_full = parseInt(episode_duration) + 3000;
 console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
+document.getElementById("scena").innerHTML += "<a-text
+        id="text1"
+        text="value: Hit square bellow to start!"
+        position="-6.5 8 -15"
+        scale="5 5 1"
+        color="white"
+      ></a-text>"
 function start() {
   
   function marker_hide() {
