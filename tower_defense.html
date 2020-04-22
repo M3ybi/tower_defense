@@ -93,13 +93,13 @@
         color="White"
       ></a-text>
       <a-entity
+        class="target"
         geometry="primitive: box"
-        id="2000"
+        id="1000"
         position="0 5 -15"
-        rotation="-0.5 0 0"
         color="green"
         scale="3.3 2 1"
-        hit-handler="id:"
+        hit-handler="id:1000"
         target="healthPoints:1"
       ></a-entity>
       <a-text
@@ -109,6 +109,7 @@
         color="White"
       ></a-text>
       <a-entity id="scena"></a-entity>
+      
       <a-camera
         id="camera"
         camera
@@ -147,7 +148,7 @@
       <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
     </a-scene>
     <!--   <script src="js/index.js"></script> -->
-    <script src="js/scene_build.js"></script>
+<!--     <script src="js/scene_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
   </body>

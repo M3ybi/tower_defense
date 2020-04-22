@@ -9,18 +9,17 @@ AFRAME.registerComponent("click-to-shoot", {
 /**
  * Change color when hit.
  */
-AFRAME.registerComponent("hit-handler", {
-  schema: {
-    id: { type: "string" }
-  },
+AFRAME.registerComponent("hit-handler"{
+// AFRAME.registerComponent("hit-handler", {
+  // schema: {
+  //   id: { type: "string" }
+  // },
 
   init: function() {
     var el = this.el;
     var element = this.data;
     var object = document.getElementById(el.id);
-    console.log(object);
     el.addEventListener("die", () => {
-      
       if (this.el.parentNode) {
         el.parentNode.removeChild(el);
         if (object.className == "target-green") {
