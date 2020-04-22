@@ -11,9 +11,13 @@ let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
-let tar_diff = localStorage.getItem("tar_diff");
-let dis_diff = localStorage.getItem("diss_diff");
-var i = Math.floor(Math.random() * 20 - 15);
+let tar_diff = parseInt(localStorage.getItem("tar_diff"));
+let dis_diff = parseInt(localStorage.getItem("dis_diff"));
+target_number = Math.floor(Math.random() * ((tar_diff+target_number)-(tar_diff-target_number)));
+distractor_number = Math.floor(Math.random() * ((dis_diff+distractor_number)-(dis_diff-distractor_number)));
+console.log("target_number"+target_number);
+console.log("distractor_number"+distractor_number);
+
 let object_red_obj = "#drone-red-obj";
 let object_red_mtl = "#drone-red-mtl";
 let marker_red_obj = "#marker-red-obj";
