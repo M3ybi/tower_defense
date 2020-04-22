@@ -13,10 +13,25 @@ var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let tar_diff = parseInt(localStorage.getItem("tar_diff"));
 let dis_diff = parseInt(localStorage.getItem("dis_diff"));
-target_number = Math.floor(Math.random() * ((tar_diff+target_number)-(tar_diff-target_number)));
-distractor_number = Math.floor(Math.random() * ((dis_diff+distractor_number)-(dis_diff-distractor_number)));
-console.log("target_number"+target_number);
-console.log("distractor_number"+distractor_number);
+console.log("target_number" + target_number);
+console.log("tar_diff" + tar_diff);
+console.log("tar_diff" + (target_number-tar_diff));
+let max_tar = (target_number+tar_diff);
+let min_tar = (target_number-tar_diff);
+
+let max_dis = (distractor_number+dis_diff)
+let min_dis = (distractor_number-dis_diff);
+console.log(max_tar,min_tar,max_dis,min_dis);
+target_number = Math.floor(
+  Math.random() * ((tar_diff + target_number) - (tar_diff - target_number)) +
+    (tar_diff - target_number)
+);
+distractor_number = Math.floor(
+  Math.random() * (dis_diff + distractor_number) +
+    (dis_diff - distractor_number)
+);
+console.log("target_number" + target_number);
+console.log("distractor_number" + distractor_number);
 
 let object_red_obj = "#drone-red-obj";
 let object_red_mtl = "#drone-red-mtl";
@@ -33,11 +48,14 @@ let episode_duration_full = parseInt(episode_duration) + 3000;
 console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
-document.getElementById("scena").innerHTML += "<a-text id=text3 text=value:"+current_level+" position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
-document.getElementById("scena").innerHTML += "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
+document.getElementById("scena").innerHTML +=
+  "<a-text id=text3 text=value:" +
+  current_level +
+  " position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
+document.getElementById("scena").innerHTML +=
+  "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
 
 function start() {
-  
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
       setTimeout(function() {
@@ -179,4 +197,4 @@ function start() {
 
   game();
   delete_target();
-};
+}
