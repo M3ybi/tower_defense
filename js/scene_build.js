@@ -11,6 +11,9 @@ let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
+let tar_diff = localStorage.getItem("tar_diff");
+let dis_diff = localStorage.getItem("diss_diff");
+var i = Math.floor(Math.random() * 20 - 15);
 let object_red_obj = "#drone-red-obj";
 let object_red_mtl = "#drone-red-mtl";
 let marker_red_obj = "#marker-red-obj";
@@ -26,8 +29,8 @@ let episode_duration_full = parseInt(episode_duration) + 3000;
 console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
-document.getElementById("scena").innerHTML += "<a-text id=text1 text=value:"+current_level+" position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
-document.getElementById("scena").innerHTML += "<a-text id=text2 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
+document.getElementById("scena").innerHTML += "<a-text id=text3 text=value:"+current_level+" position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
+document.getElementById("scena").innerHTML += "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
 
 function start() {
   
