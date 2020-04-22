@@ -26,7 +26,7 @@ let episode_duration_full = parseInt(episode_duration) + 3000;
 console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
-window.onload = function() {
+function start() {
   
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {

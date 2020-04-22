@@ -17,6 +17,7 @@
     <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
     <script src="js/shoot.js"></script>
+    <script src="js/start_click.js"></script>
   </head>
 
   <body>
@@ -92,16 +93,14 @@
         scale="5 5 1"
         color="white"
       ></a-text>
-      <a-entity id="start2">
-      <a-obj-model 
+      <a-entity
         id="start"
         geometry="primitive: box"
         position="0 5 -15"
-        hit-handler="id:1000"
-        target="healthPoints:0"
+        cursor-listener
         color="green"
         scale="3.3 2 1"
-      ></a-obj-model></a-entity>
+      ></a-entity>
       <a-text
         text="value: PLAY!"
         position="-1.6 5 -14"
