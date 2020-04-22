@@ -88,22 +88,24 @@
       </a-assets>
       <a-sky color="#333"></a-sky>
       <a-text
-        text="value: Hit button bellow to start!"
+        id="text1"
+        text="value: Hit square bellow to start!"
         position="-6.5 8 -15"
         scale="5 5 1"
         color="white"
       ></a-text>
       <a-entity
         id="start"
-        geometry="primitive: box"
+        geometry="primitive: box; color:blue"
         position="0 5 -15"
         cursor-listener
-        color="green"
-        scale="3.3 2 1"
+        color="blue"
+        scale="3.3 3.3 1"
       ></a-entity>
       <a-text
+        id="text2"
         text="value: PLAY!"
-        position="-1.6 5 -14"
+        position="-1.6 5 -15"
         scale="5 5 1"
         color="white"
       ></a-text>
