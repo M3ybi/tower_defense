@@ -9,11 +9,11 @@ AFRAME.registerComponent("click-to-shoot", {
 /**
  * Change color when hit.
  */
-AFRAME.registerComponent("hit-handler"{
-// AFRAME.registerComponent("hit-handler", {
-  // schema: {
-  //   id: { type: "string" }
-  // },
+// AFRAME.registerComponent("hit-handler",{
+AFRAME.registerComponent("hit-handler", {
+  schema: {
+    id: { type: "string" }
+  },
 
   init: function() {
     var el = this.el;

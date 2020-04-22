@@ -90,26 +90,24 @@
         text="value: Hit button bellow to start!"
         position="-6.5 8 -15"
         scale="5 5 1"
-        color="White"
+        color="white"
       ></a-text>
-      <a-entity
-        class="target"
+      <a-box
         geometry="primitive: box"
-        id="1000"
         position="0 5 -15"
+        hit-handler="1000"
+        target="healthPoints:0"
         color="green"
         scale="3.3 2 1"
-        hit-handler="id:1000"
-        target="healthPoints:1"
-      ></a-entity>
+      ></a-box>
       <a-text
         text="value: PLAY!"
         position="-1.6 5 -14"
         scale="5 5 1"
-        color="White"
+        color="white"
       ></a-text>
       <a-entity id="scena"></a-entity>
-      
+
       <a-camera
         id="camera"
         camera
@@ -148,7 +146,7 @@
       <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
     </a-scene>
     <!--   <script src="js/index.js"></script> -->
-<!--     <script src="js/scene_build.js"></script> -->
+    <!--     <script src="js/scene_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
   </body>
