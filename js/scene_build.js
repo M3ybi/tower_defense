@@ -58,7 +58,10 @@ function start() {
   }
 
   function build() {
-    
+    target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
+    distractor_number = Math.floor(
+      Math.random() * (max_dis - min_dis) + min_dis
+    );
     var object_id = 0;
     var ring_id = 2000;
     var z = -20;
@@ -173,8 +176,8 @@ function start() {
 
   var myvar = setInterval(function() {
     if (counter >= episodes) clearInterval(myvar);
-    delete_target();
     game();
+    delete_target();
     counter++;
     console.log(counter);
   }, episode_duration_full);
@@ -184,14 +187,10 @@ function start() {
     console.log("score_green " + score_episode_green);
     console.log("episode_red " + red_target);
     console.log("episode_green " + green_target);
-    target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
-    distractor_number = Math.floor(
-      Math.random() * (max_dis - min_dis) + min_dis
-    );
+
     build();
     marker_hide();
   }
-  delete_target();
   game();
-  
+  delete_target();
 }
