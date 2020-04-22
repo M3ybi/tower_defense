@@ -11,8 +11,12 @@ AFRAME.registerComponent("cursor-listener", {
       document
         .querySelector("#text2")
         .parentNode.removeChild(document.querySelector("#text2"));
-
-      start();
+      setTimeout(function(){ 
+        document.querySelector('#counter').innerHtml += "text='value: PLAY!'";
+      }, 3000);
+      setTimeout(function() {
+        start();
+      }, 4000);
     });
   }
 });
