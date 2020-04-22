@@ -57,10 +57,20 @@ function start() {
   }
 
   function build() {
-    target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
-    distractor_number = Math.floor(
-      Math.random() * (max_dis - min_dis) + min_dis
-    );
+    document.getElementById("scena").innerHTML =
+        "<a-text id=score text=value:SCORE:  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+      document.getElementById("scena").innerHTML =
+        "<a-text id=score1 text='value:Targets destroyed/total: " +
+        score_episode_red +
+        "/" +
+        red_target +
+        "'  position='-17 0 -15' scale='5 5 1' color=white ></a-text>";
+      document.getElementById("scena2").innerHTML=
+        "<a-text id=score2 text='value:Distractors destroyed/total: " +
+        score_episode_green +
+        "/" +
+        green_target +
+        "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
     var object_id = 0;
     var ring_id = 2000;
     var z = -20;
@@ -204,6 +214,8 @@ function start() {
     console.log("episode_green " + green_target);
 
     build();
+    target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
+    distractor_number = Math.floor(Math.random() * (max_dis - min_dis) + min_dis);
     marker_hide();
   }
   game();
