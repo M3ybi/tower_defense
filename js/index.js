@@ -25,7 +25,16 @@ function toGame() {
   localStorage.setItem("number_of_targets", number_of_targets);
   localStorage.setItem("number_of_distractors", number_of_distractors);
 
-  console.log(level,username,episode_count,episode_duration,tar_diff,dis_diff,number_of_targets,number_of_distractors);
+  console.log(
+    level,
+    username,
+    episode_count,
+    episode_duration,
+    tar_diff,
+    dis_diff,
+    number_of_targets,
+    number_of_distractors
+  );
   window.open("tower_defense.html");
 }
 
@@ -253,4 +262,6 @@ document.getElementById("select_level").onchange = function() {
   document.getElementById("ep_dur").value = episode_duration;
   document.getElementById("num_of_tar").value = number_of_targets;
   document.getElementById("num_of_dis").value = number_of_distractors;
+  document.getElementById("tar_diff").value = tar_diff;
+  document.getElementById("dis_diff").value = dis_diff;
 };
