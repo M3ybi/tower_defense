@@ -15,21 +15,14 @@ let tar_diff = parseInt(localStorage.getItem("tar_diff"));
 let dis_diff = parseInt(localStorage.getItem("dis_diff"));
 console.log("target_number" + target_number);
 console.log("tar_diff" + tar_diff);
-console.log("tar_diff" + (target_number-tar_diff));
-let max_tar = (target_number+tar_diff);
-let min_tar = (target_number-tar_diff);
-
-let max_dis = (distractor_number+dis_diff)
-let min_dis = (distractor_number-dis_diff);
-console.log(max_tar,min_tar,max_dis,min_dis);
-target_number = Math.floor(
-  Math.random() * ((tar_diff + target_number) - (tar_diff - target_number)) +
-    (tar_diff - target_number)
-);
-distractor_number = Math.floor(
-  Math.random() * (dis_diff + distractor_number) +
-    (dis_diff - distractor_number)
-);
+console.log("tar_diff" + (target_number - tar_diff));
+let max_tar = parseInt(target_number) + parseInt(tar_diff);
+let min_tar = target_number - tar_diff;
+let max_dis = parseInt(distractor_number) + parseInt(dis_diff);
+let min_dis = distractor_number - dis_diff;
+console.log(max_tar, min_tar, max_dis, min_dis);
+target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
+distractor_number = Math.floor(Math.random() * (max_dis - min_dis) + min_dis);
 console.log("target_number" + target_number);
 console.log("distractor_number" + distractor_number);
 
@@ -66,6 +59,10 @@ function start() {
   }
 
   function build() {
+    target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
+    distractor_number = Math.floor(
+      Math.random() * (max_dis - min_dis) + min_dis
+    );
     var object_id = 0;
     var ring_id = 20;
     var z = -20;
