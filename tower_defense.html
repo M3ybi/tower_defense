@@ -92,16 +92,15 @@
         scale="5 5 1"
         color="White"
       ></a-text>
-      <a-entity id="text">
-        <a-box
-          id="1500"
-          position="0 5 -15"
-          rotation="-0.5 0 0"
-          color="green"
-          scale="3.3 2 1"
-          hit-handler="id:1500"
-          target="healthPoints:1; static:true"
-        ></a-box
+      <a-entity
+        geometry="primitive: box"
+        id="2000"
+        position="0 5 -15"
+        rotation="-0.5 0 0"
+        color="green"
+        scale="3.3 2 1"
+        hit-handler="id:"
+        target="healthPoints:1"
       ></a-entity>
       <a-text
         text="value: PLAY!"
@@ -148,7 +147,7 @@
       <a-sky src="#sky" scale="-0.9 0.5 0.5" rotation="-90 0 -90"></a-sky>
     </a-scene>
     <!--   <script src="js/index.js"></script> -->
-    <!--     <script src="js/scene_build.js"></script> -->
+    <script src="js/scene_build.js"></script>
     <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
     <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
   </body>

@@ -18,8 +18,9 @@ AFRAME.registerComponent("hit-handler", {
     var el = this.el;
     var element = this.data;
     var object = document.getElementById(el.id);
+    console.log(object);
     el.addEventListener("die", () => {
-      console.log("gg");
+      
       if (this.el.parentNode) {
         el.parentNode.removeChild(el);
         if (object.className == "target-green") {
