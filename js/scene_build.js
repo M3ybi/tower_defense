@@ -7,12 +7,14 @@ let marker_hide_timer = 3000;
 let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
-let episodes = localStorage.getItem("episode_count"); //default
+// let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let tar_diff = parseInt(localStorage.getItem("tar_diff"));
 let dis_diff = parseInt(localStorage.getItem("dis_diff"));
+let usernameis = localStorage.getItem("username");
+let episodes = 3;
 console.log("target_number" + target_number);
 console.log("tar_diff" + tar_diff);
 console.log("tar_diff" + (target_number - tar_diff));
@@ -186,8 +188,8 @@ function start() {
   var myvar = setInterval(function() {
     if (counter >= episodes) {
       clearInterval(myvar);
-      document.getElementById("scena").innerHTML +=
-        "<a-text id=score text=value:SCORE:  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+      document.getElementById("scen2").innerHTML =
+        "<a-text id=score text=value:Username:"+usernameis+"  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
       document.getElementById("scena").innerHTML +=
         "<a-text id=score1 text='value:Targets destroyed/total: " +
         score_episode_red +
