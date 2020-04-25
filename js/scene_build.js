@@ -7,14 +7,14 @@ let marker_hide_timer = 3000;
 let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
-// let episodes = localStorage.getItem("episode_count"); //default
+let episodes = localStorage.getItem("episode_count"); //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
 let tar_diff = parseInt(localStorage.getItem("tar_diff"));
 let dis_diff = parseInt(localStorage.getItem("dis_diff"));
 let usernameis = localStorage.getItem("username");
-let episodes = 3;
+// let episodes = 3;
 console.log("target_number" + target_number);
 console.log("tar_diff" + tar_diff);
 console.log("tar_diff" + (target_number - tar_diff));
