@@ -43,11 +43,11 @@ console.log(episode_duration_full);
 console.log(window.localStorage.getItem("level"));
 console.log(targets);
 document.getElementById("scena").innerHTML +=
-  "<a-text id=text3 text=value:" +
+  "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text3 text=value:" +
   current_level +
   " position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
-document.getElementById("scena").innerHTML +=
-  "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
+// document.getElementById("scena").innerHTML +=
+  // "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
 function start() {
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
@@ -60,9 +60,9 @@ function start() {
 
   function build() {
     document.getElementById("scena").innerHTML =
-        "<a-text id=score text=value:SCORE:  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:SCORE:  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
       document.getElementById("scena").innerHTML =
-        "<a-text id=score1 text='value:Targets destroyed/total: " +
+        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
         score_episode_red +
         "/" +
         red_target +
@@ -189,15 +189,15 @@ function start() {
     if (counter >= episodes) {
       clearInterval(myvar);
       document.getElementById("scen2").innerHTML =
-        "<a-text id=score text=value:Username:"+usernameis+"  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:Username:"+usernameis+"  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
       document.getElementById("scena").innerHTML +=
-        "<a-text id=score1 text='value:Targets destroyed/total: " +
+        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
         score_episode_red +
         "/" +
         red_target +
         "'  position='-17 0 -15' scale='5 5 1' color=white ></a-text>";
       document.getElementById("scena").innerHTML +=
-        "<a-text id=score2 text='value:Distractors destroyed/total: " +
+        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score2 text='value:Distractors destroyed/total: " +
         score_episode_green +
         "/" +
         green_target +

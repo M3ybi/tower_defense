@@ -87,9 +87,15 @@
         <img id="boxTexture2" src="https://i.imgur.com/mYmmbrp.jpg" />
       </a-assets>
       <a-sky color="#333"></a-sky>
-      <a-text id="counter" position="-6.5 5 -15" scale="5 5 1"></a-text>
+      <a-text
+        font="	https://cdn.aframe.io/fonts/Exo2Bold.fnt"
+        id="counter"
+        position="-6.5 5 -15"
+        scale="5 5 1"
+      ></a-text>
       <a-text
         id="text1"
+        font="	https://cdn.aframe.io/fonts/Exo2Bold.fnt"
         text="value: Hit square below to start!"
         position="-6.5 8 -15"
         scale="5 5 1"
@@ -104,14 +110,16 @@
         scale="3.3 3.3 1"
       ></a-entity>
       <a-text
+        font="	https://cdn.aframe.io/fonts/Exo2Bold.fnt"
         id="text2"
         text="value: PLAY!"
-        position="-1.6 5 -14"
+        position="-1.5 5 -14"
         scale="5 5 1"
         color="white"
         cursor-listener
       ></a-text>
       <a-text
+        font="	https://cdn.aframe.io/fonts/Exo2Bold.fnt"
         id="text4"
         text="value:LEVEL:"
         position="-12 5 -15"
@@ -119,7 +127,7 @@
         color="white"
       ></a-text>
       <a-entity id="scena"></a-entity>
-<a-entity id="scena2"></a-entity>
+      <a-entity id="scena2"></a-entity>
       <a-camera
         id="camera"
         camera
@@ -145,21 +153,11 @@
         rotation="-90 0 0"
         scale="0.3 0.3 0.3"
       >
-<!--         <a-plane
-          src="#boxTexture"
-          geometry="primitive: box; width: 1; height: 2; depth: 25"
-          position="0 12 -1"
-          rotation="90 -90 0"
-          scale="0.3 0.3 0.3"
-        >
-        </a-plane> -->
       </a-plane>
 
-      <a-sky src="#sky" scale="-1.05 0.2 0.2" rotation="-90 0 -90"></a-sky>
+      <a-sky src="#sky" scale="-0.99 0.25 0.25" rotation="-90 0 -90"></a-sky>
     </a-scene>
     <!--   <script src="js/index.js"></script> -->
     <script src="js/scene_build.js"></script>
-    <!-- <script type="text/javascript" src="js/ring_build.js"></script> -->
-    <!-- <script type="text/javascript" src="js/ring_hide.js"></script> -->
   </body>
 </html>

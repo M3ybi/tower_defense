@@ -20,15 +20,15 @@ AFRAME.registerComponent("cursor-listener", {
      
       setTimeout(function() {
         document.getElementById("scena").innerHTML =
-          "<a-text id=text5 text=value:3  position='-0.5 3 -15' scale='5 5 1' color=white ></a-text>";
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:3  position='-0.5 3 -15' scale='5 5 1' color=white ></a-text>";
       }, 1000);
       setTimeout(function() {
         document.getElementById("scena").innerHTML =
-          "<a-text id=text5 text=value:2  position='-0.5 3 -15' scale='6 6 1' color=white ></a-text>";
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:2  position='-0.5 3 -15' scale='6 6 1' color=white ></a-text>";
       }, 2000);
       setTimeout(function() {
         document.getElementById("scena").innerHTML =
-          "<a-text id=text5 text=value:1  position='-0.5 3 -15' scale='7 7 1' color=white ></a-text>";
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:1  position='-0.5 3 -15' scale='7 7 1' color=white ></a-text>";
       }, 3000);
       setTimeout(function() {
         document
