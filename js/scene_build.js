@@ -14,7 +14,7 @@ let current_level = localStorage.getItem("level");
 let tar_diff = parseInt(localStorage.getItem("tar_diff"));
 let dis_diff = parseInt(localStorage.getItem("dis_diff"));
 let usernameis = localStorage.getItem("username");
-// let episodes = 3;
+// let episodes = 1;
 console.log("target_number" + target_number);
 console.log("tar_diff" + tar_diff);
 console.log("tar_diff" + (target_number - tar_diff));
@@ -47,7 +47,7 @@ document.getElementById("scena").innerHTML +=
   current_level +
   " position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
 // document.getElementById("scena").innerHTML +=
-  // "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
+// "<a-text id=text4 text=value:LEVEL:  position='-12 5 -15' scale='5 5 1' color=white ></a-text>";
 function start() {
   function marker_hide() {
     if (document.getElementsByClassName("ring") != null) {
@@ -59,20 +59,20 @@ function start() {
   }
 
   function build() {
-    document.getElementById("scena").innerHTML =
-        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:SCORE:  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
-      document.getElementById("scena").innerHTML =
-        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
-        score_episode_red +
-        "/" +
-        red_target +
-        "'  position='-17 0 -15' scale='5 5 1' color=white ></a-text>";
-      document.getElementById("scena2").innerHTML=
-        "<a-text id=score2 text='value:Distractors destroyed/total: " +
-        score_episode_green +
-        "/" +
-        green_target +
-        "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
+    // document.getElementById("scena").innerHTML =
+    //     "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:SCORE:  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+    //   document.getElementById("scena").innerHTML =
+    //     "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
+    //     score_episode_red +
+    //     "/" +
+    //     red_target +
+    //     "'  position='-17 0 -15' scale='5 5 1' color=white ></a-text>";
+    //   document.getElementById("scena2").innerHTML=
+    //     "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score2 text='value:Distractors destroyed/total: " +
+    //     score_episode_green +
+    //     "/" +
+    //     green_target +
+    //     "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
     var object_id = 0;
     var ring_id = 2000;
     var z = -20;
@@ -188,20 +188,24 @@ function start() {
   var myvar = setInterval(function() {
     if (counter >= episodes) {
       clearInterval(myvar);
-      document.getElementById("scen2").innerHTML =
-        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:Username:"+usernameis+"  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
-      document.getElementById("scena").innerHTML +=
-        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
-        score_episode_red +
-        "/" +
-        red_target +
-        "'  position='-17 0 -15' scale='5 5 1' color=white ></a-text>";
-      document.getElementById("scena").innerHTML +=
-        "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score2 text='value:Distractors destroyed/total: " +
-        score_episode_green +
-        "/" +
-        green_target +
-        "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
+      setTimeout(function() {
+        document.getElementById("scena2").innerHTML =
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:Username: " +
+          usernameis +
+          "  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+        document.getElementById("scena").innerHTML +=
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
+          score_episode_red +
+          "/" +
+          red_target +
+          "'  position='-17 0 -15' scale='5 5 1' color=white ></a-text>";
+        document.getElementById("scena").innerHTML +=
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score2 text='value:Distractors destroyed/total: " +
+          score_episode_green +
+          "/" +
+          green_target +
+          "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
+      }, episode_duration);
     }
     game();
     delete_target();
@@ -217,7 +221,9 @@ function start() {
 
     build();
     target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
-    distractor_number = Math.floor(Math.random() * (max_dis - min_dis) + min_dis);
+    distractor_number = Math.floor(
+      Math.random() * (max_dis - min_dis) + min_dis
+    );
     marker_hide();
   }
   game();
