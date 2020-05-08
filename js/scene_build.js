@@ -45,7 +45,6 @@ function start() {
   }
 
   function build() {
-  
     var object_id = 0;
     var ring_id = 2000;
     var z = -20;
