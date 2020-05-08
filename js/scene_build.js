@@ -1,14 +1,14 @@
 document.querySelector("#model").addEventListener("model-loaded", function() {
   console.log("...............");
 });
+let builded = 0;
 let score_episode_red = 0;
 let score_episode_green = 0;
 let marker_hide_timer = 3000;
 let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
-// let episodes = localStorage.getItem("episode_count")-1; //default
-let episodes = 0;
+let episodes = localStorage.getItem("episode_count")-1; //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
@@ -46,6 +46,7 @@ function start() {
   }
 
   function build() {
+    builded++;
     var object_id = 0;
     var ring_id = 2000;
     var z = -20;
@@ -167,10 +168,10 @@ function start() {
     if (counter >= episodes) {
       clearInterval(myvar);
       setTimeout(function() {
-        document.getElementById("scena3").innerHTML =
-          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:Username: " +
+        document.getElementById("scena2").innerHTML +=
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text='value:Username: " +
           usernameis +
-          "position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+          "'position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
         document.getElementById("scena").innerHTML +=
           "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
           score_episode_red +
@@ -181,7 +182,7 @@ function start() {
           "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score2 text='value:Distractors destroyed/total: " +
           score_episode_green +
           "/" +
-          green_target +
+          green_target + "/"+builded+
           "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
       }, episode_duration);
     }
