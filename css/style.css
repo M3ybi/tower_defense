@@ -5,20 +5,25 @@ body {
   margin: 2em;
 }
 
-h1{
+h1 {
   font-family: "Arial Black", Gadget, sans-serif;
-font-size: 25px;
-letter-spacing: 2px;
-word-spacing: 2px;
-color: #000000;
-font-weight: normal;
-text-decoration: none;
-font-style: normal;
-font-variant: normal;
-text-transform: none;
+  font-size: 3vw;
+  color: #000000;
+  font-weight: normal;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
   position: absolute;
+  left: 50%;
+  margin-top: 30rem;
+/*   margin: 0; */
+/*   -ms-transform: translate(-50%, -50%); */
+  transform: translate(-50%, -50%);
 }
-label,div {
+
+label,
+div {
   font-family: Arial;
   color: #171A21;
   font-weight: bold;
@@ -33,4 +38,10 @@ label,div {
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   font-size: 4rem;
+}
+#form{
+/*   position: absolute; */
+  margin: 15vw;
+/*   -ms-transform: translate(-50%, -50%); */
+/*   transform: translate(-50%, -50%); */
 }
