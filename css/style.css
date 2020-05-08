@@ -5,19 +5,32 @@ body {
   margin: 2em;
 }
 
-
+h1{
+  font-family: "Arial Black", Gadget, sans-serif;
+font-size: 25px;
+letter-spacing: 2px;
+word-spacing: 2px;
+color: #000000;
+font-weight: normal;
+text-decoration: none;
+font-style: normal;
+font-variant: normal;
+text-transform: none;
+  position: absolute;
+}
 label,div {
   font-family: Arial;
-  color: #000000;
+  color: #171A21;
   font-weight: bold;
+  font-size: 1.02rem;
 }
 
 #playbutton {
   margin: 0;
   position: absolute;
-  top: 80%;
+  top: 85%;
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  font-size: 8vw;
+  font-size: 4rem;
 }
