@@ -27,14 +27,14 @@ target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
 distractor_number = Math.floor(Math.random() * (max_dis - min_dis) + min_dis);
 console.log("target_number" + target_number);
 console.log("distractor_number" + distractor_number);
-let object_red_obj = "#drone-red-obj";
-let object_red_mtl = "#drone-red-mtl";
-let marker_red_obj = "#marker-red-obj";
-let marker_red_mtl = "#marker-red-mtl";
-let object_green_obj = "#drone-green-obj";
-let object_green_mtl = "#drone-green-mtl";
-let marker_green_obj = "#marker-green-obj";
-let marker_green_mtl = "#marker-green-mtl";
+let object_red_obj = "drone-red-obj";
+let object_red_mtl = "drone-red-mtl";
+let marker_red_obj = "marker-red-obj";
+let marker_red_mtl = "marker-red-mtl";
+let object_green_obj = "drone-green-obj";
+let object_green_mtl = "drone-green-mtl";
+let marker_green_obj = "marker-green-obj";
+let marker_green_mtl = "marker-green-mtl";
 let red_target = target_number;
 let green_target = distractor_number;
 let targets = distractor_number + target_number;
@@ -83,9 +83,9 @@ function start() {
       document.getElementById("scena").innerHTML +=
         "<a-obj-model id='" +
         object_id +
-        "' class='target-red' target='healthPoints:1; static:false' src=" +
+        "' class='target-red' target='healthPoints:1; static:false' src=#" +
         object_red_obj +
-        " mtl=" +
+        " mtl=#" +
         object_red_mtl +
         " " +
         "scale='0.28 0.28 0.28' position='" +
@@ -101,9 +101,9 @@ function start() {
         "; loop: false'></a-obj-model>" +
         "<a-obj-model id='" +
         ring_id +
-        "' class='ring' src=" +
+        "' class='ring' src=#" +
         marker_red_obj +
-        " mtl=" +
+        " mtl=#" +
         marker_red_mtl +
         " scale='0.28 0.28 0.28'" +
         "position='" +
@@ -127,9 +127,9 @@ function start() {
       document.getElementById("scena").innerHTML +=
         "<a-obj-model id='" +
         object_id +
-        "' class='target-green' target='healthPoints:1; static:false' src=" +
+        "' class='target-green' target='healthPoints:1; static:false' src=#" +
         object_green_obj +
-        " mtl=" +
+        " mtl=#" +
         object_green_mtl +
         " " +
         "scale='0.28 0.28 0.28' position='" +
@@ -145,9 +145,9 @@ function start() {
         "; loop: false'></a-obj-model>" +
         "<a-obj-model id='" +
         ring_id +
-        "' class='ring' src=" +
+        "' class='ring' src=#" +
         marker_green_obj +
-        " mtl=" +
+        " mtl=#" +
         marker_green_mtl +
         " scale='0.28 0.28 0.28'" +
         "position='" +
@@ -176,13 +176,13 @@ function start() {
             .getElementById(k)
             .parentNode.removeChild(document.getElementById(k));
         }
-        
+
         if (document.getElementById(rings_id) != null) {
-        document
-          .getElementById(rings_id)
-          .parentNode.removeChild(document.getElementById(rings_id));
-        rings_id++;
+          document
+            .getElementById(rings_id)
+            .parentNode.removeChild(document.getElementById(rings_id));
         }
+        rings_id++;
         k++;
       }
     }, episode_duration);
@@ -227,6 +227,7 @@ function start() {
     distractor_number = Math.floor(
       Math.random() * (max_dis - min_dis) + min_dis
     );
+    targets = target_number + distractor_number;
     marker_hide();
   }
   game();
