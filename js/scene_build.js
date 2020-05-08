@@ -176,11 +176,14 @@ function start() {
             .getElementById(k)
             .parentNode.removeChild(document.getElementById(k));
         }
-        k++;
+        
+        if (document.getElementById(rings_id) != null) {
         document
           .getElementById(rings_id)
           .parentNode.removeChild(document.getElementById(rings_id));
         rings_id++;
+        }
+        k++;
       }
     }, episode_duration);
   }
