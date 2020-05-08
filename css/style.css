@@ -1,22 +1,23 @@
 /* CSS files add styling rules to your content */
 
 body {
-  /*   font-family: helvetica, arial, sans-serif; */
+  background-image: url("https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fbackground.jpg?v=1588947183298");
   margin: 2em;
 }
 
-.headline {
-  font-family: Monospace;
+
+label,div {
+  font-family: Arial;
   color: #000000;
-  font-size: 2vw;
+  font-weight: bold;
 }
 
 #playbutton {
   margin: 0;
   position: absolute;
-  top: 50%;
+  top: 80%;
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  font-size: 2vw;
+  font-size: 8vw;
 }
