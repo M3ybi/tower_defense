@@ -68,3 +68,11 @@
 {"name":"background.jpg","date":"2020-05-08T14:10:56.015Z","url":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fbackground.jpg","type":"image/jpeg","size":381994,"imageWidth":1600,"imageHeight":1200,"thumbnail":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fthumbnails%2Fbackground.jpg","thumbnailWidth":330,"thumbnailHeight":248,"uuid":"k99gRKouOFN8VKDk"}
 {"uuid":"k99gRKouOFN8VKDk","deleted":true}
 {"name":"background.jpg","date":"2020-05-08T14:13:03.298Z","url":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fbackground.jpg","type":"image/jpeg","size":68851,"imageWidth":1920,"imageHeight":1080,"thumbnail":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fthumbnails%2Fbackground.jpg","thumbnailWidth":330,"thumbnailHeight":186,"uuid":"2ViwCq0rLz7fow8k"}
+{"uuid":"cJPSdkkFOXbO7kaU","deleted":true}
+{"uuid":"bUHJQkZOQeEAPlui","deleted":true}
+{"name":"cube.mtl","date":"2020-05-08T15:57:26.326Z","url":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fcube.mtl","type":"","size":184,"thumbnail":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fthumbnails%2Fcube.mtl","thumbnailWidth":210,"thumbnailHeight":210,"uuid":"3X9nvhCoOEg245nU"}
+{"name":"cube.obj","date":"2020-05-08T15:57:26.350Z","url":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fcube.obj","type":"","size":1924,"thumbnail":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fthumbnails%2Fcube.obj","thumbnailWidth":210,"thumbnailHeight":210,"uuid":"G2rTg1fZYJA6G5tt"}
+{"uuid":"5WIElLu6y7tK9KPR","deleted":true}
+{"uuid":"16X0aoQYB7VSNw6R","deleted":true}
+{"name":"sphere.obj","date":"2020-05-08T15:58:55.669Z","url":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fsphere.obj","type":"","size":6083,"thumbnail":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fthumbnails%2Fsphere.obj","thumbnailWidth":210,"thumbnailHeight":210,"uuid":"LZrlglbBuSxxS07M"}
+{"name":"sphere.mtl","date":"2020-05-08T15:58:55.803Z","url":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fsphere.mtl","type":"","size":184,"thumbnail":"https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fthumbnails%2Fsphere.mtl","thumbnailWidth":210,"thumbnailHeight":210,"uuid":"SvDXGuUmdk9EgX3J"}
