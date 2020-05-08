@@ -5,9 +5,9 @@ body {
   margin: 2em;
 }
 
-h1 {
+.headline1 {
   font-family: "Arial Black", Gadget, sans-serif;
-  font-size: 3vw;
+  font-size: 2rem;
   color: #000000;
   font-weight: normal;
   text-decoration: none;
@@ -16,9 +16,9 @@ h1 {
   text-transform: none;
   position: absolute;
   left: 50%;
-  margin-top: 30rem;
-/*   margin: 0; */
-/*   -ms-transform: translate(-50%, -50%); */
+  top: 5rem;
+  margin: 0;
+  -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
 
@@ -37,11 +37,12 @@ div {
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  font-size: 4rem;
+  font-size: 3rem;
 }
 #form{
 /*   position: absolute; */
-  margin: 15vw;
+  margin: 0.2rem;
+  margin-top: 10rem;
 /*   -ms-transform: translate(-50%, -50%); */
 /*   transform: translate(-50%, -50%); */
 }
