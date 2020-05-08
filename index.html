@@ -9,7 +9,7 @@
       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
     />
      <link rel="stylesheet" href="css/index.css">
-         <link rel="stylesheet" href="css/.css">
+         <link rel="stylesheet" href="css/style.css">
 
     <link
       rel="stylesheet"
@@ -29,7 +29,7 @@
       <form>
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="inputEmail4">Username</label>
+            <label class="headline" for="inputEmail4">Username</label>
             <input
               type="name"
               class="form-control"
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="exampleFormControlSelect1">Select Level</label>
+          <label class="headline" for="exampleFormControlSelect1">Select Level</label>
           <select class="form-control" id="select_level">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -123,7 +123,7 @@
             </div>
           </form>
         </div>
-        <button type="submit" onclick="toGame()" class="btn btn-primary">
+        <button id="playbutton" type="submit" onclick="toGame()" class="btn btn-primary">
           Play!
         </button>
       </form>
