@@ -1,8 +1,11 @@
 /* CSS files add styling rules to your content */
 
 body {
-  background-image: url("https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fbackground.jpg?v=1588947183298");
-  margin: 2em;
+  background-image: url("https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FVector-multilayer-modern-background-04.jpg?v=1588967038036");
+/*   margin: 2em; */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 
 .headline1 {
@@ -33,16 +36,16 @@ div {
 #playbutton {
   margin-top: 5rem;
   position: absolute;
-/*   top: 3rem; */
+  /*   top: 3rem; */
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   font-size: 3rem;
 }
-#form{
-/*   position: absolute; */
+#form {
+  /*   position: absolute; */
   margin: 0.2rem;
   margin-top: 10rem;
-/*   -ms-transform: translate(-50%, -50%); */
-/*   transform: translate(-50%, -50%); */
+  /*   -ms-transform: translate(-50%, -50%); */
+  /*   transform: translate(-50%, -50%); */
 }
