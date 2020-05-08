@@ -20,12 +20,8 @@ let max_dis = parseInt(distractor_number) + parseInt(dis_diff);
 let min_dis = distractor_number - dis_diff;
 target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
 distractor_number = Math.floor(Math.random() * (max_dis - min_dis) + min_dis);
-let object_red_obj = "drone-1-obj";
-let object_red_mtl = "drone-1-mtl";
 let marker_red_obj = "marker-red-obj";
 let marker_red_mtl = "marker-red-mtl";
-let object_green_obj = "drone-2-obj";
-let object_green_mtl = "drone-2-mtl";
 let marker_green_obj = "marker-green-obj";
 let marker_green_mtl = "marker-green-mtl";
 let red_target = target_number;
@@ -107,9 +103,9 @@ function start() {
         "<a-obj-model id='" +
         object_id +
         "' class='target-green' target='healthPoints:1; static:false' src=#" +
-        object_green_obj +
+        item_obj +
         " mtl=#" +
-        object_green_mtl +
+        item_mtl +
         " " +
         "scale='0.28 0.28 0.28' position='" +
         x +
