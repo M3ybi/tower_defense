@@ -8,7 +8,7 @@ let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
 // let episodes = localStorage.getItem("episode_count")-1; //default
-let episodes = 1;
+let episodes = 0;
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
@@ -167,10 +167,10 @@ function start() {
     if (counter >= episodes) {
       clearInterval(myvar);
       setTimeout(function() {
-        document.getElementById("scena2").innerHTML =
+        document.getElementById("scena3").innerHTML =
           "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text=value:Username: " +
           usernameis +
-          "  position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+          "position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
         document.getElementById("scena").innerHTML +=
           "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Targets destroyed/total: " +
           score_episode_red +
