@@ -193,11 +193,6 @@ function start() {
   }, episode_duration_full);
 
   function game() {
-    console.log("score_red " + score_episode_red);
-    console.log("score_green " + score_episode_green);
-    console.log("episode_red " + red_target);
-    console.log("episode_green " + green_target);
-
     build();
     target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
     distractor_number = Math.floor(
