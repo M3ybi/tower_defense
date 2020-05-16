@@ -8,7 +8,7 @@
       name="viewport"
       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
     />
-         <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
 
     <link
       rel="stylesheet"
@@ -20,15 +20,13 @@
     <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
-    
   </head>
 
   <body>
-      <h1 class="headline1">Tower Defense</h1> 
+    <h1 class="headline1">Tower Defense</h1>
     <div>
       <form id="form">
-        
-    <hr>
+        <hr />
         <div class="form-row">
           <div class="form-group col-md-6">
             <label class="headline" for="inputEmail4">Username</label>
@@ -41,7 +39,9 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="headline" for="exampleFormControlSelect1">Select Level</label>
+          <label class="headline" for="exampleFormControlSelect1"
+            >Select Level</label
+          >
           <select class="form-control" id="select_level">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -76,7 +76,6 @@
           </select>
         </div>
 
-        
         <div>
           <form>
             <div class="row">
@@ -124,9 +123,14 @@
               </div>
             </div>
           </form>
-          <hr>
+          <hr />
         </div>
-        <button id="playbutton" onclick="toGame()" type="submit" class="btn btn-primary">
+        <button
+          id="playbutton"
+          onclick="toGame()"
+          type="submit"
+          class="btn btn-primary"
+        >
           Play!
         </button>
       </form>
