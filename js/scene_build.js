@@ -164,9 +164,9 @@ function start() {
     }, episode_duration);
   }
 
-  var myvar = setInterval(function() {
+  var myGame = setInterval(function() {
     if (counter >= episodes) {
-      clearInterval(myvar);
+      clearInterval(myGame);
       setTimeout(function() {
         document.getElementById("scena2").innerHTML +=
           "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score text='value:Username: " +
