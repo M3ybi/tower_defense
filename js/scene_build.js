@@ -29,11 +29,42 @@ let red_target = target_number;
 let green_target = distractor_number;
 let targets = distractor_number + target_number;
 let episode_duration_full = parseInt(episode_duration) + 3000;
+const Parse = require('parse/node');
+
+const APP_ID = 'EOcs3eNwXcuHJ8BoTsAixKZTVL5U1UvPcYbl6FbC';
+const JAVASCRIPT_KEY = "mPauB8HeLk45mGcXG4u1DJbZ6gKGS1IhunrJnsbH";
+
+console.info("Initializing Application", APP_ID);
+Parse.initialize(APP_ID, JAVASCRIPT_KEY);
+Parse.serverURL = 'https://parseapi.back4app.com/'
+
+const Event = Parse.Object.extend("Event");
+const event = new Event();
+const eventQuery = new Parse.Query(Event);
 
 document.getElementById("scena").innerHTML +=
   "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text3 text=value:" +
   current_level +
   " position='-6.5 5 -15' scale='5 5 1' color=white ></a-text>";
+
+function create() {
+  const levelEvent = {
+    Username: usernameis,
+    Level: counter,
+    TargetsDestroyed: score_episode_red,
+    TargetsSpawned: red_target,
+    DisctractorsDestroyed: score_episode_green,
+    DistractorsSpawned: 
+  };
+  console.info('Creating an object', levelEvent);
+  event.save(levelEvent)
+  .then(obj => obj.toJSON())
+  .then(event => {
+    console.log('Object saved:\n', event);
+    read(event.objectId);
+  })
+  .catch(console.error);
+}
 
 function start() {
   function marker_hide() {
@@ -185,6 +216,7 @@ function start() {
           green_target + "/"+builded+
           "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
       }, episode_duration);
+      create();
     }
     game();
     delete_target();
