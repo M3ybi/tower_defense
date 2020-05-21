@@ -54,7 +54,7 @@ function start() {
     for (let j = 0; j < target_number; j++) {
       generate_object();
       var x = Math.floor(Math.random() * 20 - 15);
-      var y = Math.floor(Math.random() * 8 + 1);
+      var y = Math.floor(Math.random() * 6 - 2);
       document.getElementById("scena").innerHTML +=
         "<a-obj-model id='" +
         object_id +
