@@ -8,7 +8,8 @@ let marker_hide_timer = 3000;
 let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
-let episodes = localStorage.getItem("episode_count")-1; //default
+// let episodes = localStorage.getItem("episode_count")-1; //default
+let episodes = 2;
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
@@ -54,7 +55,7 @@ function create() {
     TargetsDestroyed: score_episode_red,
     TargetsSpawned: red_target,
     DisctractorsDestroyed: score_episode_green,
-    DistractorsSpawned: 
+    DistractorsSpawned: green_target
   };
   console.info('Creating an object', levelEvent);
   event.save(levelEvent)
