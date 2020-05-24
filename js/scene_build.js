@@ -53,8 +53,8 @@ function start() {
     var t = 0;
     for (let j = 0; j < target_number; j++) {
       generate_object();
-      var x = Math.floor(Math.random() * 15 - 15);
-      var y = Math.floor(Math.random() * 6 - 2);
+      var x = Math.floor(Math.random() * 15 - 5);
+      var y = Math.floor(Math.random() * 4 - 0);
       document.getElementById("scena").innerHTML +=
         "<a-obj-model id='" +
         object_id +
