@@ -2,13 +2,15 @@ document.querySelector("#model").addEventListener("model-loaded", function() {
   console.log("...............");
 });
 let builded = 0;
+let first = 0;
 let score_episode_red = 0;
 let score_episode_green = 0;
 let marker_hide_timer = 3000;
 let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
-let episodes = localStorage.getItem("episode_count")-1; //default
+let episodes = 2;
+// let episodes = localStorage.getItem("episode_count")-1; //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
@@ -94,7 +96,9 @@ function start() {
       t++;
       object_id++;
       ring_id++;
+      if(first != 0){
       red_target++;
+      }
     }
     for (let i = 0; i < distractor_number; i++) {
       generate_object();
@@ -138,7 +142,9 @@ function start() {
         "</a-obj-model>";
       object_id++;
       ring_id++;
+      if(first != 0){
       green_target++;
+      }
     }
   }
 
@@ -183,8 +189,6 @@ function start() {
           score_episode_green +
           "/" +
           green_target +
-          "/" +
-          builded +
           "'  position='-17 -2 -15' scale='5 5 1' color=white ></a-text>";
       }, episode_duration);
     }
@@ -196,6 +200,7 @@ function start() {
 
   function game() {
     build();
+    first = 1;
     target_number = Math.floor(Math.random() * (max_tar - min_tar) + min_tar);
     distractor_number = Math.floor(
       Math.random() * (max_dis - min_dis) + min_dis
