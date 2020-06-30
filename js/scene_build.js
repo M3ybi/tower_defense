@@ -9,8 +9,7 @@ let marker_hide_timer = 3000;
 let counter = 0; //default
 let distractor_number = localStorage.getItem("number_of_distractors");
 let target_number = localStorage.getItem("number_of_targets"); //default
-let episodes = 0;
-// let episodes = localStorage.getItem("episode_count")-1; //default
+let episodes = localStorage.getItem("episode_count")-1; //default
 let episode_duration = localStorage.getItem("episode_duration"); //default
 var ring = document.getElementsByClassName("ring");
 let current_level = localStorage.getItem("level");
@@ -32,6 +31,17 @@ let green_target = distractor_number;
 let targets = distractor_number + target_number;
 let episode_duration_full = parseInt(episode_duration) + 3000;
 
+document.body.onkeyup = function(e){
+    if(e.keyCode == 32){
+        document.getElementById("scena2").innerHTML +=
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=lvl text='value:Episode: " +
+          counter + "/" + episodes
+          "'position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+      setTimeout(function() {
+          
+      },marker_hide_timer);
+    }
+}
 document.getElementById("scena").innerHTML +=
   "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text3 text=value:" +
   current_level +
