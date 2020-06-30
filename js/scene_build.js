@@ -33,13 +33,16 @@ let episode_duration_full = parseInt(episode_duration) + 3000;
 
 document.body.onkeyup = function(e){
     if(e.keyCode == 32){
-        document.getElementById("scena2").innerHTML +=
-          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=lvl text='value:Episode: " +
-          counter + "/" + episodes
-          "'position='-15 2 -15' scale='5 5 1' color=white ></a-text>";
+        document.getElementById("scena3").innerHTML +=
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=score1 text='value:Current episode/total: " +
+          (parseInt(counter)+parseInt(1)) +
+          "/" +
+          (parseInt(episodes)+parseInt(1)) +
+          "'  position='-1.6 0 -5' scale='1 1 1' color=white ></a-text>";
       setTimeout(function() {
-          
-      },marker_hide_timer);
+          document.getElementById("scena3").innerHTML =
+          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:  position='-0.5 15 -15' scale='5 5 1' color=white ></a-text>"
+      },3000);
     }
 }
 document.getElementById("scena").innerHTML +=
