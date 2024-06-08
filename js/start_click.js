@@ -1,41 +1,41 @@
 AFRAME.registerComponent("cursor-listener", {
   init: function() {
-    this.el.addEventListener("click", function(evt) {
-      console.log("I was clicked at:");
-      document
-        .querySelector("#start")
-        .parentNode.removeChild(document.querySelector("#start"));
-      document
-        .querySelector("#text1")
-        .parentNode.removeChild(document.querySelector("#text1"));
-      document
-        .querySelector("#text2")
-        .parentNode.removeChild(document.querySelector("#text2"));
-      document
-        .querySelector("#text3")
-        .parentNode.removeChild(document.querySelector("#text3"));
-      document
-        .querySelector("#text4")
-        .parentNode.removeChild(document.querySelector("#text4"));
-     
-      setTimeout(function() {
-        document.getElementById("scena").innerHTML =
-          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:3  position='-0.5 3 -15' scale='5 5 1' color=white ></a-text>";
-      }, 1000);
-      setTimeout(function() {
-        document.getElementById("scena").innerHTML =
-          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:2  position='-0.5 3 -15' scale='6 6 1' color=white ></a-text>";
-      }, 2000);
-      setTimeout(function() {
-        document.getElementById("scena").innerHTML =
-          "<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id=text5 text=value:1  position='-0.5 3 -15' scale='7 7 1' color=white ></a-text>";
-      }, 3000);
-      setTimeout(function() {
-        document
-          .querySelector("#text5")
-          .parentNode.removeChild(document.querySelector("#text5"));
-        start();
-      }, 4000);
-    });
+    this.el.addEventListener("click", onCursorClick);
   }
 });
+
+function onCursorClick(evt) {
+  console.log("I was clicked at:");
+
+  // Elements to be removed
+  const elementsToRemove = ["#start", "#text1", "#text2", "#text3", "#text4"];
+  
+  // Remove specified elements
+  elementsToRemove.forEach(selector => {
+    const element = document.querySelector(selector);
+    if (element) {
+      element.parentNode.removeChild(element);
+    }
+  });
+
+  // Countdown values and delays
+  const countdownValues = [3, 2, 1];
+  const delay = 1000;
+
+  // Display countdown
+  countdownValues.forEach((value, index) => {
+    setTimeout(() => {
+      document.getElementById("scena").innerHTML =
+        `<a-text font='https://cdn.aframe.io/fonts/Exo2Bold.fnt' id='text5' text='value:${value}' position='-0.5 3 -15' scale='${5 + index} ${5 + index} 1' color='white'></a-text>`;
+    }, delay * (index + 1));
+  });
+
+  // Remove countdown and start the game
+  setTimeout(() => {
+    const text5 = document.querySelector("#text5");
+    if (text5) {
+      text5.parentNode.removeChild(text5);
+    }
+    start();
+  }, delay * (countdownValues.length + 1));
+}
