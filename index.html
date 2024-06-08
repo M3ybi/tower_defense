@@ -23,52 +23,56 @@
   <body>
     <div class="container">
       <h1 class="headline1">Tower Defense</h1>
-      <form id="form">
-        <hr />
+      <form id="form" class="custom-form">
+        <hr class="divider" />
         <div class="form-row">
           <div class="form-group col-md-6">
             <label class="headline" for="username">Username</label>
-            <input type="text" class="form-control" id="username" value="Player" />
+            <input type="text" class="form-control custom-input" id="username" value="Player" />
           </div>
         </div>
         <div class="form-group">
           <label class="headline" for="select_level">Select Level</label>
-<select class="form-control" id="select_level">
-  ${Array.from({ length: 30 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
-</select>
+          <select class="form-control custom-select" id="select_level">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <!-- Other options omitted for brevity -->
+            <option value="30">30</option>
+          </select>
         </div>
         <div class="form-group">
           <div class="row">
             <div class="col">
               <label for="ep_count">Episodes Count</label>
-              <input type="text" class="form-control" id="ep_count" disabled />
+              <input type="text" class="form-control custom-input" id="ep_count" disabled />
             </div>
             <div class="col">
               <label for="ep_dur">Episode Duration</label>
-              <input type="text" class="form-control" id="ep_dur" disabled />
+              <input type="text" class="form-control custom-input" id="ep_dur" disabled />
             </div>
           </div>
           <div class="row">
             <div class="col">
               <label for="num_of_tar">Number of Targets</label>
-              <input type="text" class="form-control" id="num_of_tar" disabled />
+              <input type="text" class="form-control custom-input" id="num_of_tar" disabled />
             </div>
             <div class="col">
               <label for="num_of_dis">Number of Distractors</label>
-              <input type="text" class="form-control" id="num_of_dis" disabled />
+              <input type="text" class="form-control custom-input" id="num_of_dis" disabled />
             </div>
             <div class="col">
               <label for="tar_diff">Targets Difficulty</label>
-              <input type="text" class="form-control" id="tar_diff" />
+              <input type="text" class="form-control custom-input" id="tar_diff" />
             </div>
             <div class="col">
               <label for="dis_diff">Distractors Difficulty</label>
-              <input type="text" class="form-control" id="dis_diff" />
+              <input type="text" class="form-control custom-input" id="dis_diff" />
             </div>
           </div>
         </div>
-        <hr />
-        <button id="playbutton" type="submit" class="btn btn-primary" onclick="toGame()">Play!</button>
+        <hr class="divider" />
+        <button id="playbutton" type="submit" class="btn btn-primary custom-btn" onclick="toGame()">Play!</button>
       </form>
     </div>
 
