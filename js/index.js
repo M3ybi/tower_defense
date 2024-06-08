@@ -1,267 +1,84 @@
+// Declare necessary variables
 let level, username;
-let episodes_count,
-  cur_level,
-  episode_duration,
-  number_of_targets,
-  number_of_distractors;
-let tar_diff = 1,
-  dis_diff = 1;
+let episodes_count, episode_duration, number_of_targets, number_of_distractors;
+let tar_diff = 1, dis_diff = 1;
 
 function toGame() {
-  let username = document.getElementById("username").value;
-  let level = document.getElementById("select_level").value;
-  let episode_count = document.getElementById("ep_count").value;
-  let episode_duration = document.getElementById("ep_dur").value;
-  let tar_diff = document.getElementById("tar_diff").value;
-  let dis_diff = document.getElementById("dis_diff").value;
-  let number_of_targets = document.getElementById("num_of_tar").value;
-  let number_of_distractors = document.getElementById("num_of_dis").value;
-  localStorage.setItem("username", username);
-  localStorage.setItem("level", level);
-  localStorage.setItem("episode_count", episode_count);
-  localStorage.setItem("episode_duration", episode_duration);
-  localStorage.setItem("tar_diff", tar_diff);
-  localStorage.setItem("dis_diff", dis_diff);
-  localStorage.setItem("number_of_targets", number_of_targets);
-  localStorage.setItem("number_of_distractors", number_of_distractors);
+  // Get input values
+  username = document.getElementById("username").value;
+  level = document.getElementById("select_level").value;
+  episodes_count = document.getElementById("ep_count").value;
+  episode_duration = document.getElementById("ep_dur").value;
+  tar_diff = document.getElementById("tar_diff").value;
+  dis_diff = document.getElementById("dis_diff").value;
+  number_of_targets = document.getElementById("num_of_tar").value;
+  number_of_distractors = document.getElementById("num_of_dis").value;
 
-  console.log(
-    level,
-    username,
-    episode_count,
-    episode_duration,
-    tar_diff,
-    dis_diff,
-    number_of_targets,
-    number_of_distractors
-  );
+  // Save values to localStorage
+  const settings = { username, level, episodes_count, episode_duration, tar_diff, dis_diff, number_of_targets, number_of_distractors };
+  for (const key in settings) {
+    localStorage.setItem(key, settings[key]);
+  }
+
+  console.log(settings);
   window.open("tower_defense.html");
 }
 
-var e = document.getElementById("select_level");
-cur_level = e.options[e.selectedIndex].text;
-if (cur_level <= 10) {
-  episodes_count = 26;
-  episode_duration = 15000;
-}
-if (cur_level > 10 && cur_level <= 20) {
-  episodes_count = 32;
-  episode_duration = 12000;
-}
-if (cur_level > 20) {
-  episodes_count = 36;
-  episode_duration = 10000;
-}
-if (cur_level <= 2) {
-  number_of_targets = 2;
-}
-if (
-  cur_level == 3 ||
-  cur_level == 4 ||
-  cur_level == 5 ||
-  cur_level == 11 ||
-  cur_level == 12 ||
-  cur_level == 21
-) {
-  number_of_targets = 3;
-}
-if (
-  cur_level == 6 ||
-  cur_level == 7 ||
-  cur_level == 8 ||
-  cur_level == 9 ||
-  cur_level == 13 ||
-  cur_level == 14 ||
-  cur_level == 17 ||
-  cur_level == 22 ||
-  cur_level == 23 ||
-  cur_level == 26
-) {
-  number_of_targets = 4;
-}
-if (
-  cur_level == 10 ||
-  cur_level == 15 ||
-  cur_level == 16 ||
-  cur_level == 18 ||
-  cur_level == 19 ||
-  cur_level == 20 ||
-  cur_level == 24 ||
-  cur_level == 25 ||
-  cur_level == 27 ||
-  cur_level == 28 ||
-  cur_level == 29
-) {
-  number_of_targets = 5;
-}
-if (cur_level == 30) {
-  number_of_targets = 6;
-}
-//
-//
-if (cur_level == 1) {
-  number_of_distractors = 2;
-}
-if (
-  cur_level == 2 ||
-  cur_level == 3 ||
-  cur_level == 4 ||
-  cur_level == 6 ||
-  cur_level == 11
-) {
-  number_of_distractors = 3;
-}
-if (
-  cur_level == 5 ||
-  cur_level == 7 ||
-  cur_level == 8 ||
-  cur_level == 10 ||
-  cur_level == 12 ||
-  cur_level == 13 ||
-  cur_level == 15 ||
-  cur_level == 21 ||
-  cur_level == 22 ||
-  cur_level == 24
-) {
-  number_of_distractors = 4;
-}
-if (
-  cur_level == 9 ||
-  cur_level == 14 ||
-  cur_level == 16 ||
-  cur_level == 17 ||
-  cur_level == 18 ||
-  cur_level == 23 ||
-  cur_level == 25 ||
-  cur_level == 26 ||
-  cur_level == 27
-) {
-  number_of_distractors = 5;
-}
-if (cur_level == 19 || cur_level == 28) {
-  number_of_distractors = 6;
-}
-if (cur_level == 20 || cur_level == 29) {
-  number_of_distractors = 7;
-}
-document.getElementById("ep_count").value = episodes_count;
-document.getElementById("ep_dur").value = episode_duration;
-document.getElementById("tar_diff").value = tar_diff;
-document.getElementById("dis_diff").value = dis_diff;
-document.getElementById("num_of_tar").value = number_of_targets;
-document.getElementById("num_of_dis").value = number_of_distractors;
-
-//
-document.getElementById("select_level").onchange = function() {
-  cur_level = e.options[e.selectedIndex].text;
-  if (cur_level <= 10) {
+function updateGameSettings(level) {
+  // Set episode count and duration based on level
+  if (level <= 10) {
     episodes_count = 26;
     episode_duration = 15000;
-  }
-
-  if (cur_level > 10 && cur_level <= 20) {
+  } else if (level <= 20) {
     episodes_count = 32;
     episode_duration = 12000;
-  }
-  if (cur_level > 20) {
+  } else {
     episodes_count = 36;
     episode_duration = 10000;
   }
-  if (cur_level <= 2) {
-    number_of_targets = 2;
-  }
-  if (
-    cur_level == 3 ||
-    cur_level == 4 ||
-    cur_level == 5 ||
-    cur_level == 11 ||
-    cur_level == 12 ||
-    cur_level == 21
-  ) {
-    number_of_targets = 3;
-  }
-  if (
-    cur_level == 6 ||
-    cur_level == 7 ||
-    cur_level == 8 ||
-    cur_level == 9 ||
-    cur_level == 13 ||
-    cur_level == 14 ||
-    cur_level == 17 ||
-    cur_level == 22 ||
-    cur_level == 23 ||
-    cur_level == 26
-  ) {
-    number_of_targets = 4;
-  }
-  if (
-    cur_level == 10 ||
-    cur_level == 15 ||
-    cur_level == 16 ||
-    cur_level == 18 ||
-    cur_level == 19 ||
-    cur_level == 20 ||
-    cur_level == 24 ||
-    cur_level == 25 ||
-    cur_level == 27 ||
-    cur_level == 28 ||
-    cur_level == 29 ||
-    cur_level == 30
-  ) {
-    number_of_targets = 5;
-  }
-  if (cur_level == 30) {
-    number_of_targets = 6;
-  }
-  if (cur_level == 1) {
-    number_of_distractors = 2;
-  }
-  if (
-    cur_level == 2 ||
-    cur_level == 3 ||
-    cur_level == 4 ||
-    cur_level == 6 ||
-    cur_level == 11
-  ) {
-    number_of_distractors = 3;
-  }
-  if (
-    cur_level == 5 ||
-    cur_level == 7 ||
-    cur_level == 8 ||
-    cur_level == 10 ||
-    cur_level == 12 ||
-    cur_level == 13 ||
-    cur_level == 15 ||
-    cur_level == 21 ||
-    cur_level == 22 ||
-    cur_level == 24
-  ) {
-    number_of_distractors = 4;
-  }
-  if (
-    cur_level == 9 ||
-    cur_level == 14 ||
-    cur_level == 16 ||
-    cur_level == 17 ||
-    cur_level == 18 ||
-    cur_level == 23 ||
-    cur_level == 25 ||
-    cur_level == 26 ||
-    cur_level == 27
-  ) {
-    number_of_distractors = 5;
-  }
-  if (cur_level == 19 || cur_level == 28) {
-    number_of_distractors = 6;
-  }
-  if (cur_level == 20 || cur_level == 29 || cur_level == 30) {
-    number_of_distractors = 7;
-  }
+
+  // Define target and distractor values based on level ranges
+  const targetSettings = [
+    { levels: [1, 2], value: 2 },
+    { levels: [3, 4, 5, 11, 12, 21], value: 3 },
+    { levels: [6, 7, 8, 9, 13, 14, 17, 22, 23, 26], value: 4 },
+    { levels: [10, 15, 16, 18, 19, 20, 24, 25, 27, 28, 29], value: 5 },
+    { levels: [30], value: 6 }
+  ];
+
+  const distractorSettings = [
+    { levels: [1], value: 2 },
+    { levels: [2, 3, 4, 6, 11], value: 3 },
+    { levels: [5, 7, 8, 10, 12, 13, 15, 21, 22, 24], value: 4 },
+    { levels: [9, 14, 16, 17, 18, 23, 25, 26, 27], value: 5 },
+    { levels: [19, 28], value: 6 },
+    { levels: [20, 29, 30], value: 7 }
+  ];
+
+  // Helper function to get value based on level
+  const getValueForLevel = (settings) => settings.find(setting => setting.levels.includes(level))?.value;
+
+  number_of_targets = getValueForLevel(targetSettings);
+  number_of_distractors = getValueForLevel(distractorSettings);
+
+  // Update DOM elements with new settings
   document.getElementById("ep_count").value = episodes_count;
   document.getElementById("ep_dur").value = episode_duration;
-  document.getElementById("num_of_tar").value = number_of_targets;
-  document.getElementById("num_of_dis").value = number_of_distractors;
   document.getElementById("tar_diff").value = tar_diff;
   document.getElementById("dis_diff").value = dis_diff;
-};
+  document.getElementById("num_of_tar").value = number_of_targets;
+  document.getElementById("num_of_dis").value = number_of_distractors;
+}
+
+// Initial setup
+document.addEventListener("DOMContentLoaded", () => {
+  const selectLevelElement = document.getElementById("select_level");
+  const initialLevel = parseInt(selectLevelElement.options[selectLevelElement.selectedIndex].text);
+  updateGameSettings(initialLevel);
+
+  // Add event listener for level change
+  selectLevelElement.addEventListener("change", () => {
+    const newLevel = parseInt(selectLevelElement.options[selectLevelElement.selectedIndex].text);
+    updateGameSettings(newLevel);
+  });
+});

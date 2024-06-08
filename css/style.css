@@ -112,3 +112,150 @@ body {
     font-size: 0.9em; /* Even smaller button for very small screens */
   }
 }
+
+/* Existing styles */
+/* ... */
+
+/* New styles */
+
+
+p {
+  line-height: 1.6;
+  color: #666;
+}
+
+/* Buttons */
+.button-primary,
+.button-secondary {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.button-primary {
+  background-color: #ff5722;
+  color: #fff;
+}
+
+.button-primary:hover {
+  background-color: #e64a19;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.button-secondary {
+  background-color: #fff;
+  color: #ff5722;
+  border: 2px solid #ff5722;
+}
+
+.button-secondary:hover {
+  background-color: #ffccbc;
+  color: #fff;
+}
+
+/* Navigation */
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Main content */
+.main {
+  padding: 16px;
+  margin-top: 50px; /* Add a top margin to avoid content overlay */
+}
+
+/* Footer */
+.footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fadeIn {
+  animation-name: fadeIn;
+  animation-duration: 2s;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+
+
+/* Responsive design */
+@media (max-width: 992px) {
+  .navbar a { padding: 12px 15px; }
+  .main { margin-top: 60px; }
+}
+
+@media (max-width: 600px) {
+  .navbar a { float: none; width: 100%; text-align: left; }
+  .navbar { position: relative; }
+  .main { margin-top: 70px; }
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+.mt-1 { margin-top: 0.25rem; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+.mb-5 { margin-bottom: 3rem; }
+.p-0 { padding: 0; }
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.p-4 { padding: 1.5rem; }
+.p-5 { padding: 3rem; }
+
