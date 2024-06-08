@@ -1,10 +1,9 @@
 body {
   font-family: 'Helvetica Neue', sans-serif;
-  background-image: url("https://cdn.glitch.global/bec2ef73-e6da-4e87-9aa6-4f01ec436114/OIG4.jfif?v=1717860800222");
-/*   margin: 2em; */
-  background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
-  background-size: cover; /* Resize the background image to cover the entire container */
+  background-image: url("https://cdn.glitch.global/bec2ef73-e6da-4e87-9aa6-4f01ec436114/futuristic-modern-3840x2160-12471.jpg?v=1717861152037");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   margin: 0;
   padding: 0;
 }
@@ -13,24 +12,32 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
 }
 
 .headline1 {
   text-align: center;
-  color: #333;
+  color: #fff;
   font-size: 2.5em;
   margin-bottom: 20px;
+  text-shadow: 3px 3px 5px #000000;
 }
 
 .custom-form {
-  background-color: #fff;
+  background-color: #f8f9fa;
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.custom-form:hover {
+  transform: translateY(-5px);
 }
 
 .divider {
-  border-top: 1px solid #ddd;
+  border-top: 3px solid #333;
   margin: 20px 0;
 }
 
@@ -39,7 +46,7 @@ body {
 }
 
 .headline {
-  color: #555;
+  color: #333;
   font-size: 1.2em;
   margin-bottom: 10px;
 }
@@ -48,9 +55,10 @@ body {
 .custom-select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #bbb;
   border-radius: 5px;
   font-size: 1em;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .custom-btn {
@@ -63,9 +71,44 @@ body {
   color: #fff;
   font-size: 1.2em;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .custom-btn:hover {
   background-color: #0056b3;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    max-width: 100%;
+  }
+
+  .headline1 {
+    font-size: 2em; /* Smaller font size for smaller screens */
+  }
+
+  .custom-form {
+    padding: 15px;
+    border-radius: 5px; /* Less rounded corners for smaller screens */
+  }
+
+  .custom-btn {
+    padding: 8px;
+    font-size: 1em; /* Smaller button for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .headline1 {
+    font-size: 1.5em; /* Even smaller font size for very small screens */
+  }
+
+  .custom-btn {
+    padding: 6px;
+    font-size: 0.9em; /* Even smaller button for very small screens */
+  }
 }
