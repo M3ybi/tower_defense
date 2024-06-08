@@ -1,148 +1,71 @@
-/* Reset default margin and padding */
-* {
+body {
+  font-family: 'Helvetica Neue', sans-serif;
+  background-image: url("https://cdn.glitch.global/bec2ef73-e6da-4e87-9aa6-4f01ec436114/OIG4.jfif?v=1717860800222");
+/*   margin: 2em; */
+  background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-/* Body styles */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
-  color: #333;
-}
-
-/* Container styles */
 .container {
-  background-color: #f9f9f9;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.headline1 {
+  text-align: center;
+  color: #333;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.custom-form {
+  background-color: #fff;
   padding: 20px;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Headline styles */
-.headline1 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-/* Divider styles */
 .divider {
-  border-top: 1px solid #ccc;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
 }
 
-/* Form styles */
-#form {
-  margin-top: 20px;
-}
-
-/* Form group styles */
 .form-group {
   margin-bottom: 20px;
 }
 
-/* Form label styles */
-.label {
-  font-size: 18px;
-  font-weight: bold;
+.headline {
+  color: #555;
+  font-size: 1.2em;
   margin-bottom: 10px;
 }
 
-/* Input styles */
-.form-control {
+.custom-input,
+.custom-select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #fff;
+  font-size: 1em;
 }
 
-/* Select styles */
-.select {
+.custom-btn {
+  display: block;
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  appearance: none;
-}
-
-/* Button styles */
-.btn {
-  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   background-color: #007bff;
   color: #fff;
-  font-size: 16px;
+  font-size: 1.2em;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+.custom-btn:hover {
   background-color: #0056b3;
 }
-
-/* Link styles */
-a {
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  color: #0056b3;
-}
-
-/* Textarea styles */
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  resize: vertical;
-}
-
-/* Checkbox styles */
-.checkbox {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
-/* Radio button styles */
-.radio {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
-/* Image styles */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Table styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 10px;
-  border: 1px solid #ccc;
-  text-align: left;
-}
-
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-/* Additional custom styles */
-/* Add your custom styles here */
