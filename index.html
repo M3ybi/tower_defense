@@ -1,123 +1,254 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
+    <meta charset="utf-8" />
     <meta
       name="viewport"
       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
     />
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <title>Tower Defense – Level Setup</title>
 
-    <link rel="stylesheet" href="css/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
+    <meta
+      name="description"
+      content="Configure level, difficulty, and episode parameters for the Tower Defense game."
     />
-    <title>Tower Defense</title>
-    <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+
+    <!-- Styles (minimal custom design) -->
+    <link rel="stylesheet" href="css/style.css" />
   </head>
 
   <body>
-    <div class="container">
-      <h1 class="headline1">Tower Defense</h1>
-      <form id="form" class="custom-form">
-        <hr class="divider" />
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label class="headline" for="username">Username</label>
-            <input type="text" class="form-control custom-input" id="username" value="Player" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="headline" for="select_level">Select Level</label>
-          <select class="form-control" id="select_level">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-            <option value="18">18</option>
-            <option value="19">19</option>
-            <option value="20">20</option>
-            <option value="21">21</option>
-            <option value="22">22</option>
-            <option value="23">23</option>
-            <option value="24">24</option>
-            <option value="25">25</option>
-            <option value="26">26</option>
-            <option value="27">27</option>
-            <option value="28">28</option>
-            <option value="29">29</option>
-            <option value="30">30</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <div class="col">
-              <label for="ep_count">Episodes Count</label>
-              <input type="text" class="form-control custom-input" id="ep_count" disabled />
-            </div>
-            <div class="col">
-              <label for="ep_dur">Episode Duration</label>
-              <input type="text" class="form-control custom-input" id="ep_dur" disabled />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <label for="num_of_tar">Number of Targets</label>
-              <input type="text" class="form-control custom-input" id="num_of_tar" disabled />
-            </div>
-            <div class="col">
-              <label for="num_of_dis">Number of Distractors</label>
-              <input type="text" class="form-control custom-input" id="num_of_dis" disabled />
-            </div>
-            <div class="col">
-              <label for="tar_diff">Targets Difficulty</label>
-              <input type="text" class="form-control custom-input" id="tar_diff" />
-            </div>
-            <div class="col">
-              <label for="dis_diff">Distractors Difficulty</label>
-              <input type="text" class="form-control custom-input" id="dis_diff" />
-            </div>
-          </div>
-        </div>
-        <hr class="divider" />
-        <button id="playbutton" type="submit" class="btn btn-primary custom-btn" onclick="toGame()">Play!</button>
-      </form>
-    </div>
+    <main class="container" role="main">
+      <header>
+        <h1 class="headline1">Tower Defense</h1>
+        <p class="subtitle">
+          Configure your mission parameters and jump into the VR battlefield.
+        </p>
+      </header>
 
-    <script src="js/index.js"></script>
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-      crossorigin="anonymous"
-    ></script>
+      <form
+        id="form"
+        class="custom-form"
+        autocomplete="off"
+        novalidate
+        aria-label="Tower Defense level configuration"
+      >
+        <hr class="divider" />
+
+        <!-- Username -->
+        <section aria-labelledby="username-label">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label class="headline" id="username-label" for="username">
+                Username
+                <span class="label-hint">Used for scoring overview</span>
+              </label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                id="username"
+                name="username"
+                value="Player"
+                placeholder="Enter your nickname"
+                autocomplete="off"
+                spellcheck="false"
+                required
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- Level -->
+        <section aria-labelledby="level-label">
+          <div class="form-group">
+            <label class="headline" id="level-label" for="select_level">
+              Select level
+              <span class="badge-level">Campaign</span>
+            </label>
+            <div class="field-inline">
+              <span>Higher levels increase episode count and velocity.</span>
+            </div>
+            <select
+              class="form-control custom-select"
+              id="select_level"
+              name="level"
+              aria-describedby="level-help"
+            >
+              <!-- Levels 1–30 -->
+              <option value="1">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3">Level 3</option>
+              <option value="4">Level 4</option>
+              <option value="5">Level 5</option>
+              <option value="6">Level 6</option>
+              <option value="7">Level 7</option>
+              <option value="8">Level 8</option>
+              <option value="9">Level 9</option>
+              <option value="10">Level 10</option>
+              <option value="11">Level 11</option>
+              <option value="12">Level 12</option>
+              <option value="13">Level 13</option>
+              <option value="14">Level 14</option>
+              <option value="15">Level 15</option>
+              <option value="16">Level 16</option>
+              <option value="17">Level 17</option>
+              <option value="18">Level 18</option>
+              <option value="19">Level 19</option>
+              <option value="20">Level 20</option>
+              <option value="21">Level 21</option>
+              <option value="22">Level 22</option>
+              <option value="23">Level 23</option>
+              <option value="24">Level 24</option>
+              <option value="25">Level 25</option>
+              <option value="26">Level 26</option>
+              <option value="27">Level 27</option>
+              <option value="28">Level 28</option>
+              <option value="29">Level 29</option>
+              <option value="30">Level 30</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- Episode parameters -->
+        <section aria-labelledby="episode-params-label">
+          <h2 id="episode-params-label" class="sr-only">Episode parameters</h2>
+
+          <div class="form-group">
+            <!-- Episodes / Duration -->
+            <div class="form-row">
+              <div class="form-group col">
+                <label for="ep_count" class="headline">
+                  Episodes count
+                  <span class="label-hint">Total waves in this mission</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  id="ep_count"
+                  name="ep_count"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  disabled
+                />
+              </div>
+
+              <div class="form-group col">
+                <label for="ep_dur" class="headline">
+                  Episode duration (ms)
+                  <span class="label-hint">Time per wave</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  id="ep_dur"
+                  name="ep_dur"
+                  min="1000"
+                  step="500"
+                  inputmode="numeric"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <!-- Targets / Distractors / Difficulty -->
+            <div class="form-row">
+              <div class="form-group col">
+                <label for="num_of_tar" class="headline">
+                  Number of targets
+                  <span class="label-hint">Red drones per wave</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  id="num_of_tar"
+                  name="num_of_tar"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                  disabled
+                />
+              </div>
+
+              <div class="form-group col">
+                <label for="num_of_dis" class="headline">
+                  Number of distractors
+                  <span class="label-hint">Green drones per wave</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  id="num_of_dis"
+                  name="num_of_dis"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col">
+                <label for="tar_diff" class="headline">
+                  Targets difficulty (±)
+                  <span class="label-hint">Random variation of red drones</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  id="tar_diff"
+                  name="tar_diff"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                  value="1"
+                />
+                <div class="field-inline">
+                  <span>Example: base 3 ± 1 → 2–4 per wave.</span>
+                </div>
+              </div>
+
+              <div class="form-group col">
+                <label for="dis_diff" class="headline">
+                  Distractors difficulty (±)
+                  <span class="label-hint">Random variation of green drones</span>
+                </label>
+                <input
+                  type="number"
+                  class="form-control custom-input"
+                  id="dis_diff"
+                  name="dis_diff"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                  value="1"
+                />
+                <div class="field-inline">
+                  <span>Higher values add more chaos per wave.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="divider" />
+
+        <!-- Primary action -->
+        <section aria-label="Start game">
+          <button
+            id="playbutton"
+            type="submit"
+            class="custom-btn"
+          >
+            <span>Launch mission</span>
+            <span class="icon">▶</span>
+          </button>
+        </section>
+      </form>
+    </main>
+
+    <!-- App logic (deferred for better performance) -->
+    <script src="js/index.js" defer></script>
   </body>
 </html>
