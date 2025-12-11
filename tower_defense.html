@@ -58,7 +58,7 @@
         />
         <img
           id="sky"
-          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fmoon.jpg?v=1583343395162"
+          src="assets/cosmic-river-space-background.jpg"
         />
 
         <!-- Drones -->
@@ -213,11 +213,14 @@
       ></a-plane>
 
       <!-- Sky texture -->
-      <a-sky
-        src="#sky"
-        scale="-0.99 0.25 0.25"
-        rotation="-90 0 -90"
-      ></a-sky>
+    <!-- Single sky sphere, no weird scaling -->
+    <a-sky
+      id="backgroundSky"
+      src="#sky"
+      radius="180"
+      rotation="0 -90 0"
+      position="-0 0 -160"
+    ></a-sky>
     </a-scene>
   </body>
 </html>

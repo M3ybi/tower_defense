@@ -18,12 +18,22 @@ body {
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Helvetica Neue", Arial, sans-serif;
-  background: radial-gradient(circle at top, #141e30 0%, #0b0c10 45%, #050608 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
   color: #f5f7fb;
+
+  /* Background: image + soft dark overlay */
+  background:
+    radial-gradient(circle at top, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.75)),
+    url("../assets/cosmic-river-space-background.jpg")
+      center/cover no-repeat fixed;
+
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* mobile: top-aligned */
   justify-content: center;
 }
+
 
 /* Subtle noise / grain effect (optional) */
 body::before {
@@ -34,16 +44,33 @@ body::before {
   opacity: 0.2;
   background-image: radial-gradient(#ffffff10 0.5px, transparent 0.5px);
   background-size: 3px 3px;
+  z-index: -1;
 }
 
 /* =========================
-   Container (Bootstrap .container override)
+   Screen-reader only
+   ========================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================
+   Container
    ========================= */
 
 .container {
   width: 100%;
   max-width: 520px;
-  margin: 24px;
+  margin: 24px 16px 32px;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   background: linear-gradient(145deg, #0f172aee, #020617dd);
@@ -135,7 +162,7 @@ label {
 }
 
 .form-group {
-  margin-bottom: 0; /* We control spacing via gap */
+  margin-bottom: 0; /* spacing controlled via gap */
 }
 
 /* Make columns stack nicely on small screens */
@@ -280,11 +307,17 @@ label {
   color: #9ca3af;
 }
 
-/* Responsive grid tuning */
+/* =========================
+   Responsive tuning
+   ========================= */
 
 @media (max-width: 640px) {
+  body {
+    align-items: flex-start;
+  }
+
   .container {
-    margin: 16px;
+    margin: 16px 12px 24px;
     padding: 20px 16px 24px;
     border-radius: 14px;
   }
@@ -293,12 +326,22 @@ label {
     font-size: 1.6rem;
   }
 
+  .subtitle {
+    font-size: 0.85rem;
+  }
+
   .custom-form {
     gap: 14px;
   }
 }
 
-/* Larger screens – slightly wider layout */
+/* Larger screens – center vertically and slightly widen */
+
+@media (min-width: 768px) {
+  body {
+    align-items: center;
+  }
+}
 
 @media (min-width: 900px) {
   .container {
