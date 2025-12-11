@@ -13,14 +13,25 @@
       content="3D Tower Defense game built with A-Frame and a custom shooting mechanic."
     />
 
-    <!-- Optional: any extra styling for canvas / loading overlays -->
-    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-    <!-- Core A-Frame engine (latest stable) -->
-    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+    <!-- Core A-Frame engine -->
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
 
-    <!-- A-Frame extensions / plugins (local) -->
+    <!-- A-Frame extensions and plugins -->
     <script src="js/aframe-super-shooter-kit.min.js" defer></script>
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"
+      defer
+    ></script>
+    <script
+      src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"
+      defer
+    ></script>
 
     <!-- Game logic -->
     <script src="js/objects.js" defer></script>
@@ -29,17 +40,8 @@
     <script src="js/start_click.js" defer></script>
   </head>
 
-  <body style="margin: 0; padding: 0; overflow: hidden;">
-    <noscript>
-      <p style="color: white; background: #111; padding: 1rem; text-align: center;">
-        JavaScript is required to run the Tower Defense game.
-      </p>
-    </noscript>
-
-    <a-scene
-      vr-mode-ui="enabled: true"
-      renderer="colorManagement: true; physicallyCorrectLights: true"
-    >
+  <body>
+    <a-scene>
       <!-- Bullet Template -->
       <a-entity
         id="bulletTemplate"
@@ -50,13 +52,10 @@
 
       <!-- Assets -->
       <a-assets id="model">
-        <!-- Ground / floor texture -->
         <img
           id="boxTexture"
           src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FDRN.png?v=1583343395782"
         />
-
-        <!-- Sky texture -->
         <img
           id="sky"
           src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fmoon.jpg?v=1583343395162"
@@ -127,17 +126,15 @@
           src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.mtl?v=1583343436628"
         ></a-asset-item>
 
-        <!-- Extra floor texture (unused but kept for compatibility) -->
         <img
           id="boxTexture2"
           src="https://i.imgur.com/mYmmbrp.jpg"
         />
       </a-assets>
 
-      <!-- Background sky color (will be overwritten by sky texture below) -->
+      <!-- HUD / Labels -->
       <a-sky color="#333"></a-sky>
 
-      <!-- HUD / Labels -->
       <a-text
         font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"
         id="counter"
@@ -156,7 +153,7 @@
 
       <a-entity
         id="start"
-        geometry="primitive: box"
+        geometry="primitive: box; color: blue"
         material="color: green"
         position="0 5 -15"
         cursor-listener
@@ -182,7 +179,6 @@
         color="white"
       ></a-text>
 
-      <!-- Dynamic containers (populated by scene_build.js) -->
       <a-entity id="scena"></a-entity>
       <a-entity id="scena2"></a-entity>
       <a-entity id="scena3"></a-entity>
@@ -190,18 +186,18 @@
       <!-- Camera and Controls -->
       <a-camera
         id="camera"
+        camera
         look-controls="pointerLockEnabled: true"
         wasd-controls-enabled="false"
+        mouse-cursor
       >
-        <!-- Cursor configured to use mouse ray as origin (no external plugin needed) -->
         <a-cursor
-          id="cursor"
-          cursor="rayOrigin: mouse"
+          cursor
           shooter
           click-to-shoot
-          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.030"
-          material="color: red; shader: flat"
-          position="0 0 -1"
+          wasd-controls="wsAxis: y; wsInverted: true"
+          color="red"
+          scale="1 1 1"
         ></a-cursor>
       </a-camera>
 
