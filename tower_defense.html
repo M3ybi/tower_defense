@@ -193,14 +193,14 @@
         look-controls="pointerLockEnabled: true"
         wasd-controls-enabled="false"
       >
-        <!-- Clean, responsive crosshair using mouse ray + hitscan shooter -->
+        <!-- Cursor configured to use mouse ray as origin (no external plugin needed) -->
         <a-cursor
           id="cursor"
-          raycaster="objects: .target-red, .target-green, .ring; far: 100; interval: 0"
-          td-hitscan-shooter
-          td-aim-cursor="baseColor: #f97316; hoverColor: #22c55e; baseScale: 0.06 0.06 0.06; hoverScale: 0.085 0.085 0.085"
-          geometry="primitive: ring; radiusInner: 0.25; radiusOuter: 0.5; segmentsTheta: 32"
-          material="color: #f97316; shader: flat; opacity: 0.9"
+          cursor="rayOrigin: mouse"
+          shooter
+          click-to-shoot
+          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.030"
+          material="color: red; shader: flat"
           position="0 0 -1"
         ></a-cursor>
       </a-camera>
