@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Env / secrets
+.env
+*.env.local
+*.env.development
+*.env.production
+server/.env
+
+# Build / dist
+dist/
