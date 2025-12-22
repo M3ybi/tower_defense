@@ -22,7 +22,7 @@
     let episodeDuration;
 
     if (level <= 10) {
-      episodesCount = 2;
+      episodesCount = 26;
       episodeDuration = 15000;
     } else if (level <= 20) {
       episodesCount = 32;
