@@ -1,0 +1,293 @@
+<!-- tower_defense.html (Game) -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
+    />
+    <title>Tower Defense – Game</title>
+
+    <meta
+      name="description"
+      content="3D Tower Defense game built with A-Frame and a custom shooting mechanic."
+    />
+
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/api.js" defer></script>
+
+    <!-- Core A-Frame engine -->
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+
+    <!-- A-Frame extensions and plugins -->
+    <script src="js/aframe-super-shooter-kit.min.js" defer></script>
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"
+      defer
+    ></script>
+    <script
+      src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"
+      defer
+    ></script>
+
+    <!-- Game logic -->
+    <script src="js/objects.js" defer></script>
+    <script src="js/shoot.js" defer></script>
+    <script src="js/scene_build.js" defer></script>
+    <script src="js/start_click.js" defer></script>
+  </head>
+
+  <body class="game-page">
+
+<button id="hudToggleBtn" class="hud-toggle-btn" aria-label="Toggle score">
+  Click to see score
+</button>
+
+
+    <div id="hudHint" class="hud-hint">
+  Press <b>SPACE</b> to show score
+</div>
+    <!-- =========================
+         2D HUD Overlay (always visible)
+         ========================= -->
+    <div id="hudOverlay" class="hud" aria-live="polite">
+      <button
+    id="hudCloseBtn"
+    class="hud-close-btn"
+    type="button"
+    aria-label="Close score"
+    title="Close"
+  >
+    ❌
+  </button>
+      <div class="hud__header">
+        <div class="hud__title">Tower Defense</div>
+        <div class="hud__pill" id="hudLevel">Level 1</div>
+      </div>
+
+      <div class="hud__grid">
+        <div class="hud__row">
+          <span class="hud__label">Player</span>
+          <span class="hud__value" id="hudPlayer">Player</span>
+        </div>
+
+        <div class="hud__row">
+          <span class="hud__label">Wave</span>
+          <span class="hud__value">
+            <span id="hudWave">1</span>/<span id="hudWaveTotal">1</span>
+          </span>
+        </div>
+
+        <div class="hud__row">
+          <span class="hud__label">Score</span>
+          <span class="hud__value" id="hudScore">0</span>
+        </div>
+
+        <div class="hud__row">
+          <span class="hud__label">Shots</span>
+          <span class="hud__value" id="hudShots">0</span>
+        </div>
+
+        <div class="hud__row">
+          <span class="hud__label">Accuracy</span>
+          <span class="hud__value" id="hudAcc">0%</span>
+        </div>
+
+        <div class="hud__row hud__row--split">
+          <span class="hud__chip hud__chip--red">
+            RED <b id="hudRedHits">0</b>
+          </span>
+          <span class="hud__chip hud__chip--green">
+            GREEN <b id="hudGreenHits">0</b>
+          </span>
+          <span class="hud__chip hud__chip--blue">
+            STREAK <b id="hudStreak">0</b>
+          </span>
+        </div>
+
+        <div class="hud__row hud__row--muted">
+          Spawn (this wave):
+          <span class="hud__muted">R</span><b id="hudSpawnR">0</b>
+          <span class="hud__muted">G</span><b id="hudSpawnG">0</b>
+        </div>
+      </div>
+    </div>
+
+    <a-scene>
+      <!-- Bullet Template -->
+      <a-entity
+        id="bulletTemplate"
+        bullet="speed: 120"
+        geometry="primitive: sphere; radius: 0.1"
+        material="color: orange; emissive: orange"
+      ></a-entity>
+
+      <!-- Assets -->
+      <a-assets id="model">
+        <img id="boxTexture" src="assets/images/platform2.png" />
+        <img id="sky" src="assets/images/bg4.jpg" />
+
+        <!-- Drones -->
+        <a-asset-item
+          id="drone-1-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FbestDrone.obj?v=1583343426308"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-1-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FbestDrone.mtl?v=1583343426014"
+        ></a-asset-item>
+
+        <a-asset-item
+          id="drone-2-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FsphereDrone.obj?v=1583343433266"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-2-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FsphereDrone.mtl?v=1583343432443"
+        ></a-asset-item>
+
+        <a-asset-item
+          id="drone-3-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fcube.obj?v=1588953446350"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-3-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fcube.mtl?v=1588953446326"
+        ></a-asset-item>
+
+        <a-asset-item
+          id="drone-4-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fsphere.obj?v=1588953535669"
+        ></a-asset-item>
+        <a-asset-item
+          id="drone-4-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2Fsphere.mtl?v=1588953535803"
+        ></a-asset-item>
+
+        <!-- Indicators / markers -->
+        <a-asset-item
+          id="marker-red-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerRed.obj?v=1583343428283"
+        ></a-asset-item>
+        <a-asset-item
+          id="marker-red-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerRed.mtl?v=1583343427967"
+        ></a-asset-item>
+
+        <a-asset-item
+          id="marker-green-obj"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.obj?v=1583343427667"
+        ></a-asset-item>
+        <a-asset-item
+          id="marker-green-mtl"
+          src="https://cdn.glitch.com/bec2ef73-e6da-4e87-9aa6-4f01ec436114%2FdroneMarkerGreen.mtl?v=1583343436628"
+        ></a-asset-item>
+
+        <img id="boxTexture2" src="https://i.imgur.com/mYmmbrp.jpg" />
+      </a-assets>
+
+      <!-- Start UI -->
+      <a-text
+        font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"
+        id="counter"
+        position="-6.5 5 -15"
+        scale="5 5 1"
+      ></a-text>
+
+
+<a-text
+  id="prestartText"
+  font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"
+  text="value: Practice (before PLAY): shoot drones with the RED marker to destroy them"
+  position="-6.5 10.2 -15"
+  scale="3.6 3.6 1"
+  color="white"
+></a-text>
+
+<a-entity id="prestartDrones"></a-entity>
+
+
+      <a-text
+        id="text1"
+        font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"
+        text="value: Hit square below to start!"
+        position="-6.5 8 -15"
+        scale="5 5 1"
+        color="white"
+      ></a-text>
+
+      <a-entity
+        id="start"
+        class="shootable"
+        geometry="primitive: box"
+        cursor-listener
+        material="color: #FF570A"
+        position="0 5 -15"
+        scale="3.3 3.3 1"
+        target="healthPoints: 1"
+        hit-handler="start: true"
+        animation="property: scale; dir: alternate; dur: 800; to: 3.6 3.6 1; loop: true"
+      ></a-entity>
+
+      <a-text
+        font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"
+        id="text2"
+        text="value: PLAY!"
+        position="-1.5 5 -14"
+        scale="5 5 1"
+        color="white"
+        cursor-listener
+      ></a-text>
+
+      <!-- Game containers -->
+      <a-entity id="scena"></a-entity>
+      <a-entity id="scena2"></a-entity>
+      <a-entity id="scena3"></a-entity>
+
+      <!-- Camera and Controls -->
+      <a-camera
+        id="camera"
+        camera
+        look-controls="pointerLockEnabled: true"
+        wasd-controls-enabled="false"
+        mouse-cursor
+      >
+        <a-cursor
+          cursor
+          shooter
+          click-to-shoot
+          shot-counter
+          hitscan-shooter
+          
+          color="red"
+          scale="1 1 1"
+        ></a-cursor>
+      </a-camera>
+
+      <!-- Ground Plane -->
+      <a-plane
+        id="circle"
+        geometry="primitive: circle; radius: 10; segments: 8"
+        src="#boxTexture"
+        height="15"
+        width="15"
+        rotation="-90 0 0"
+        scale="0.25 0.25 0.25"
+      ></a-plane>
+
+      <!-- Sky -->
+      <a-sky
+        id="backgroundSky"
+        src="#sky"
+        radius="180"
+        rotation="0 -90 0"
+        position="-0 0 -160"
+      ></a-sky>
+    </a-scene>
+  </body>
+</html>

@@ -1,0 +1,251 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Tower Defense – Setup</title>
+
+    <meta name="description" content="Choose guest or sign-in, configure level, and play Tower Defense VR mode." />
+    <meta name="theme-color" content="#020617" />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Keep order -->
+    <script src="js/api.js" defer></script>
+    <script src="js/login.js" defer></script>
+    <script src="js/index.js" defer></script>
+  </head>
+
+  <body class="setup-page">
+    <main class="setup-shell" role="main">
+      <!-- =========================
+           ENTRY SCREEN
+           ========================= -->
+      <section id="entryScreen" class="card card--hero">
+        <div class="hero-header">
+          <div class="hero-title">TOWER DEFENSE</div>
+          <div class="hero-subtitle">VR mode · Aim fast · Prioritize RED targets</div>
+        </div>
+
+        <div class="hero-actions">
+          <button id="btnEntryGuest" class="btn btn--primary" type="button">
+            Continue as Guest
+          </button>
+
+          <button id="btnEntryAuth" class="btn btn--secondary" type="button">
+            Sign in / Sign up
+          </button>
+        </div>
+
+        <div class="hero-footnote">
+          Guest mode uses a randomized name (e.g., <span class="mono">guest70839</span>).
+          Sign-in enables email display in HUD and persistent scoring.
+        </div>
+      </section>
+
+      <!-- =========================
+           MAIN FORM (hidden initially)
+           ========================= -->
+      <section id="setupScreen" class="hidden">
+        <div class="grid">
+          <!-- Left: Form -->
+          <form id="form" class="card card--panel" autocomplete="off" novalidate>
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Mission Setup</div>
+                <div class="panel-subtitle">
+                  Choose a level. Core parameters are derived automatically.
+                </div>
+              </div>
+
+              <!-- small account status -->
+              <div class="account-pill">
+                <span class="dot" aria-hidden="true"></span>
+                <span id="authStatusText" class="account-text">Not signed in</span>
+                  <!-- ADD THIS -->
+  <button id="btnLogout" class="btn btn--mini btn--danger hidden" type="button">
+    Logout
+  </button>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <!-- Account -->
+              <div class="field-row">
+                <div class="field">
+                  <label for="username">Username</label>
+                  <input id="username" class="input" type="text" readonly />
+                  <div class="help">Used in HUD if you are in guest mode.</div>
+                </div>
+
+                <div class="field hidden" id="emailGroup">
+                  <label for="userEmail">Email</label>
+                  <input id="userEmail" class="input" type="text" readonly />
+                  <div class="help">Displayed in-game in the top-right HUD.</div>
+                </div>
+              </div>
+
+              <!-- Level -->
+              <div class="field">
+                <label for="select_level">Level</label>
+                <select id="select_level" class="input select">
+                  <option value="1">Level 1</option>
+                  <option value="2">Level 2</option>
+                  <option value="3">Level 3</option>
+                  <option value="4">Level 4</option>
+                  <option value="5">Level 5</option>
+                  <option value="6">Level 6</option>
+                  <option value="7">Level 7</option>
+                  <option value="8">Level 8</option>
+                  <option value="9">Level 9</option>
+                  <option value="10">Level 10</option>
+                  <option value="11">Level 11</option>
+                  <option value="12">Level 12</option>
+                  <option value="13">Level 13</option>
+                  <option value="14">Level 14</option>
+                  <option value="15">Level 15</option>
+                  <option value="16">Level 16</option>
+                  <option value="17">Level 17</option>
+                  <option value="18">Level 18</option>
+                  <option value="19">Level 19</option>
+                  <option value="20">Level 20</option>
+                  <option value="21">Level 21</option>
+                  <option value="22">Level 22</option>
+                  <option value="23">Level 23</option>
+                  <option value="24">Level 24</option>
+                  <option value="25">Level 25</option>
+                  <option value="26">Level 26</option>
+                  <option value="27">Level 27</option>
+                  <option value="28">Level 28</option>
+                  <option value="29">Level 29</option>
+                  <option value="30">Level 30</option>
+                </select>
+                <div class="help">Higher levels increase speed and pressure.</div>
+              </div>
+
+              <!-- Derived read-only -->
+              <div class="stats-grid">
+                <div class="stat">
+                  <div class="stat-label">Episodes</div>
+                  <input id="ep_count" class="input input--readonly" readonly />
+                </div>
+                <div class="stat">
+                  <div class="stat-label">Episode duration (ms)</div>
+                  <input id="ep_dur" class="input input--readonly" readonly />
+                </div>
+                <div class="stat">
+                  <div class="stat-label">Targets / wave (RED)</div>
+                  <input id="num_of_tar" class="input input--readonly" readonly />
+                </div>
+                <div class="stat">
+                  <div class="stat-label">Distractors / wave (GREEN)</div>
+                  <input id="num_of_dis" class="input input--readonly" readonly />
+                </div>
+              </div>
+
+              <!-- Variance -->
+              <div class="divider"></div>
+
+              <div class="section-title">Variance (optional)</div>
+              <div class="section-subtitle">
+                Adds randomized +/- variance to targets/distractors each wave (kept within bounds).
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="tar_diff">Target diff</label>
+                  <input
+                    id="tar_diff"
+                    class="input"
+                    type="number"
+                    min="0"
+                    max="20"
+                    step="1"
+                    inputmode="numeric"
+                  />
+                  <div class="help">Example: 1 → each wave can be ±1 target.</div>
+                </div>
+
+                <div class="field">
+                  <label for="dis_diff">Distractor diff</label>
+                  <input
+                    id="dis_diff"
+                    class="input"
+                    type="number"
+                    min="0"
+                    max="20"
+                    step="1"
+                    inputmode="numeric"
+                  />
+                  <div class="help">Example: 2 → each wave can be ±2 distractors.</div>
+                </div>
+              </div>
+
+              <!-- CTA -->
+              <button id="playbutton" class="btn btn--play" type="submit">
+                PLAY
+              </button>
+
+              <div class="footnote">
+                Tip: Focus RED targets for score. GREEN drones are distractors.
+              </div>
+            </div>
+          </form>
+
+          <!-- Right: Help / info -->
+          <aside class="card card--panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">How the game works</div>
+                <div class="panel-subtitle">Quick rules and scoring clarity</div>
+              </div>
+            </div>
+
+            <div class="panel-body prose">
+              <ul>
+                <li><strong>RED marker</strong>: primary targets. Destroy them for best results.</li>
+                <li><strong>GREEN marker</strong>: distractors. They exist to break your rhythm.</li>
+                <li><strong>Episodes</strong>: waves of enemies. Your mission runs through all episodes.</li>
+                <li><strong>Episode duration</strong>: time window enemies stay active before cleanup.</li>
+                <li><strong>Variance</strong>: adds randomness per wave for replayability.</li>
+              </ul>
+
+              <div class="callout">
+                If you sign in, your <strong>email will display in the top-right HUD</strong>.
+                In guest mode you will see your guest name.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+<!-- AUTH MODAL + BACKDROP -->
+<div id="authBackdrop" class="auth-backdrop hidden">
+  <div id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="auth-modal__panel">
+      <button id="authClose" class="auth-modal__close" type="button" aria-label="Close">
+        ✕
+      </button>
+
+      <h2 class="auth-modal__title">Sign in</h2>
+      <p class="auth-modal__subtitle">
+        Sign in to save your score and show your email in the HUD.
+      </p>
+
+      <div class="auth-modal__buttons">
+        <button id="btnGoogleAuth" class="btn btn--primary" type="button">
+          Continue with Google
+        </button>
+        <button id="btnAmazonAuth" class="btn btn--secondary" type="button">
+          Continue with Amazon
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  </body>
+</html>
