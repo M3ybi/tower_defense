@@ -60,7 +60,7 @@ app.use(
 );
 
 // ---------- Static assets (CSS, JS, images, etc.) ----------
-// This lets /css/... and /js/... work when you are at / or /tower_defense.html
+// This lets /css/... and /js/... work when you are at / or /tower-defense.html
 app.use(express.static(ROOT_DIR));
 
 // ---------- HTML pages ----------
@@ -70,9 +70,9 @@ app.get(["/", "/index.html"], (_req, res) => {
   res.sendFile(resolveHtmlPath("index.html"));
 });
 
-// Game page
-app.get("/tower_defense.html", (_req, res) => {
-  res.sendFile(resolveHtmlPath("tower_defense.html"));
+// Game page (new canonical path + legacy alias)
+app.get(["/tower-defense.html", "/tower_defense.html"], (_req, res) => {
+  res.sendFile(resolveHtmlPath("tower-defense.html"));
 });
 
 // ---------- Auth session population ----------

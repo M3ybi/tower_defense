@@ -126,7 +126,7 @@
   }
 
   function navigateToGame() {
-    window.location.href = "tower_defense.html";
+    window.location.href = "tower-defense.html";
   }
 
   window.toGame = function toGame() {

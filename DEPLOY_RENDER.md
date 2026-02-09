@@ -40,7 +40,7 @@ After deploy:
 
 1. Open `https://<your-domain>/health` -> expect `{ "ok": true }`
 2. Open `https://<your-domain>/index.html`
-3. Start game -> open `https://<your-domain>/tower_defense.html`
+3. Start game -> open `https://<your-domain>/tower-defense.html`
 4. Test login and run submission.
 
 ## 5) Free tier caveat
