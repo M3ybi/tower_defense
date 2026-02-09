@@ -244,13 +244,6 @@
         cursor-listener
       ></a-text>
 
-      <!-- Tutorial start button (optional). Placed under the crosshair, not on it. -->
-      <a-entity
-        id="tutorialStartBack"
-        geometry="primitive: plane; height: 1.35; width: 4.8"
-        material="color: #020617; opacity: 0.55"
-        position="0 2.25 -14.78"
-      ></a-entity>
 
       <a-entity
         id="tutorialStart"
@@ -258,7 +251,7 @@
         geometry="primitive: plane; height: 1.2; width: 4.6"
         cursor-listener
         material="shader: standard; color: #0EA5E9; emissive: #0B4A6B; emissiveIntensity: 0.65; roughness: 0.35; metalness: 0.12; opacity: 0.96"
-        position="0 2.25 -14.7"
+        position="0 -2.25 -14.7"
         scale="1 1 1"
         target="healthPoints: 1"
         hit-handler="startTutorial: true"
@@ -268,8 +261,8 @@
       <a-text
         font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"
         id="tutorialLabel"
-        text="value: Start Tutorial\n(optional); align: center; width: 6"
-        position="0 2.25 -14.5"
+        text="value: Start Tutorial; align: center; width: 6"
+        position="0 -2.1 -14.5"
         scale="2.15 2.15 1"
         color="white"
       ></a-text>
