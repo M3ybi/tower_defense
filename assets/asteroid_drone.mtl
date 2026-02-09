@@ -1,0 +1,19 @@
+# asteroid_debris.mtl
+# Bright, stylized “space debris” look (matches your yellow targets)
+
+newmtl Rock
+Ka 0.200000 0.200000 0.050000
+Kd 1.000000 1.000000 0.120000
+Ks 0.080000 0.080000 0.040000
+Ns 18.000000
+d 1.000000
+illum 2
+
+newmtl Core
+Ka 1.000000 1.000000 0.000000
+Kd 1.000000 1.000000 0.200000
+Ks 0.250000 0.250000 0.080000
+Ns 80.000000
+Ke 1.000000 1.000000 0.300000
+d 1.000000
+illum 2

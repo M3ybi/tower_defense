@@ -1,0 +1,16 @@
+newmtl Prison_Green
+
+# Color
+Ka 0.0 0.4 0.0
+Kd 0.1 0.9 0.1
+Ks 0.2 0.2 0.2
+
+# Shininess
+Ns 80
+
+# ---- IMPORTANT PART ----
+d 1.0
+Tr 0.0
+
+# Disable transparency tricks
+illum 2
