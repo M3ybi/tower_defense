@@ -1,8 +1,8 @@
 import crypto from "crypto";
-import { q } from "../db.js";
 import { signSession } from "./jwt.js";
 import { issueCsrfCookie } from "../security.js";
 import { resolveRedirectUri } from "./oauth_config.js";
+import { resolveOrCreateOAuthUser } from "./oauth_user.js";
 
 function setStateCookie(res, value) {
   res.cookie("oauth_state", value, {
@@ -72,47 +72,20 @@ export async function amazonCallback(req, res) {
 
   const sub = String(prof.user_id);
   const name = toSafeFirstName(prof.name ? String(prof.name) : "Player");
+  if (!sub) return res.status(400).send("Missing subject");
 
-  // Privacy-first OAuth user linkage: bind by provider subject only.
-  const userRow = await q(
-    `
-    with existing as (
-      select ai.user_id as id
-      from app_identity ai
-      where ai.provider = 'amazon' and ai.provider_subject = $1
-      limit 1
-    ),
-    created as (
-      insert into app_user(display_name)
-      select
-        case
-          when not exists (select 1 from app_user where lower(display_name) = lower($2))
-            then $2
-          else left($2, 19) || '_' || substring(md5($1), 1, 4)
-        end
-      where not exists (select 1 from existing)
-      returning id
-    ),
-    resolved as (
-      select id from existing
-      union all
-      select id from created
-      limit 1
-    ),
-    identity as (
-      insert into app_identity(user_id, provider, provider_subject, provider_email)
-      values ((select id from resolved), 'amazon', $1, null)
-      on conflict (provider, provider_subject) do nothing
-      returning user_id
-    )
-    select au.id, au.display_name
-    from app_user au
-    where au.id = (select id from resolved)
-    `,
-    [sub, name]
-  );
+  const email = prof.email ? String(prof.email) : null;
 
-  const u = userRow.rows[0];
+  const u = await resolveOrCreateOAuthUser({
+    provider: "amazon",
+    providerSubject: sub,
+    displayName: name,
+    providerEmail: email
+  });
+  if (!u || !u.id) {
+    console.error("amazonCallback: failed to resolve user", { sub, name });
+    return res.status(500).send("OAuth user creation failed");
+  }
   const jwt = await signSession({ uid: u.id, name: u.display_name });
 
   res.cookie(process.env.COOKIE_NAME || "td_session", jwt, {

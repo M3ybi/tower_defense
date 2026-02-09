@@ -1,16 +1,12 @@
 import crypto from "crypto";
-import { q } from "../db.js";
 import { signSession } from "./jwt.js";
 import { issueCsrfCookie } from "../security.js";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 import { resolveRedirectUri } from "./oauth_config.js";
+import { resolveOrCreateOAuthUser } from "./oauth_user.js";
 
 const GOOGLE_ISSUER = "https://accounts.google.com";
 const JWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
-
-function base64url(buf) {
-  return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-}
 
 function setStateCookie(res, value) {
   res.cookie("oauth_state", value, {
@@ -41,7 +37,7 @@ export function googleStart(req, res) {
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: "openid profile",
+    scope: "openid profile email",
     state
   });
 
@@ -82,49 +78,22 @@ export async function googleCallback(req, res) {
     audience: process.env.GOOGLE_CLIENT_ID
   });
 
-  const sub = String(payload.sub);
+  const sub = payload.sub ? String(payload.sub) : "";
+  if (!sub) return res.status(400).send("Missing subject");
+
   const name = toSafeFirstName(payload.name ? String(payload.name) : "Player");
+  const email = payload.email ? String(payload.email) : null;
 
-  // Privacy-first OAuth user linkage: bind by provider subject only.
-  const userRow = await q(
-    `
-    with existing as (
-      select ai.user_id as id
-      from app_identity ai
-      where ai.provider = 'google' and ai.provider_subject = $1
-      limit 1
-    ),
-    created as (
-      insert into app_user(display_name)
-      select
-        case
-          when not exists (select 1 from app_user where lower(display_name) = lower($2))
-            then $2
-          else left($2, 19) || '_' || substring(md5($1), 1, 4)
-        end
-      where not exists (select 1 from existing)
-      returning id
-    ),
-    resolved as (
-      select id from existing
-      union all
-      select id from created
-      limit 1
-    ),
-    identity as (
-      insert into app_identity(user_id, provider, provider_subject, provider_email)
-      values ((select id from resolved), 'google', $1, null)
-      on conflict (provider, provider_subject) do nothing
-      returning user_id
-    )
-    select au.id, au.display_name
-    from app_user au
-    where au.id = (select id from resolved)
-    `,
-    [sub, name]
-  );
-
-  const u = userRow.rows[0];
+  const u = await resolveOrCreateOAuthUser({
+    provider: "google",
+    providerSubject: sub,
+    displayName: name,
+    providerEmail: email
+  });
+  if (!u || !u.id) {
+    console.error("googleCallback: failed to resolve user", { sub, name });
+    return res.status(500).send("OAuth user creation failed");
+  }
   const jwt = await signSession({ uid: u.id, name: u.display_name });
 
   res.cookie(process.env.COOKIE_NAME || "td_session", jwt, {
