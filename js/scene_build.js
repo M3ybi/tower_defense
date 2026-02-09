@@ -934,6 +934,10 @@
     scena2El.innerHTML = "";
     scena3El.innerHTML = "";
 
+    // Hide the HUD so it doesn't clash with the final results screen.
+    hudVisible = false;
+    updateHudVisibility();
+
     const title = document.createElement("a-text");
     title.setAttribute("font", FONT_URL);
     title.setAttribute("value", "Mission Complete");
@@ -984,15 +988,46 @@
       }
     }
 
-    const lineStep = lines.length > 7 ? 0.45 : 0.55;
-    const lineScale = lines.length > 7 ? 2.0 : 2.2;
-    const startY = lines.length > 7 ? 2.1 : 1.7;
+    function wrapLine(text, maxChars) {
+      const raw = String(text || "").trim();
+      if (!raw) return [];
+      if (raw.length <= maxChars) return [raw];
 
-    lines.forEach((txt, i) => {
+      const out = [];
+      const tokens = raw.split(/\s+/g);
+      let cur = "";
+      for (const t of tokens) {
+        if (!cur) {
+          cur = t;
+          continue;
+        }
+        if ((cur + " " + t).length <= maxChars) {
+          cur += " " + t;
+        } else {
+          out.push(cur);
+          cur = t;
+        }
+      }
+      if (cur) out.push(cur);
+      return out;
+    }
+
+    // Flatten into render lines so long strings (Breakdown, etc) cannot auto-wrap and overlap.
+    const renderLines = [];
+    for (const l of lines) renderLines.push(...wrapLine(l, 46));
+
+    const lineStep = 0.62;
+    const lineScale = renderLines.length > 9 ? 1.75 : 1.9;
+    const startY = 2.0;
+    const startX = -6.2;
+
+    renderLines.forEach((txt, i) => {
       const el = document.createElement("a-text");
       el.setAttribute("font", FONT_URL);
       el.setAttribute("value", txt);
-      el.setAttribute("position", `-6.0 ${startY - i * lineStep} -10`);
+      // Avoid A-Frame text auto-wrapping inside a single a-text (which causes overlaps).
+      el.setAttribute("text", "wrapCount: 999; align: left; width: 12");
+      el.setAttribute("position", `${startX} ${startY - i * lineStep} -10`);
       el.setAttribute("scale", `${lineScale} ${lineScale} 1`);
       el.setAttribute("color", "white");
       scena3El.appendChild(el);
