@@ -222,7 +222,8 @@
       id: { type: "string", default: "" },
       start: { type: "boolean", default: false },
       prestartRed: { type: "boolean", default: false },
-      tutorial: { type: "boolean", default: false }
+      tutorial: { type: "boolean", default: false },
+      startTutorial: { type: "boolean", default: false }
     },
 
     init() {
@@ -236,6 +237,18 @@
     },
 
     onDie() {
+      // Tutorial start box: start tutorial flow (does not auto-run anymore).
+      if (this.data.startTutorial === true) {
+        if (typeof window.clearPrestartPracticeUI === "function") {
+          window.clearPrestartPracticeUI();
+        }
+        if (typeof window.startTutorialFlow === "function") {
+          window.startTutorialFlow();
+        }
+        if (this.el && this.el.parentNode) this.el.parentNode.removeChild(this.el);
+        return;
+      }
+
       // START box: trigger start flow and immediately despawn practice drones
       if (this.data.start === true) {
         if (window.__startingGame) return;

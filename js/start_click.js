@@ -6,7 +6,16 @@
   const COUNTDOWN_DELAY_MS = 800;
   const FONT_URL = "https://cdn.aframe.io/fonts/Exo2Bold.fnt";
   const SCENE_CONTAINER_ID = "scena";
-  const REMOVE = ["#start", "#text1", "#text2", "#text3", "#text4", "#prestartText"];
+  const REMOVE_PLAY = [
+    "#start",
+    "#tutorialStart",
+    "#tutorialLabel",
+    "#text1",
+    "#text2",
+    "#text3",
+    "#text4",
+    "#prestartText"
+  ];
   const TUTORIAL_DONE_KEY = "td_tutorial_done";
 
   function removeElements(list) {
@@ -60,8 +69,9 @@
     }
   }
 
-  function runTutorialThen(cb) {
-    if (isTutorialDone()) {
+  function runTutorialThen(cb, opts = {}) {
+    const force = !!opts.force;
+    if (isTutorialDone() && !force) {
       cb && cb();
       return;
     }
@@ -120,6 +130,41 @@
     };
   }
 
+  function startPlayFlow() {
+    removeElements(REMOVE_PLAY);
+
+    // Defensive: ensure tutorial UI is not left around if the player reloaded mid-tutorial.
+    if (typeof window.clearTutorialUI === "function") {
+      window.clearTutorialUI();
+    }
+
+    showCountdown();
+    startAfterCountdown();
+  }
+
+  function startTutorialFlow() {
+    if (window.__startingTutorial) return;
+    window.__startingTutorial = true;
+
+    removeElements(REMOVE_PLAY);
+
+    // Clear practice UI if any is still around.
+    if (typeof window.clearPrestartPracticeUI === "function") {
+      window.clearPrestartPracticeUI();
+    }
+
+    runTutorialThen(() => {
+      // Tutorial finished -> normal start
+      if (typeof window.clearTutorialUI === "function") window.clearTutorialUI();
+      window.__startingTutorial = false;
+      showCountdown();
+      startAfterCountdown();
+    }, { force: true });
+  }
+
+  // Used by shoot.js hit-handler when the tutorial box is shot (die event).
+  window.startTutorialFlow = startTutorialFlow;
+
   AFRAME.registerComponent("cursor-listener", {
     init() {
       this.onClick = this.onClick.bind(this);
@@ -129,11 +174,12 @@
       this.el.removeEventListener("click", this.onClick);
     },
     onClick() {
-      removeElements(REMOVE);
-      runTutorialThen(() => {
-        showCountdown();
-        startAfterCountdown();
-      });
+      const id = (this.el && this.el.getAttribute && this.el.getAttribute("id")) || "";
+      if (id === "tutorialStart") {
+        startTutorialFlow();
+        return;
+      }
+      startPlayFlow();
     }
   });
 })();
