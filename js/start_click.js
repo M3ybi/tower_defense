@@ -7,6 +7,7 @@
   const FONT_URL = "https://cdn.aframe.io/fonts/Exo2Bold.fnt";
   const SCENE_CONTAINER_ID = "scena";
   const REMOVE = ["#start", "#text1", "#text2", "#text3", "#text4", "#prestartText"];
+  const TUTORIAL_DONE_KEY = "td_tutorial_done";
 
   function removeElements(list) {
     list.forEach((sel) => {
@@ -45,6 +46,80 @@
     }, totalDelay);
   }
 
+  function setTutorialDone() {
+    try {
+      localStorage.setItem(TUTORIAL_DONE_KEY, "1");
+    } catch (_) {}
+  }
+
+  function isTutorialDone() {
+    try {
+      return localStorage.getItem(TUTORIAL_DONE_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function runTutorialThen(cb) {
+    if (isTutorialDone()) {
+      cb && cb();
+      return;
+    }
+
+    // Clear practice UI if any is still around.
+    if (typeof window.clearPrestartPracticeUI === "function") {
+      window.clearPrestartPracticeUI();
+    }
+
+    // Simple 2-step tutorial driven by kills (shoot.js calls window.__tutorialOnKill).
+    let step = 1;
+    let redNeeded = 2;
+    let greenMistakes = 0;
+    let redRemainingThisStep = redNeeded;
+
+    if (typeof window.__tutorialSpawn === "function") {
+      window.__tutorialSpawn(1);
+    }
+
+    window.__tutorialOnKill = function onTutorialKill({ isRed, isGreen }) {
+      if (step === 1) {
+        if (isRed) {
+          redRemainingThisStep = Math.max(0, redRemainingThisStep - 1);
+        }
+        if (redRemainingThisStep === 0) {
+          step = 2;
+          redRemainingThisStep = 1;
+          if (typeof window.__tutorialSpawn === "function") window.__tutorialSpawn(2);
+        }
+        return;
+      }
+
+      // Step 2: one red + one green on screen.
+      if (isGreen) {
+        greenMistakes += 1;
+        if (typeof window.__tutorialSpawn === "function") window.__tutorialSpawn(2);
+
+        // Update message if the UI exists.
+        const txt = document.getElementById("tutorialText");
+        if (txt) {
+          txt.setAttribute(
+            "value",
+            `Tutorial 2/2: Avoid GREEN. Shoot RED. (Green hit: ${greenMistakes})`
+          );
+        }
+        return;
+      }
+
+      if (isRed) {
+        // Done.
+        setTutorialDone();
+        if (typeof window.clearTutorialUI === "function") window.clearTutorialUI();
+        window.__tutorialOnKill = null;
+        cb && cb();
+      }
+    };
+  }
+
   AFRAME.registerComponent("cursor-listener", {
     init() {
       this.onClick = this.onClick.bind(this);
@@ -55,8 +130,10 @@
     },
     onClick() {
       removeElements(REMOVE);
-      showCountdown();
-      startAfterCountdown();
+      runTutorialThen(() => {
+        showCountdown();
+        startAfterCountdown();
+      });
     }
   });
 })();

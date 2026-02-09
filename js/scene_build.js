@@ -634,6 +634,119 @@
     }, 150);
   });
 
+  // =========================================================
+  // TUTORIAL (runs once per device before the first game)
+  // =========================================================
+  function ensureTutorialUI() {
+    if (!scena2El) return null;
+
+    let holder = document.getElementById("tutorialDrones");
+    if (!holder) {
+      holder = document.createElement("a-entity");
+      holder.setAttribute("id", "tutorialDrones");
+      scena2El.appendChild(holder);
+    }
+
+    let txt = document.getElementById("tutorialText");
+    if (!txt) {
+      txt = document.createElement("a-text");
+      txt.setAttribute("id", "tutorialText");
+      txt.setAttribute("font", FONT_URL);
+      txt.setAttribute("position", "-6.2 9.6 -15");
+      txt.setAttribute("scale", "2.6 2.6 1");
+      txt.setAttribute("color", "white");
+      scena2El.appendChild(txt);
+    }
+
+    return { holder, txt };
+  }
+
+  window.clearTutorialUI = function clearTutorialUI() {
+    const holder = document.getElementById("tutorialDrones");
+    if (holder) holder.innerHTML = "";
+
+    const txt = document.getElementById("tutorialText");
+    if (txt && txt.parentNode) txt.parentNode.removeChild(txt);
+  };
+
+  function spawnTutorialDrones(specs) {
+    // Never during gameplay
+    if (window.gameState && window.gameState.flags && window.gameState.flags.isActive) return;
+
+    if (typeof window.generate_object === "function") window.generate_object();
+    if (!window.item_obj) return;
+
+    const ui = ensureTutorialUI();
+    if (!ui) return;
+
+    ui.holder.innerHTML = "";
+
+    const positions = getNicePracticePositions(Math.max(1, Math.min(8, specs.length)));
+
+    for (let i = 0; i < specs.length; i += 1) {
+      const p = positions[i % positions.length];
+      const isRed = !!specs[i].isRed;
+
+      const objectId = `tut_${Date.now()}_${i}`;
+      const wrapId = `wrap_${objectId}`;
+      const droneId = `drone_${objectId}`;
+      const ringId = `ring_${objectId}`;
+
+      const wrap = document.createElement("a-entity");
+      wrap.setAttribute("id", wrapId);
+      wrap.classList.add(WRAP_CLASS, "tutorial-only");
+      wrap.setAttribute("position", `${p.x} ${p.y} ${p.z}`);
+
+      wrap.setAttribute(
+        "animation__hover",
+        `property: object3D.position.y; from: ${p.y}; to: ${p.y + 0.22}; dir: alternate; dur: 900; easing: easeInOutSine; loop: true`
+      );
+
+      const drone = document.createElement("a-obj-model");
+      drone.setAttribute("id", droneId);
+      drone.classList.add("shootable", "tutorial-only", isRed ? "target-red" : "target-green");
+      drone.setAttribute("target", "healthPoints:1; static:false");
+      drone.setAttribute("src", `#${window.item_obj}`);
+      if (window.item_mtl) drone.setAttribute("mtl", `#${window.item_mtl}`);
+      const scale = 0.34;
+      drone.setAttribute("scale", `${scale} ${scale} ${scale}`);
+      drone.setAttribute("position", "0 0 0");
+      drone.setAttribute("hit-handler", "tutorial:true");
+
+      const ring = document.createElement("a-obj-model");
+      ring.setAttribute("id", ringId);
+      ring.classList.add("shootable", RING_CLASS, "tutorial-only");
+      ring.setAttribute("src", isRed ? "#marker-red-obj" : "#marker-green-obj");
+      ring.setAttribute("mtl", isRed ? "#marker-red-mtl" : "#marker-green-mtl");
+      ring.setAttribute("scale", `${scale} ${scale} ${scale}`);
+      ring.setAttribute("position", "0 0 0");
+      ring.setAttribute("hit-handler", "tutorial:true");
+
+      ring.setAttribute(
+        "animation__spin",
+        `property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: ${isRed ? 1350 : 1650}; easing: linear`
+      );
+
+      wrap.appendChild(drone);
+      wrap.appendChild(ring);
+      ui.holder.appendChild(wrap);
+    }
+  }
+
+  window.__tutorialSpawn = function __tutorialSpawn(step) {
+    const ui = ensureTutorialUI();
+    if (!ui) return;
+
+    if (step === 1) {
+      ui.txt.setAttribute("value", "Tutorial 1/2: Shoot the RED drones (2).");
+      spawnTutorialDrones([{ isRed: true }, { isRed: true }]);
+      return;
+    }
+
+    ui.txt.setAttribute("value", "Tutorial 2/2: Shoot RED. Avoid GREEN distractor.");
+    spawnTutorialDrones([{ isRed: true }, { isRed: false }]);
+  };
+
   // -------------------------------
   // Game wave build
   // -------------------------------

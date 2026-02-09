@@ -221,7 +221,8 @@
     schema: {
       id: { type: "string", default: "" },
       start: { type: "boolean", default: false },
-      prestartRed: { type: "boolean", default: false }
+      prestartRed: { type: "boolean", default: false },
+      tutorial: { type: "boolean", default: false }
     },
 
     init() {
@@ -286,6 +287,29 @@
         }
 
         return; // IMPORTANT: do not score practice hits
+      }
+
+      // TUTORIAL DRONES (not scored, used only for onboarding)
+      if (this.data.tutorial === true) {
+        // Remove entire wrap (drone + ring)
+        const wrap = this.el && this.el.closest ? this.el.closest(".enemy-wrap") : null;
+        if (wrap && wrap.parentNode) {
+          wrap.parentNode.removeChild(wrap);
+        } else if (this.el && this.el.parentNode) {
+          this.el.parentNode.removeChild(this.el);
+        }
+
+        const classList = (this.el && this.el.classList) || null;
+        const isRed = !!(classList && classList.contains("target-red"));
+        const isGreen = !!(classList && classList.contains("target-green"));
+
+        if (typeof window.__tutorialOnKill === "function") {
+          try {
+            window.__tutorialOnKill({ isRed, isGreen });
+          } catch (_) {}
+        }
+
+        return;
       }
 
       // Regular gameplay targets
