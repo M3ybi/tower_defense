@@ -11,7 +11,7 @@ import { securityMiddleware } from "./security.js";
 import { authRoutes } from "./routes/auth.routes.js";
 import { runRoutes } from "./routes/run.routes.js";
 import { verifySession } from "./auth/jwt.js";
-import { initSchema } from "./db.js";
+import { initSchema, q } from "./db.js";
 
 
 // ---------- Resolve project root & views ----------
@@ -101,6 +101,40 @@ app.use("/auth", authRoutes);
 app.use("/api", runRoutes);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+// Debug-only DB info (counts only). Enable by setting DEBUG_DBINFO_PUBLIC="true".
+app.get("/health/db", async (_req, res) => {
+  if (String(process.env.DEBUG_DBINFO_PUBLIC || "") !== "true") {
+    return res.status(404).json({ ok: false });
+  }
+
+  try {
+    const db = await q("select current_database() as db", []);
+    const users = await q("select count(*)::int as c from app_user", []);
+    const runs = await q("select count(*)::int as c from level_run", []);
+    const eligible = await q(
+      "select count(*)::int as c from level_run where coalesce(score_total, red_hits, green_hits, shots) is not null",
+      []
+    );
+    const joinable = await q(
+      "select count(*)::int as c from level_run lr left join app_user au on au.id = lr.user_id where coalesce(lr.score_total, lr.red_hits, lr.green_hits, lr.shots) is not null",
+      []
+    );
+
+    return res.json({
+      ok: true,
+      db: db.rows[0]?.db || null,
+      counts: {
+        app_user: users.rows[0]?.c ?? 0,
+        level_run: runs.rows[0]?.c ?? 0,
+        leaderboard_eligible_runs: eligible.rows[0]?.c ?? 0,
+        joinable_runs: joinable.rows[0]?.c ?? 0
+      }
+    });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: "DB check failed" });
+  }
+});
 
 const PORT = process.env.PORT || 8080;
 

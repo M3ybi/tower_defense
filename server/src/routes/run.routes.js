@@ -54,15 +54,15 @@ runRoutes.get("/leaderboard", async (req, res) => {
         coalesce(lr.finished_at, lr.created_at) asc
     )
     select
-      au.id as user_id,
-      au.display_name,
+      br.user_id as user_id,
+      coalesce(au.display_name, 'Player') as display_name,
       br.level,
       br.score_total,
       br.accuracy_pct,
       br.duration_ms,
       br.finished_at
     from best_runs br
-    join app_user au on au.id = br.user_id
+    left join app_user au on au.id = br.user_id
     order by br.score_total desc, br.accuracy_pct desc, br.finished_at asc
     limit $1
     `,
@@ -125,12 +125,12 @@ runRoutes.get("/leaderboard", async (req, res) => {
       select
         r.rank_pos,
         r.user_id,
-        au.display_name,
+        coalesce(au.display_name, 'Player') as display_name,
         r.level,
         r.score_total,
         r.accuracy_pct
       from ranked r
-      join app_user au on au.id = r.user_id
+      left join app_user au on au.id = r.user_id
       where r.user_id = $1
       `,
       [req.user.id]
