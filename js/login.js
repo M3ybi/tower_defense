@@ -19,7 +19,6 @@
   const leaderboardStatus = document.getElementById("leaderboardStatus");
   const leaderboardSearchPlayer = document.getElementById("leaderboardSearchPlayer");
   const leaderboardSearchLevel = document.getElementById("leaderboardSearchLevel");
-  const leaderboardIncludeCustom = document.getElementById("leaderboardIncludeCustom");
   const btnRefreshLeaderboard = document.getElementById("btnRefreshLeaderboard");
   const leaderboardSortBtns = Array.from(document.querySelectorAll(".th-sort[data-sort]"));
 
@@ -42,7 +41,6 @@
   let leaderboardRawRows = [];
   let searchPlayerQuery = "";
   let searchLevelQuery = "";
-  let includeCustom = false;
   let sortKey = "scoreTotal";
   let sortDir = "desc";
 
@@ -366,12 +364,10 @@
     const api = getApi();
 
     if (api && typeof api.leaderboard === "function") {
-      return api.leaderboard(safeLimit, { includeCustom });
+      return api.leaderboard(safeLimit);
     }
 
-    const qs = new URLSearchParams({ limit: String(safeLimit) });
-    if (includeCustom) qs.set("includeCustom", "1");
-    const r = await fetch(`/api/leaderboard?${qs.toString()}`, {
+    const r = await fetch(`/api/leaderboard?limit=${safeLimit}`, {
       method: "GET",
       credentials: "include"
     });
@@ -574,16 +570,7 @@
     });
   }
 
-  if (leaderboardIncludeCustom) {
-    const saved = localStorage.getItem("leaderboard_include_custom");
-    includeCustom = saved === "1" || saved === "true";
-    leaderboardIncludeCustom.checked = includeCustom;
-    leaderboardIncludeCustom.addEventListener("change", () => {
-      includeCustom = !!leaderboardIncludeCustom.checked;
-      localStorage.setItem("leaderboard_include_custom", includeCustom ? "1" : "0");
-      void refreshLeaderboard();
-    });
-  }
+  localStorage.removeItem("leaderboard_include_custom");
 
   leaderboardSortBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
