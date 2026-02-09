@@ -26,6 +26,27 @@ export async function initSchema() {
     );
   `);
 
+  // Older deployments may have email as NOT NULL (legacy schema). We need it nullable
+  // to support privacy-first OAuth identities.
+  await q(`
+    do $$
+    begin
+      if exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'app_user'
+          and column_name = 'email'
+          and is_nullable = 'NO'
+      ) then
+        alter table public.app_user alter column email drop not null;
+      end if;
+    exception
+      when undefined_table then
+        null;
+    end $$;
+  `);
+
   await q(`
     create table if not exists app_identity (
       id bigserial primary key,
