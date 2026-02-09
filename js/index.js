@@ -137,26 +137,9 @@
     return false;
   };
 
-  function toTestGameOneEpisode() {
-    const base = readFormSettings();
-    const test = {
-      ...base,
-      episodesCount: 1,
-      episodeDuration: 8000,
-      numberOfTargets: 3,
-      numberOfDistractors: 1,
-      tarDiff: 0,
-      disDiff: 0
-    };
-
-    saveSettingsToLocalStorage(test);
-    navigateToGame();
-  }
-
   document.addEventListener("DOMContentLoaded", () => {
     const levelSelect = document.getElementById("select_level");
     const formEl = document.getElementById("form");
-    const testBtn = document.getElementById("btnTestOneEpisode");
 
     // Initialize derived values immediately
     const initialLevel = levelSelect ? Number(levelSelect.value) || 1 : 1;
@@ -173,13 +156,6 @@
       formEl.addEventListener("submit", (event) => {
         event.preventDefault();
         window.toGame();
-      });
-    }
-
-    if (testBtn) {
-      testBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        toTestGameOneEpisode();
       });
     }
   });
