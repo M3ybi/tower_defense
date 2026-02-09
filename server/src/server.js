@@ -31,6 +31,15 @@ function resolveHtmlPath(filename) {
 }
 
 const app = express();
+const allowedOrigins = String(process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  return allowedOrigins.includes(origin);
+}
 
 // Security / rate limiting
 securityMiddleware(app);
@@ -42,7 +51,10 @@ app.use(express.json({ limit: "256kb" }));
 // CORS for API (same origin in dev, but keep it)
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin(origin, callback) {
+      if (isAllowedOrigin(origin)) return callback(null, true);
+      return callback(null, false);
+    },
     credentials: true
   })
 );

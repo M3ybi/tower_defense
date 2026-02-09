@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { q } from "../db.js";
 import { signSession } from "./jwt.js";
 import { issueCsrfCookie } from "../security.js";
+import { resolveRedirectUri } from "./oauth_config.js";
 
 function setStateCookie(res, value) {
   res.cookie("oauth_state", value, {
@@ -12,13 +13,14 @@ function setStateCookie(res, value) {
   });
 }
 
-export function amazonStart(_req, res) {
+export function amazonStart(req, res) {
   const state = crypto.randomBytes(24).toString("hex");
   setStateCookie(res, state);
+  const redirectUri = resolveRedirectUri(req, "AMAZON_REDIRECT_URI", "AMAZON_REDIRECT_URIS");
 
   const params = new URLSearchParams({
     client_id: process.env.AMAZON_CLIENT_ID,
-    redirect_uri: process.env.AMAZON_REDIRECT_URI,
+    redirect_uri: redirectUri,
     response_type: "code",
     scope: "profile",
     state
@@ -29,6 +31,7 @@ export function amazonStart(_req, res) {
 
 export async function amazonCallback(req, res) {
   const { code, state } = req.query;
+  const redirectUri = resolveRedirectUri(req, "AMAZON_REDIRECT_URI", "AMAZON_REDIRECT_URIS");
 
   if (!code || !state || state !== req.cookies.oauth_state) {
     return res.status(400).send("OAuth state mismatch");
@@ -42,7 +45,7 @@ export async function amazonCallback(req, res) {
       code: String(code),
       client_id: process.env.AMAZON_CLIENT_ID,
       client_secret: process.env.AMAZON_CLIENT_SECRET,
-      redirect_uri: process.env.AMAZON_REDIRECT_URI
+      redirect_uri: redirectUri
     })
   });
 

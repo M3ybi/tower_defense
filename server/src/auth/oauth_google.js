@@ -3,6 +3,7 @@ import { q } from "../db.js";
 import { signSession } from "./jwt.js";
 import { issueCsrfCookie } from "../security.js";
 import { jwtVerify, createRemoteJWKSet } from "jose";
+import { resolveRedirectUri } from "./oauth_config.js";
 
 const GOOGLE_ISSUER = "https://accounts.google.com";
 const JWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
@@ -23,10 +24,11 @@ function setStateCookie(res, value) {
 export function googleStart(req, res) {
   const state = crypto.randomBytes(24).toString("hex");
   setStateCookie(res, state);
+  const redirectUri = resolveRedirectUri(req, "GOOGLE_REDIRECT_URI", "GOOGLE_REDIRECT_URIS");
 
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID,
-    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    redirect_uri: redirectUri,
     response_type: "code",
     scope: "openid email profile",
     state
@@ -38,6 +40,7 @@ export function googleStart(req, res) {
 
 export async function googleCallback(req, res) {
   const { code, state } = req.query;
+  const redirectUri = resolveRedirectUri(req, "GOOGLE_REDIRECT_URI", "GOOGLE_REDIRECT_URIS");
 
   if (!code || !state || state !== req.cookies.oauth_state) {
     return res.status(400).send("OAuth state mismatch");
@@ -51,7 +54,7 @@ export async function googleCallback(req, res) {
       code: String(code),
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      redirect_uri: redirectUri,
       grant_type: "authorization_code"
     })
   });
