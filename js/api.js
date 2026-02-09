@@ -64,6 +64,14 @@
     });
   }
 
+  async function updateProfile(displayName) {
+    return requestJson("/auth/profile", {
+      method: "PATCH",
+      headers: withCsrf(JSON_HEADERS),
+      body: JSON.stringify({ displayName })
+    });
+  }
+
   async function startRun(payload) {
     return requestJson("/api/run/start", {
       method: "POST",
@@ -80,6 +88,13 @@
     });
   }
 
+  async function leaderboard(limit = 10) {
+    const safeLimit = Math.max(1, Math.min(Number(limit) || 10, 50));
+    return requestJson(`/api/leaderboard?limit=${safeLimit}`, {
+      method: "GET"
+    });
+  }
+
   // ========== FINAL EXPORTED OBJECT ==========
 
   window.GameAPI = {
@@ -89,8 +104,10 @@
     register,
     login,
     logout,
+    updateProfile,
     startRun,
     finishRun,
+    leaderboard,
 
     oauth: {
       googleStart: buildUrl("/auth/google/start"),

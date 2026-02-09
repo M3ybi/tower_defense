@@ -199,8 +199,7 @@
     const accPct = Math.round((redHits / denom) * 100);
     const accPctClamped = Math.max(0, Math.min(100, accPct));
 
-    const email = localStorage.getItem("user_email");
-    setNodeText(hudNodes.player, email || username);
+    setNodeText(hudNodes.player, username);
 
     setNodeText(hudNodes.level, `Level ${levelNum}`);
     setNodeText(hudNodes.wave, waveDisplay);

@@ -9,12 +9,12 @@
     <meta name="description" content="Choose guest or sign-in, configure level, and play Tower Defense VR mode." />
     <meta name="theme-color" content="#020617" />
 
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css?v=20260209d" />
 
     <!-- Keep order -->
-    <script src="js/api.js" defer></script>
-    <script src="js/login.js" defer></script>
-    <script src="js/index.js" defer></script>
+    <script src="js/api.js?v=20260209c" defer></script>
+    <script src="js/login.js?v=20260209c" defer></script>
+    <script src="js/index.js?v=20260209c" defer></script>
   </head>
 
   <body class="setup-page">
@@ -40,7 +40,7 @@
 
         <div class="hero-footnote">
           Guest mode uses a randomized name (e.g., <span class="mono">guest70839</span>).
-          Sign-in enables email display in HUD and persistent scoring.
+          Sign-in enables your player profile and persistent scoring.
         </div>
       </section>
 
@@ -75,14 +75,14 @@
               <div class="field-row">
                 <div class="field">
                   <label for="username">Username</label>
-                  <input id="username" class="input" type="text" readonly />
-                  <div class="help">Used in HUD if you are in guest mode.</div>
-                </div>
-
-                <div class="field hidden" id="emailGroup">
-                  <label for="userEmail">Email</label>
-                  <input id="userEmail" class="input" type="text" readonly />
-                  <div class="help">Displayed in-game in the top-right HUD.</div>
+                  <input id="username" class="input" type="text" maxlength="24" />
+                  <div class="field-actions">
+                    <button id="btnSaveUsername" class="btn btn--secondary btn--mini-plain" type="button">
+                      Save name
+                    </button>
+                    <span id="usernameSaveStatus" class="field-actions__status" aria-live="polite"></span>
+                  </div>
+                  <div class="help">Displayed in the in-game HUD and leaderboard.</div>
                 </div>
               </div>
 
@@ -212,12 +212,54 @@
               </ul>
 
               <div class="callout">
-                If you sign in, your <strong>email will display in the top-right HUD</strong>.
-                In guest mode you will see your guest name.
+                Sign in to use your profile name and compete on the persistent leaderboard.
               </div>
             </div>
           </aside>
         </div>
+
+        <section class="card card--panel leaderboard-panel" aria-labelledby="leaderboardTitle">
+          <div class="panel-header">
+            <div>
+              <div id="leaderboardTitle" class="panel-title">Top Ranking Players</div>
+              <div class="panel-subtitle">Best verified scores across all players</div>
+            </div>
+            <div class="leaderboard-controls">
+              <input
+                id="leaderboardSearch"
+                class="input leaderboard-search"
+                type="text"
+                placeholder="Search player"
+                autocomplete="off"
+              />
+              <button id="btnSortLevel" class="btn btn--secondary btn--mini-plain" type="button">
+                Level: Desc
+              </button>
+              <button id="btnRefreshLeaderboard" class="btn btn--secondary btn--mini-plain" type="button">
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div id="leaderboardEmpty" class="leaderboard-empty">No ranked runs yet.</div>
+            <div class="leaderboard-table-wrap">
+              <table class="leaderboard-table" aria-label="Top ranked players">
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Player</th>
+                    <th scope="col">Score</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Accuracy</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardRows"></tbody>
+              </table>
+            </div>
+            <div id="leaderboardStatus" class="leaderboard-status" aria-live="polite"></div>
+          </div>
+        </section>
       </section>
     </main>
 
@@ -231,7 +273,7 @@
 
       <h2 class="auth-modal__title">Sign in</h2>
       <p class="auth-modal__subtitle">
-        Sign in to save your score and show your email in the HUD.
+        Sign in to save your score and show your profile name in the HUD.
       </p>
 
       <div class="auth-modal__buttons">
