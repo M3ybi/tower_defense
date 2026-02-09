@@ -27,6 +27,29 @@
   const scena2El = document.getElementById("scena2");
   const scena3El = document.getElementById("scena3");
   const hudCloseEl = document.getElementById("hudCloseBtn");
+  const assetLoadingEl = document.getElementById("assetLoading");
+
+  function setupAssetLoadingOverlay() {
+    if (!assetLoadingEl) return;
+
+    const hide = () => assetLoadingEl.classList.add("hidden");
+
+    const assetsEl = document.querySelector("a-assets");
+    if (assetsEl) {
+      if (assetsEl.hasLoaded) {
+        hide();
+        return;
+      }
+      assetsEl.addEventListener("loaded", hide, { once: true });
+    }
+
+    const sceneEl = document.querySelector("a-scene");
+    if (sceneEl) sceneEl.addEventListener("loaded", hide, { once: true });
+
+    setTimeout(hide, 15000);
+  }
+
+  setupAssetLoadingOverlay();
 
   const getNumber = (key, defaultValue = 0) => {
     const value = Number(localStorage.getItem(key));
@@ -196,7 +219,7 @@
       penalizeGreenHits,
       isActive: false
     },
-    // ✅ NEW: run tracking (filled on start)
+    // NEW: run tracking (filled on start)
     run: {
       runId: null,
       startedAtIso: null,
@@ -206,7 +229,7 @@
       leaderboardEligible: false,
       accepted: null
     },
-    // ✅ NEW: telemetry (created fresh each start)
+    // NEW: telemetry (created fresh each start)
     telemetry: null
   };
 
@@ -228,8 +251,11 @@
     const redHits = Number(gs.score.redHits) || 0;
 
     const denom = Math.max(1, bullets);
-    const accPct = Math.round((redHits / denom) * 100);
-    const accPctClamped = Math.max(0, Math.min(100, accPct));
+    const accPctRaw =
+      typeof gs.score.accuracyPct === "number" && Number.isFinite(gs.score.accuracyPct)
+        ? gs.score.accuracyPct
+        : (redHits / denom) * 100; // red/shots (backend-consistent)
+    const accPctClamped = Math.max(0, Math.min(100, Math.round(accPctRaw)));
 
     setNodeText(hudNodes.player, username);
 
@@ -351,14 +377,14 @@
     ring.setAttribute("position", "0 0 0");
     ring.setAttribute("hit-handler", `id:${droneId}`);
 
-    // ✅ NEW: rotate marker continuously (gameplay + practice consistent)
+    // NEW: rotate marker continuously (gameplay + practice consistent)
     const spinDur = isRed ? 1350 : 1650; // slight variation looks nicer
     ring.setAttribute(
       "animation__spin",
       `property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: ${spinDur}; easing: linear`
     );
 
-    // OPTIONAL: subtle “marker hover” to make it more visible
+    // OPTIONAL: subtle "marker hover" to make it more visible
     ring.setAttribute(
       "animation__bob",
       "property: position; from: 0 0 0; to: 0 0.06 0; dir: alternate; loop: true; dur: 600; easing: easeInOutSine"
@@ -429,7 +455,7 @@
     const vw = Math.min(window.innerWidth || 9999, window.screen?.width || 9999);
     const vh = Math.min(window.innerHeight || 9999, window.screen?.height || 9999);
 
-    // Aspect ratio (portrait phones ~0.55–0.7, desktop ~1.6–2.2)
+    // Aspect ratio (portrait phones ~0.55-0.7, desktop ~1.6-2.2)
     const aspect = vw / Math.max(1, vh);
 
     // Horizontal compression factor
@@ -833,7 +859,7 @@
     }, 300);
   }
 
-  // ✅ NEW: finish run and store server-accepted metrics
+  // NEW: finish run and store server-accepted metrics
   async function finishRunToBackend() {
     const gs = window.gameState;
     if (!gs) return;
@@ -885,7 +911,7 @@
     }
   }
 
-  // ✅ NEW: show final score (now async so it can wait for backend)
+  // NEW: show final score (now async so it can wait for backend)
   async function showFinalScoreAsync() {
     if (!scena2El || !scena3El) return;
 
@@ -899,7 +925,11 @@
     const redHits = Number(gs.score.redHits) || 0;
 
     const denom = Math.max(1, bullets);
-    const accuracyPct = Math.max(0, Math.min(100, Math.round((redHits / denom) * 100)));
+    const accuracyPctRaw =
+      typeof gs.score.accuracyPct === "number" && Number.isFinite(gs.score.accuracyPct)
+        ? gs.score.accuracyPct
+        : (redHits / denom) * 100; // red/shots (backend-consistent)
+    const accuracyPct = Math.max(0, Math.min(100, Math.round(accuracyPctRaw)));
 
     scena2El.innerHTML = "";
     scena3El.innerHTML = "";
@@ -912,7 +942,7 @@
     title.setAttribute("color", "white");
     scena2El.appendChild(title);
 
-    const verifiedTag = gs.run && gs.run.verified ? "✔ Verified" : "⚠ Unverified";
+    const verifiedTag = gs.run && gs.run.verified ? "Verified" : "Unverified";
 
     const lines = [
       `Player: ${username} | Level: ${levelNum} | ${verifiedTag}`,
@@ -1021,20 +1051,20 @@
     redTargetTotal = 0;
     greenTargetTotal = 0;
 
-    // ✅ NEW: initialize telemetry fresh for this run (used by shoot.js pushEvent)
+    // NEW: initialize telemetry fresh for this run (used by shoot.js pushEvent)
     window.gameState.telemetry = {
       t0: performance.now(),
       events: []
     };
 
-    // ✅ NEW: reset run record
+    // NEW: reset run record
     window.gameState.run.runId = null;
     window.gameState.run.startedAtIso = new Date().toISOString();
     window.gameState.run.finishedAtIso = null;
     window.gameState.run.verified = false;
     window.gameState.run.accepted = null;
 
-    // ✅ NEW: start backend run (non-blocking; game continues even if it fails)
+    // NEW: start backend run (non-blocking; game continues even if it fails)
     (async () => {
       try {
         if (!window.GameAPI || typeof window.GameAPI.startRun !== "function") return;
@@ -1072,7 +1102,7 @@
 
           window.gameState.flags.isActive = false;
 
-          // ✅ NEW: final score now async (waits for backend finish)
+          // NEW: final score now async (waits for backend finish)
           setTimeout(() => {
             void showFinalScoreAsync();
           }, 350);

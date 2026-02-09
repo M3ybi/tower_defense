@@ -5,6 +5,70 @@
   // -----------------------------
   // Helpers
   // -----------------------------
+  const SCORE_POPUP_FONT_URL = "https://cdn.aframe.io/fonts/Exo2Bold.fnt";
+
+  function spawnScorePopup({ sceneEl, position, delta }) {
+    if (!sceneEl || !position || !Number.isFinite(delta)) return;
+
+    const holder = document.createElement("a-entity");
+    holder.classList.add("score-popup");
+    holder.setAttribute("position", `${position.x} ${position.y} ${position.z}`);
+    holder.setAttribute("billboard-to-camera", "");
+
+    // +score is green, -score is red, 0 is muted.
+    const txtColor = delta > 0 ? "#22c55e" : delta < 0 ? "#ef4444" : "#e5e7eb";
+    const txtValue = delta > 0 ? `+${delta}` : String(delta);
+
+    // Shadow/outline: draw the text twice with a small Z offset.
+    const txtShadow = document.createElement("a-text");
+    txtShadow.setAttribute("font", SCORE_POPUP_FONT_URL);
+    txtShadow.setAttribute(
+      "text",
+      `value: ${txtValue}; align: center; width: 3.2; color: #000000; opacity: 0.75`
+    );
+    txtShadow.setAttribute("position", "0 -0.01 0.012");
+    txtShadow.setAttribute("scale", "2.35 2.35 1");
+
+    const txt = document.createElement("a-text");
+    txt.setAttribute("font", SCORE_POPUP_FONT_URL);
+    txt.setAttribute(
+      "text",
+      `value: ${txtValue}; align: center; width: 3.2; color: ${txtColor}; opacity: 1`
+    );
+    txt.setAttribute("position", "0 0 0.02");
+    txt.setAttribute("scale", "2.35 2.35 1");
+
+    // Rise and fade out quickly, then self-destruct.
+    // IMPORTANT: animate from/to absolute positions so it always moves upward from its spawn point.
+    const y0 = Number(position.y) || 0;
+    const dy = delta < 0 ? -1.0 : 1.0; // + goes up, - goes down
+    const y1 = y0 + dy;
+    holder.setAttribute(
+      "animation__rise",
+      `property: position; from: ${position.x} ${y0} ${position.z}; to: ${position.x} ${y1} ${position.z}; dur: 700; easing: easeOutCubic`
+    );
+    holder.setAttribute(
+      "animation__pop",
+      "property: scale; from: 0.75 0.75 0.75; to: 1 1 1; dur: 120; easing: easeOutBack"
+    );
+    txt.setAttribute(
+      "animation__fade",
+      "property: text.opacity; to: 0; dur: 650; easing: easeInQuad"
+    );
+    txtShadow.setAttribute(
+      "animation__fade",
+      "property: text.opacity; to: 0; dur: 650; easing: easeInQuad"
+    );
+
+    holder.appendChild(txtShadow);
+    holder.appendChild(txt);
+    sceneEl.appendChild(holder);
+
+    setTimeout(() => {
+      if (holder && holder.parentNode) holder.parentNode.removeChild(holder);
+    }, 750);
+  }
+
   function ensureLegacyCounters() {
     if (typeof window.score_episode_red !== "number") window.score_episode_red = 0;
     if (typeof window.score_episode_green !== "number") window.score_episode_green = 0;
@@ -28,7 +92,7 @@
     return !!(gs && gs.flags && gs.flags.isActive);
   }
 
-  // ✅ NEW: telemetry event writer (expects telemetry to be created by scene_build.js on start)
+  // NEW: telemetry event writer (expects telemetry to be created by scene_build.js on start)
   function pushEvent(type) {
     const gs = ensureGameState();
     if (!gs || !gs.telemetry) return;
@@ -45,11 +109,10 @@
 
     const bullets = Number(gs.score._rawShots) || 0;
     const red = Number(gs.score.redHits) || 0;
-    const green = Number(gs.score.greenHits) || 0;
-    const hits = red + green;
 
     const denom = Math.max(1, bullets);
-    const pct = (hits / denom) * 100;
+    // Keep consistent with backend scoring: accuracy is RED hits / shots.
+    const pct = (red / denom) * 100;
 
     gs.score.accuracyPct = Math.max(0, Math.min(100, pct));
     gs.score.bullets = bullets;
@@ -69,7 +132,7 @@
 
     recomputeDerivedStats();
 
-    // ✅ NEW: record shot
+    // NEW: record shot
     pushEvent("shot");
   }
 
@@ -91,7 +154,7 @@
       gs.score.total = (Number(gs.score.total) || 0) + 1;
       gs.wave.waveScoreDelta = (Number(gs.wave.waveScoreDelta) || 0) + 1;
 
-      // ✅ NEW: record red hit
+      // NEW: record red hit
       pushEvent("hit_red");
 
       recomputeDerivedStats();
@@ -108,7 +171,7 @@
         gs.wave.waveScoreDelta = (Number(gs.wave.waveScoreDelta) || 0) - 1;
       }
 
-      // ✅ NEW: record green hit
+      // NEW: record green hit
       pushEvent("hit_green");
 
       recomputeDerivedStats();
@@ -236,7 +299,7 @@
       this.el.removeEventListener("die", this.onDie);
     },
 
-    onDie() {
+    onDie(evt) {
       // Tutorial start box: start tutorial flow (does not auto-run anymore).
       if (this.data.startTutorial === true) {
         if (typeof window.clearPrestartPracticeUI === "function") {
@@ -332,6 +395,8 @@
       }
 
       // Regular gameplay targets
+      const sceneEl = this.el && this.el.sceneEl ? this.el.sceneEl : document.querySelector("a-scene");
+
       let targetEl = null;
       if (this.data.id) targetEl = document.getElementById(this.data.id);
       if (!targetEl) targetEl = this.el;
@@ -342,6 +407,29 @@
 
       if (typeof applyHit === "function") applyHit(isRed, isGreen);
 
+      // Score popup: only for real gameplay hits.
+      if (isGameActive()) {
+        const gs = ensureGameState();
+        const penalizeGreenHits = gs && gs.flags && gs.flags.penalizeGreenHits === true;
+        const delta = isRed ? 1 : isGreen ? (penalizeGreenHits ? -1 : 0) : 0;
+
+        const p = new THREE.Vector3();
+        // Prefer hitscan intersection point if provided.
+        if (evt && evt.detail && evt.detail.hitPoint) {
+          const hp = evt.detail.hitPoint;
+          p.set(Number(hp.x) || 0, Number(hp.y) || 0, Number(hp.z) || 0);
+        } else if (targetEl && targetEl.object3D) {
+          targetEl.object3D.getWorldPosition(p);
+        } else if (this.el && this.el.object3D) {
+          this.el.object3D.getWorldPosition(p);
+        }
+
+        // Small lift so text doesn't clip into the model.
+        p.y += 0.25;
+
+        spawnScorePopup({ sceneEl, position: p, delta });
+      }
+
       // Remove wrap if exists
       const wrap = targetEl && targetEl.closest ? targetEl.closest(".enemy-wrap") : null;
       if (wrap && wrap.parentNode) {
@@ -350,6 +438,21 @@
         if (targetEl && targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
         if (this.el !== targetEl && this.el.parentNode) this.el.parentNode.removeChild(this.el);
       }
+    }
+  });
+
+  // -----------------------------
+  // Billboard helper (face the active camera)
+  // -----------------------------
+  AFRAME.registerComponent("billboard-to-camera", {
+    init() {
+      this._camPos = new THREE.Vector3();
+    },
+    tick() {
+      const sceneEl = this.el.sceneEl;
+      if (!sceneEl || !sceneEl.camera) return;
+      sceneEl.camera.getWorldPosition(this._camPos);
+      this.el.object3D.lookAt(this._camPos);
     }
   });
 
@@ -404,7 +507,10 @@
         if (!entityEl) continue;
         if (!entityEl.classList || !entityEl.classList.contains("shootable")) continue;
 
-        entityEl.emit("die");
+        const pt = h && h.point ? h.point : null;
+        entityEl.emit("die", {
+          hitPoint: pt ? { x: pt.x, y: pt.y, z: pt.z } : null
+        });
         return;
       }
     }

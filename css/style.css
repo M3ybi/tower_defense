@@ -26,7 +26,11 @@ body {
   background-color: #020617;
   background-image:
     radial-gradient(circle at top, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.75)),
-    url("../assets/images/dark-planet-space-landscape.jpg");
+    image-set(
+      url("../assets/images/dark-planet-space-landscape.avif") type("image/avif"),
+      url("../assets/images/dark-planet-space-landscape.webp") type("image/webp"),
+      url("../assets/images/dark-planet-space-landscape.jpg") type("image/jpeg")
+    );
   background-position: center center, center center;
   background-size: cover, cover;
   background-repeat: no-repeat, no-repeat;
@@ -42,6 +46,44 @@ body {
 /* Setup page should scroll; game page should not */
 body.setup-page { overflow: auto; align-items: flex-start; }
 body.game-page { overflow: hidden; align-items: stretch; }
+
+/* Game: asset-loading overlay (shown until A-Frame assets are ready) */
+.asset-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at top, rgba(2, 6, 23, 0.92), rgba(2, 6, 23, 0.98));
+  color: rgba(241, 245, 249, 0.92);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.asset-loading__panel {
+  width: min(520px, 92vw);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.86), rgba(2, 6, 23, 0.82));
+  box-shadow: 0 26px 90px rgba(0, 0, 0, 0.6);
+  padding: 18px 18px;
+  text-align: center;
+}
+
+.asset-loading__title {
+  font-size: 0.85rem;
+}
+
+.asset-loading__sub {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: rgba(226, 232, 240, 0.72);
+  text-transform: none;
+  font-weight: 700;
+}
 
 @media (pointer: coarse) {
   body {
@@ -667,7 +709,7 @@ a-scene > canvas,
   color: #f9fafb;
 }
 
-/* Close button – top-right, small circular */
+/* Close button - top-right, small circular */
 .auth-modal__close {
   position: absolute;
   top: 10px;
