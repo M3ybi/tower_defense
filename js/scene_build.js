@@ -715,7 +715,7 @@
 
       const ring = document.createElement("a-obj-model");
       ring.setAttribute("id", ringId);
-      ring.classList.add("shootable", RING_CLASS, "tutorial-only");
+      ring.classList.add("shootable", RING_CLASS, "tutorial-only", isRed ? "target-red" : "target-green");
       ring.setAttribute("src", isRed ? "#marker-red-obj" : "#marker-green-obj");
       ring.setAttribute("mtl", isRed ? "#marker-red-mtl" : "#marker-green-mtl");
       ring.setAttribute("scale", `${scale} ${scale} ${scale}`);

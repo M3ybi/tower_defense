@@ -291,17 +291,23 @@
 
       // TUTORIAL DRONES (not scored, used only for onboarding)
       if (this.data.tutorial === true) {
-        // Remove entire wrap (drone + ring)
+        // Determine color from either the clicked element OR its wrap contents.
+        // Players often shoot the marker ring, so rely on the wrap's drone class too.
         const wrap = this.el && this.el.closest ? this.el.closest(".enemy-wrap") : null;
+        const classList = (this.el && this.el.classList) || null;
+        let isRed = !!(classList && classList.contains("target-red"));
+        let isGreen = !!(classList && classList.contains("target-green"));
+        if (!isRed && !isGreen && wrap && wrap.querySelector) {
+          isRed = !!wrap.querySelector(".target-red");
+          isGreen = !!wrap.querySelector(".target-green");
+        }
+
+        // Remove entire wrap (drone + ring)
         if (wrap && wrap.parentNode) {
           wrap.parentNode.removeChild(wrap);
         } else if (this.el && this.el.parentNode) {
           this.el.parentNode.removeChild(this.el);
         }
-
-        const classList = (this.el && this.el.classList) || null;
-        const isRed = !!(classList && classList.contains("target-red"));
-        const isGreen = !!(classList && classList.contains("target-green"));
 
         if (typeof window.__tutorialOnKill === "function") {
           try {
