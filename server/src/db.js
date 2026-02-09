@@ -147,6 +147,16 @@ export async function initSchema() {
     end $$;
   `);
 
+  // Backfill legacy runs: before we introduced `completed`, old rows with `finished_at`
+  // represent a completed level. Mark them completed so they appear in leaderboard.
+  await q(`
+    update level_run
+    set completed = true
+    where completed is false
+      and finished_at is not null
+      and coalesce(score_total, red_hits, green_hits, shots) is not null;
+  `);
+
   await q(`create index if not exists idx_level_run_user_id on level_run(user_id);`);
   await q(`create index if not exists idx_level_run_started_at on level_run(started_at);`);
 
