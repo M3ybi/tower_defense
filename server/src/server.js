@@ -86,7 +86,6 @@ app.use(async (req, _res, next) => {
     if (payload) {
       req.user = {
         id: payload.uid,
-        email: payload.email,
         name: payload.name
       };
     }

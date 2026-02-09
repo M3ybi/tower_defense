@@ -32,7 +32,7 @@ authRoutes.get("/me", async (req, res) => {
   }
 
   const userRow = await q(
-    `select id, email, display_name from app_user where id = $1`,
+    `select id, display_name from app_user where id = $1`,
     [req.user.id]
   );
 
@@ -58,7 +58,7 @@ authRoutes.patch(
       update app_user
       set display_name = $1
       where id = $2
-      returning id, email, display_name
+      returning id, display_name
       `,
       [body.displayName, req.user.id]
     );

@@ -45,10 +45,13 @@ export async function registerLocal(req, res) {
   if (r.rowCount === 0) return res.status(409).json({ ok: false, error: "Email already registered" });
 
   const user = r.rows[0];
-  const jwt = await signSession({ uid: user.id, email: user.email, name: user.display_name });
+  const jwt = await signSession({ uid: user.id, name: user.display_name });
   setSessionCookie(res, jwt);
 
-  return res.json({ ok: true, user });
+  return res.json({
+    ok: true,
+    user: { id: user.id, display_name: user.display_name }
+  });
 }
 
 export async function loginLocal(req, res) {
@@ -69,12 +72,12 @@ export async function loginLocal(req, res) {
   const ok = await bcrypt.compare(body.password, u.password_hash);
   if (!ok) return res.status(401).json({ ok: false, error: "Invalid credentials" });
 
-  const jwt = await signSession({ uid: u.id, email: u.email, name: u.display_name });
+  const jwt = await signSession({ uid: u.id, name: u.display_name });
   setSessionCookie(res, jwt);
 
   return res.json({
     ok: true,
-    user: { id: u.id, email: u.email, display_name: u.display_name }
+    user: { id: u.id, display_name: u.display_name }
   });
 }
 

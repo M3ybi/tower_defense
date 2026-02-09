@@ -9,12 +9,12 @@
     <meta name="description" content="Choose guest or sign-in, configure level, and play Tower Defense VR mode." />
     <meta name="theme-color" content="#020617" />
 
-    <link rel="stylesheet" href="css/style.css?v=20260209d" />
+    <link rel="stylesheet" href="css/style.css?v=20260209e" />
 
     <!-- Keep order -->
-    <script src="js/api.js?v=20260209c" defer></script>
-    <script src="js/login.js?v=20260209c" defer></script>
-    <script src="js/index.js?v=20260209c" defer></script>
+    <script src="js/api.js?v=20260209e" defer></script>
+    <script src="js/login.js?v=20260209e" defer></script>
+    <script src="js/index.js?v=20260209e" defer></script>
   </head>
 
   <body class="setup-page">
@@ -48,7 +48,17 @@
            MAIN FORM (hidden initially)
            ========================= -->
       <section id="setupScreen" class="hidden">
-        <div class="grid">
+        <div class="setup-sections-nav" role="tablist" aria-label="Setup sections">
+          <button id="btnShowSetupSection" class="btn btn--secondary setup-sections-nav__btn is-active" type="button">
+            Setup
+          </button>
+          <button id="btnShowLeaderboardSection" class="btn btn--secondary setup-sections-nav__btn" type="button">
+            Leaderboard
+          </button>
+        </div>
+
+        <section id="setupContentSection">
+          <div class="grid">
           <!-- Left: Form -->
           <form id="form" class="card card--panel" autocomplete="off" novalidate>
             <div class="panel-header">
@@ -216,9 +226,10 @@
               </div>
             </div>
           </aside>
-        </div>
+          </div>
+        </section>
 
-        <section class="card card--panel leaderboard-panel" aria-labelledby="leaderboardTitle">
+        <section id="leaderboardContentSection" class="card card--panel leaderboard-panel hidden" aria-labelledby="leaderboardTitle">
           <div class="panel-header">
             <div>
               <div id="leaderboardTitle" class="panel-title">Top Ranking Players</div>

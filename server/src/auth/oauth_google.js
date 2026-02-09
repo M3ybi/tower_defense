@@ -21,6 +21,17 @@ function setStateCookie(res, value) {
   });
 }
 
+function toSafeFirstName(rawName) {
+  const cleaned = String(rawName || "")
+    .trim()
+    .replace(/\s+/g, " ");
+  if (!cleaned) return "Player";
+
+  const firstToken = cleaned.split(" ")[0] || "Player";
+  const safe = firstToken.replace(/[^\p{L}\p{N}_-]/gu, "");
+  return (safe || "Player").slice(0, 24);
+}
+
 export function googleStart(req, res) {
   const state = crypto.randomBytes(24).toString("hex");
   setStateCookie(res, state);
@@ -30,7 +41,7 @@ export function googleStart(req, res) {
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: "openid email profile",
+    scope: "openid profile",
     state
   });
 
@@ -72,28 +83,42 @@ export async function googleCallback(req, res) {
   });
 
   const sub = String(payload.sub);
-  const email = payload.email ? String(payload.email).toLowerCase() : null;
-  const name = payload.name ? String(payload.name) : "Player";
+  const name = toSafeFirstName(payload.name ? String(payload.name) : "Player");
 
-  // Upsert user + identity
+  // Privacy-first OAuth user linkage: bind by provider subject only.
   const userRow = await q(
     `
-    with u as (
-      insert into app_user(email, display_name)
-      values ($1, $2)
-      on conflict (email) do update set display_name = excluded.display_name
-      returning id, email, display_name
+    with existing as (
+      select ai.user_id as id
+      from app_identity ai
+      where ai.provider = 'google' and ai.provider_subject = $1
+      limit 1
+    ),
+    created as (
+      insert into app_user(display_name)
+      select $2
+      where not exists (select 1 from existing)
+      returning id
+    ),
+    resolved as (
+      select id from existing
+      union all
+      select id from created
+      limit 1
     )
     insert into app_identity(user_id, provider, provider_subject, provider_email)
-    values ((select id from u), 'google', $3, $1)
-    on conflict (provider, provider_subject) do update set provider_email = excluded.provider_email
-    returning (select id from u) as id, (select email from u) as email, (select display_name from u) as display_name
+    values ((select id from resolved), 'google', $1, null)
+    on conflict (provider, provider_subject) do nothing;
+
+    select au.id, au.display_name
+    from app_user au
+    where au.id = (select id from resolved)
     `,
-    [email, name.slice(0, 24), sub]
+    [sub, name]
   );
 
   const u = userRow.rows[0];
-  const jwt = await signSession({ uid: u.id, email: u.email, name: u.display_name });
+  const jwt = await signSession({ uid: u.id, name: u.display_name });
 
   res.cookie(process.env.COOKIE_NAME || "td_session", jwt, {
     httpOnly: true,

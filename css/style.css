@@ -23,10 +23,14 @@ body {
   padding: 0;
   color: #f5f7fb;
 
-  background:
+  background-color: #020617;
+  background-image:
     radial-gradient(circle at top, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.75)),
-    url("../assets/images/dark-planet-space-landscape.jpg")
-      center/cover no-repeat fixed;
+    url("../assets/images/dark-planet-space-landscape.jpg");
+  background-position: center center, center center;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
 
   display: flex;
   justify-content: center;
@@ -41,7 +45,9 @@ body.game-page { overflow: hidden; align-items: stretch; }
 
 @media (pointer: coarse) {
   body {
-    background-attachment: scroll;
+    min-height: 100dvh;
+    background-position: center top, center top;
+    background-attachment: scroll, scroll;
   }
 }
 
@@ -777,6 +783,25 @@ a-scene > canvas,
   padding: 28px 16px;
 }
 
+.setup-sections-nav {
+  width: min(1120px, 96vw);
+  margin: 0 0 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.setup-sections-nav__btn {
+  flex: 1 1 0;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+}
+
+.setup-sections-nav__btn.is-active {
+  background: linear-gradient(90deg, rgba(16,185,129,0.95), rgba(37,99,235,0.95));
+  color: rgba(255,255,255,0.95);
+  border-color: transparent;
+}
+
 .grid {
   width: min(1120px, 96vw);
   display: grid;
@@ -1094,6 +1119,13 @@ a-scene > canvas,
 @media (max-width: 680px) {
   .setup-shell {
     padding: 14px 10px;
+  }
+
+  .setup-sections-nav {
+    position: sticky;
+    top: 8px;
+    z-index: 5;
+    margin-bottom: 10px;
   }
 
   .panel-header {

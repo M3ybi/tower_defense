@@ -8,6 +8,10 @@
   const usernameInput = document.getElementById("username");
   const btnSaveUsername = document.getElementById("btnSaveUsername");
   const usernameSaveStatus = document.getElementById("usernameSaveStatus");
+  const setupContentSection = document.getElementById("setupContentSection");
+  const leaderboardContentSection = document.getElementById("leaderboardContentSection");
+  const btnShowSetupSection = document.getElementById("btnShowSetupSection");
+  const btnShowLeaderboardSection = document.getElementById("btnShowLeaderboardSection");
 
   const authStatusText = document.getElementById("authStatusText");
   const leaderboardRows = document.getElementById("leaderboardRows");
@@ -53,7 +57,7 @@
   function showSetup() {
     if (entryScreen) entryScreen.classList.add("hidden");
     if (setupScreen) setupScreen.classList.remove("hidden");
-    void refreshLeaderboard();
+    switchToSection("setup");
   }
 
   function openAuthModal() {
@@ -80,6 +84,27 @@
   function sanitizeDisplayName(raw) {
     const normalized = String(raw || "").trim().replace(/\s+/g, " ");
     return (normalized || "Player").slice(0, 24);
+  }
+
+  function switchToSection(section) {
+    const showLeaderboard = section === "leaderboard";
+
+    if (setupContentSection) {
+      setupContentSection.classList.toggle("hidden", showLeaderboard);
+    }
+    if (leaderboardContentSection) {
+      leaderboardContentSection.classList.toggle("hidden", !showLeaderboard);
+    }
+    if (btnShowSetupSection) {
+      btnShowSetupSection.classList.toggle("is-active", !showLeaderboard);
+    }
+    if (btnShowLeaderboardSection) {
+      btnShowLeaderboardSection.classList.toggle("is-active", showLeaderboard);
+    }
+
+    if (showLeaderboard) {
+      void refreshLeaderboard();
+    }
   }
 
   function setLoggedOutState() {
@@ -478,6 +503,18 @@
   if (btnRefreshLeaderboard) {
     btnRefreshLeaderboard.addEventListener("click", () => {
       void refreshLeaderboard();
+    });
+  }
+
+  if (btnShowSetupSection) {
+    btnShowSetupSection.addEventListener("click", () => {
+      switchToSection("setup");
+    });
+  }
+
+  if (btnShowLeaderboardSection) {
+    btnShowLeaderboardSection.addEventListener("click", () => {
+      switchToSection("leaderboard");
     });
   }
 

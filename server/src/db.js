@@ -64,4 +64,36 @@ export async function initSchema() {
 
   await q(`create index if not exists idx_level_run_user_id on level_run(user_id);`);
   await q(`create index if not exists idx_level_run_started_at on level_run(started_at);`);
+
+  // Privacy migration:
+  // 1) OAuth users do not need email persisted.
+  // 2) Provider emails are not retained.
+  // 3) Display names are kept as first-token aliases (no last names).
+  await q(`
+    update app_user
+    set email = null
+    where password_hash is null
+      and email is not null;
+  `);
+
+  await q(`
+    update app_identity
+    set provider_email = null
+    where provider_email is not null;
+  `);
+
+  await q(`
+    update app_user
+    set display_name = coalesce(
+      nullif(
+        left(
+          regexp_replace(split_part(display_name, ' ', 1), '[^[:alnum:]_-]', '', 'g'),
+          24
+        ),
+        ''
+      ),
+      'Player'
+    )
+    where display_name is not null;
+  `);
 }

@@ -1,4 +1,4 @@
-# Deploy Tower Defense on Render (Free)
+# Deploy Tower Defense on Render + Neon (Free Tier)
 
 ## 1) Create service from repo
 
@@ -6,12 +6,12 @@
 2. Select this GitHub repo (`M3ybi/tower_defense`).
 3. Render will detect `render.yaml` and create:
    - `tower-defense-web` (free web service)
-   - `tower-defense-db` (free Postgres)
 
 ## 2) Set required environment variables
 
 In `tower-defense-web` -> **Environment**, set:
 
+- `DATABASE_URL` = your Neon pooled connection string (with `sslmode=require`)
 - `CORS_ORIGIN` = your public Render URL (example: `https://tower-defense-web.onrender.com`)
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
@@ -22,7 +22,7 @@ In `tower-defense-web` -> **Environment**, set:
 
 Notes:
 - `JWT_SECRET` is auto-generated from `render.yaml`.
-- `DATABASE_URL` is auto-linked to the Render Postgres instance.
+- `DATABASE_URL` is external (Neon) and must be set manually.
 - DB schema is auto-created on app boot.
 
 ## 3) OAuth provider setup
