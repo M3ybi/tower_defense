@@ -40,7 +40,8 @@ export function securityMiddleware(app) {
           "'self'",
           "data:",
           "blob:",
-          "https://i.imgur.com"
+          "https://i.imgur.com",
+          "https://cdn.aframe.io"
         ],
 
         // CSS: local + optional Google Fonts
@@ -58,7 +59,12 @@ export function securityMiddleware(app) {
         ],
 
         // XHR / fetch targets (keep tight)
-        connectSrc: ["'self'", "https://aframe.io", "https://cdn.jsdelivr.net"],
+        connectSrc: [
+          "'self'",
+          "https://aframe.io",
+          "https://cdn.aframe.io",
+          "https://cdn.jsdelivr.net"
+        ],
 
         // Audio / video (if you add any)
         mediaSrc: ["'self'"],
