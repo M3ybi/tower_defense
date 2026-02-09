@@ -96,7 +96,12 @@ export async function googleCallback(req, res) {
     ),
     created as (
       insert into app_user(display_name)
-      select $2
+      select
+        case
+          when not exists (select 1 from app_user where lower(display_name) = lower($2))
+            then $2
+          else left($2, 19) || '_' || substring(md5($1), 1, 4)
+        end
       where not exists (select 1 from existing)
       returning id
     ),

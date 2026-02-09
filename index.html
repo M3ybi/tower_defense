@@ -9,12 +9,12 @@
     <meta name="description" content="Choose guest or sign-in, configure level, and play Tower Defense VR mode." />
     <meta name="theme-color" content="#020617" />
 
-    <link rel="stylesheet" href="css/style.css?v=20260209e" />
+    <link rel="stylesheet" href="css/style.css?v=20260209h" />
 
     <!-- Keep order -->
-    <script src="js/api.js?v=20260209e" defer></script>
-    <script src="js/login.js?v=20260209e" defer></script>
-    <script src="js/index.js?v=20260209e" defer></script>
+    <script src="js/api.js?v=20260209h" defer></script>
+    <script src="js/login.js?v=20260209h" defer></script>
+    <script src="js/index.js?v=20260209h" defer></script>
   </head>
 
   <body class="setup-page">
@@ -237,15 +237,22 @@
             </div>
             <div class="leaderboard-controls">
               <input
-                id="leaderboardSearch"
+                id="leaderboardSearchPlayer"
                 class="input leaderboard-search"
                 type="text"
                 placeholder="Search player"
                 autocomplete="off"
               />
-              <button id="btnSortLevel" class="btn btn--secondary btn--mini-plain" type="button">
-                Level: Desc
-              </button>
+              <input
+                id="leaderboardSearchLevel"
+                class="input leaderboard-level"
+                type="number"
+                min="1"
+                max="30"
+                step="1"
+                inputmode="numeric"
+                placeholder="Level"
+              />
               <button id="btnRefreshLeaderboard" class="btn btn--secondary btn--mini-plain" type="button">
                 Refresh
               </button>
@@ -258,11 +265,33 @@
               <table class="leaderboard-table" aria-label="Top ranked players">
                 <thead>
                   <tr>
-                    <th scope="col">Rank</th>
-                    <th scope="col">Player</th>
-                    <th scope="col">Score</th>
-                    <th scope="col">Level</th>
-                    <th scope="col">Accuracy</th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="rank">Rank</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="displayName">Player</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="scoreTotal">Score</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="level">Level</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="tarDiff">Tar diff</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="distractorsPerWave">Dis/wave</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="redHits">Targets</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="greenHits">Distractors</button>
+                    </th>
+                    <th scope="col">
+                      <button class="th-sort" type="button" data-sort="accuracyPct">Accuracy</button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="leaderboardRows"></tbody>

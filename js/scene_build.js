@@ -885,6 +885,10 @@
           level: levelNum,
           episodesTotal: totalEpisodes,
           episodeDurationMs: episodeDuration,
+          targetsPerWave: baseTargets,
+          distractorsPerWave: baseDistractors,
+          tarDiff,
+          disDiff,
           clientBuild: "td-web"
         });
 

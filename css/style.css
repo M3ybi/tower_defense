@@ -1059,6 +1059,34 @@ a-scene > canvas,
   border-radius: 999px;
 }
 
+.leaderboard-level {
+  width: 110px;
+  padding: 9px 12px;
+  border-radius: 999px;
+}
+
+.th-sort {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.th-sort.is-active {
+  color: rgba(241, 245, 249, 0.92);
+}
+
+.th-sort:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.65);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .leaderboard-table-wrap {
   overflow-x: auto;
 }
@@ -1086,7 +1114,11 @@ a-scene > canvas,
 .leaderboard-table td:first-child,
 .leaderboard-table td:nth-child(3),
 .leaderboard-table td:nth-child(4),
-.leaderboard-table td:nth-child(5) {
+.leaderboard-table td:nth-child(5),
+.leaderboard-table td:nth-child(6),
+.leaderboard-table td:nth-child(7),
+.leaderboard-table td:nth-child(8),
+.leaderboard-table td:nth-child(9) {
   white-space: nowrap;
 }
 
@@ -1175,6 +1207,12 @@ a-scene > canvas,
   }
 
   .leaderboard-search {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .leaderboard-level {
     flex: 1 1 100%;
     width: 100%;
     min-width: 0;

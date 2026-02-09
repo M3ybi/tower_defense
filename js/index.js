@@ -2,8 +2,9 @@
 (function () {
   "use strict";
 
-  const DEFAULT_TAR_DIFF = 1;
-  const DEFAULT_DIS_DIFF = 1;
+  // Default variance is 0 so each level has consistent totals unless the user changes diffs.
+  const DEFAULT_TAR_DIFF = 0;
+  const DEFAULT_DIS_DIFF = 0;
   const DEFAULT_TARGETS = 2;
   const DEFAULT_DISTRACTORS = 2;
 

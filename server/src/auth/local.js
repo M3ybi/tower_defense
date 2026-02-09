@@ -31,6 +31,13 @@ export async function registerLocal(req, res) {
 
   const email = body.email.toLowerCase().trim();
   const displayName = (body.displayName || "Player").slice(0, 24);
+  const nameCheck = await q(
+    `select 1 from app_user where lower(display_name) = lower($1) limit 1`,
+    [displayName]
+  );
+  if (nameCheck.rowCount > 0) {
+    return res.status(409).json({ ok: false, error: "Name is already taken" });
+  }
 
   const hash = await bcrypt.hash(body.password, 12);
 

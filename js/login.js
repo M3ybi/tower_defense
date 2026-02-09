@@ -17,9 +17,10 @@
   const leaderboardRows = document.getElementById("leaderboardRows");
   const leaderboardEmpty = document.getElementById("leaderboardEmpty");
   const leaderboardStatus = document.getElementById("leaderboardStatus");
-  const leaderboardSearch = document.getElementById("leaderboardSearch");
-  const btnSortLevel = document.getElementById("btnSortLevel");
+  const leaderboardSearchPlayer = document.getElementById("leaderboardSearchPlayer");
+  const leaderboardSearchLevel = document.getElementById("leaderboardSearchLevel");
   const btnRefreshLeaderboard = document.getElementById("btnRefreshLeaderboard");
+  const leaderboardSortBtns = Array.from(document.querySelectorAll(".th-sort[data-sort]"));
 
   const btnGuest = document.getElementById("btnEntryGuest");
   const btnAuth = document.getElementById("btnEntryAuth");
@@ -38,9 +39,10 @@
   let sessionMode = MODE_LOGGED_OUT;
   let authedUserId = null;
   let leaderboardRawRows = [];
-  let leaderboardCurrentUserRank = null;
-  let levelSortDir = "desc";
-  let searchQuery = "";
+  let searchPlayerQuery = "";
+  let searchLevelQuery = "";
+  let sortKey = "scoreTotal";
+  let sortDir = "desc";
 
   function getApi() {
     return window.GameAPI || null;
@@ -183,46 +185,95 @@
     if (leaderboardStatus) leaderboardStatus.textContent = String(text || "");
   }
 
+  function normalizeLevelQuery(q) {
+    const s = String(q || "").trim();
+    if (!s) return null;
+    const n = Number(s);
+    if (!Number.isFinite(n)) return null;
+    const level = Math.floor(n);
+    if (level < 1 || level > 30) return null;
+    return level;
+  }
+
+  function getComparableValue(row, key) {
+    if (!row) return null;
+    if (key === "displayName") return String(row.displayName || "");
+    if (key === "rank") return Number(row.rank) || 0;
+    if (key === "finishedAt") return row.finishedAt ? new Date(row.finishedAt).getTime() : null;
+
+    const v = row[key];
+    if (v === null || v === undefined) return null;
+    const num = Number(v);
+    return Number.isFinite(num) ? num : null;
+  }
+
+  function compareValues(a, b, dir, isString) {
+    // nulls last
+    const aNull = a === null || a === undefined || a === "";
+    const bNull = b === null || b === undefined || b === "";
+    if (aNull && bNull) return 0;
+    if (aNull) return 1;
+    if (bNull) return -1;
+
+    if (isString) {
+      const aa = String(a).toLowerCase();
+      const bb = String(b).toLowerCase();
+      if (aa < bb) return dir === "asc" ? -1 : 1;
+      if (aa > bb) return dir === "asc" ? 1 : -1;
+      return 0;
+    }
+
+    const diff = Number(a) - Number(b);
+    if (diff === 0) return 0;
+    return dir === "asc" ? diff : -diff;
+  }
+
   function getFilteredAndSortedRows(rows) {
     let out = Array.isArray(rows) ? [...rows] : [];
 
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      out = out.filter((row) =>
-        String(row.displayName || "")
-          .toLowerCase()
-          .includes(q)
-      );
+    if (searchPlayerQuery) {
+      const q = searchPlayerQuery.toLowerCase();
+      out = out.filter((row) => String(row.displayName || "").toLowerCase().includes(q));
+    }
+
+    const levelFilter = normalizeLevelQuery(searchLevelQuery);
+    if (levelFilter !== null) {
+      out = out.filter((row) => Number(row.level) === levelFilter);
     }
 
     out.sort((a, b) => {
-      const lA = Number(a.level) || 0;
-      const lB = Number(b.level) || 0;
-      if (lA !== lB) return levelSortDir === "asc" ? lA - lB : lB - lA;
+      const isString = sortKey === "displayName";
+      const av = getComparableValue(a, sortKey);
+      const bv = getComparableValue(b, sortKey);
+      const c = compareValues(av, bv, sortDir, isString);
+      if (c !== 0) return c;
 
-      const rankA = Number(a.rank) || 0;
-      const rankB = Number(b.rank) || 0;
-      return rankA - rankB;
+      // Stable tie-break: keep server rank order.
+      const ra = Number(a.rank) || 0;
+      const rb = Number(b.rank) || 0;
+      return ra - rb;
     });
 
     return out;
   }
 
-  function maybeAppendCurrentUserRow(filteredRows) {
-    if (!leaderboardCurrentUserRank || !authedUserId) return null;
+  function updateSortHeaderUI() {
+    leaderboardSortBtns.forEach((btn) => {
+      const key = btn.getAttribute("data-sort") || "";
+      const base = btn.getAttribute("data-label") || btn.textContent || "";
+      if (!btn.getAttribute("data-label")) btn.setAttribute("data-label", base.trim());
 
-    const meId = Number(leaderboardCurrentUserRank.userId) || 0;
-    if (!meId || meId !== authedUserId) return null;
+      const isActive = key === sortKey;
+      btn.classList.toggle("is-active", isActive);
 
-    const alreadyVisible = filteredRows.some((row) => Number(row.userId) === meId);
-    if (alreadyVisible) return null;
+      const label = btn.getAttribute("data-label") || base.trim();
+      if (!isActive) {
+        btn.textContent = label;
+        return;
+      }
 
-    if (searchQuery) {
-      const meName = String(leaderboardCurrentUserRank.displayName || "").toLowerCase();
-      if (!meName.includes(searchQuery.toLowerCase())) return null;
-    }
-
-    return leaderboardCurrentUserRank;
+      btn.textContent = `${label} ${sortDir === "asc" ? "▲" : "▼"}`;
+    });
   }
 
   function renderLeaderboardRows() {
@@ -235,8 +286,9 @@
     let currentUserShownInList = false;
 
     if (!visibleRows.length) {
-      leaderboardEmpty.textContent = searchQuery
-        ? "No players match this search."
+      const hasSearch = !!searchPlayerQuery || normalizeLevelQuery(searchLevelQuery) !== null;
+      leaderboardEmpty.textContent = hasSearch
+        ? "No results match your search."
         : "No ranked runs yet.";
       leaderboardEmpty.classList.remove("hidden");
       return;
@@ -252,6 +304,10 @@
       const player = sanitizeDisplayName(row.displayName || "Player");
       const score = Number(row.scoreTotal) || 0;
       const level = Number(row.level) || 1;
+      const tarDiff = row.tarDiff === null ? "" : String(Number(row.tarDiff) || 0);
+      const disPerWave = row.distractorsPerWave === null ? "" : String(Number(row.distractorsPerWave) || 0);
+      const redHits = Number(row.redHits) || 0;
+      const greenHits = Number(row.greenHits) || 0;
       const accuracy = formatAccuracy(Number(row.accuracyPct));
 
       if (currentUserId && userId === currentUserId) {
@@ -275,6 +331,22 @@
       levelTd.textContent = String(level);
       tr.appendChild(levelTd);
 
+      const tarDiffTd = document.createElement("td");
+      tarDiffTd.textContent = tarDiff;
+      tr.appendChild(tarDiffTd);
+
+      const disWaveTd = document.createElement("td");
+      disWaveTd.textContent = disPerWave;
+      tr.appendChild(disWaveTd);
+
+      const redTd = document.createElement("td");
+      redTd.textContent = String(redHits);
+      tr.appendChild(redTd);
+
+      const greenTd = document.createElement("td");
+      greenTd.textContent = String(greenHits);
+      tr.appendChild(greenTd);
+
       const accTd = document.createElement("td");
       accTd.textContent = accuracy;
       tr.appendChild(accTd);
@@ -282,38 +354,7 @@
       leaderboardRows.appendChild(tr);
     });
 
-    const extraMeRow = maybeAppendCurrentUserRow(visibleRows);
-    if (extraMeRow && !currentUserShownInList) {
-      const spacer = document.createElement("tr");
-      spacer.classList.add("leaderboard-row--spacer");
-      spacer.innerHTML = '<td colspan="5">...</td>';
-      leaderboardRows.appendChild(spacer);
-
-      const meTr = document.createElement("tr");
-      meTr.classList.add("leaderboard-row--me");
-
-      const rankTd = document.createElement("td");
-      rankTd.textContent = `#${Number(extraMeRow.rank) || 0}`;
-      meTr.appendChild(rankTd);
-
-      const playerTd = document.createElement("td");
-      playerTd.textContent = sanitizeDisplayName(extraMeRow.displayName || "Player");
-      meTr.appendChild(playerTd);
-
-      const scoreTd = document.createElement("td");
-      scoreTd.textContent = String(Number(extraMeRow.scoreTotal) || 0);
-      meTr.appendChild(scoreTd);
-
-      const levelTd = document.createElement("td");
-      levelTd.textContent = String(Number(extraMeRow.level) || 1);
-      meTr.appendChild(levelTd);
-
-      const accTd = document.createElement("td");
-      accTd.textContent = formatAccuracy(Number(extraMeRow.accuracyPct));
-      meTr.appendChild(accTd);
-
-      leaderboardRows.appendChild(meTr);
-    }
+    // No "your rank" append: leaderboard is now per-level and can contain multiple rows per user.
   }
 
   async function loadLeaderboardPayload(limit) {
@@ -338,18 +379,13 @@
       const response = await loadLeaderboardPayload(200);
       leaderboardRawRows =
         response && Array.isArray(response.leaderboard) ? response.leaderboard : [];
-      leaderboardCurrentUserRank =
-        response && response.currentUserRank ? response.currentUserRank : null;
 
+      updateSortHeaderUI();
       renderLeaderboardRows();
 
-      if (leaderboardCurrentUserRank && Number(leaderboardCurrentUserRank.rank) > 0) {
-        setLeaderboardStatus(`Updated just now. Your rank: #${leaderboardCurrentUserRank.rank}.`);
-      } else {
-        setLeaderboardStatus(
-          leaderboardRawRows.length ? "Updated just now." : "No scores to show yet."
-        );
-      }
+      setLeaderboardStatus(
+        leaderboardRawRows.length ? "Updated just now." : "No scores to show yet."
+      );
     } catch {
       setLeaderboardStatus("Could not load rankings right now.");
     }
@@ -392,14 +428,14 @@
       setStatus(`Signed in as ${updatedName}`);
       setUsernameSaveStatus("Saved.");
       void refreshLeaderboard();
-    } catch {
-      setUsernameSaveStatus("Save failed. Try again.");
+    } catch (e) {
+      const message = e && e.message ? String(e.message) : "";
+      if (message.toLowerCase().includes("409")) {
+        setUsernameSaveStatus("Name is already taken.");
+      } else {
+        setUsernameSaveStatus("Save failed. Try again.");
+      }
     }
-  }
-
-  function applySortButtonLabel() {
-    if (!btnSortLevel) return;
-    btnSortLevel.textContent = `Level: ${levelSortDir === "asc" ? "Asc" : "Desc"}`;
   }
 
   // =========================
@@ -483,7 +519,7 @@
   }
 
   setStatus("Not signed in");
-  applySortButtonLabel();
+  updateSortHeaderUI();
   void tryResumeSession();
 
   if (btnGoogleAuth) {
@@ -518,20 +554,36 @@
     });
   }
 
-  if (btnSortLevel) {
-    btnSortLevel.addEventListener("click", () => {
-      levelSortDir = levelSortDir === "asc" ? "desc" : "asc";
-      applySortButtonLabel();
+  if (leaderboardSearchPlayer) {
+    leaderboardSearchPlayer.addEventListener("input", () => {
+      searchPlayerQuery = String(leaderboardSearchPlayer.value || "").trim();
       renderLeaderboardRows();
     });
   }
 
-  if (leaderboardSearch) {
-    leaderboardSearch.addEventListener("input", () => {
-      searchQuery = String(leaderboardSearch.value || "").trim();
+  if (leaderboardSearchLevel) {
+    leaderboardSearchLevel.addEventListener("input", () => {
+      searchLevelQuery = String(leaderboardSearchLevel.value || "").trim();
       renderLeaderboardRows();
     });
   }
+
+  leaderboardSortBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.getAttribute("data-sort");
+      if (!key) return;
+
+      if (sortKey === key) {
+        sortDir = sortDir === "asc" ? "desc" : "asc";
+      } else {
+        sortKey = key;
+        sortDir = key === "displayName" ? "asc" : "desc";
+      }
+
+      updateSortHeaderUI();
+      renderLeaderboardRows();
+    });
+  });
 
   if (btnSaveUsername) {
     btnSaveUsername.addEventListener("click", () => {

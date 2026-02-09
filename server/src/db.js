@@ -67,6 +67,10 @@ export async function initSchema() {
       started_at timestamptz not null,
       finished_at timestamptz,
       completed boolean not null default false,
+      targets_per_wave integer,
+      distractors_per_wave integer,
+      tar_diff integer,
+      dis_diff integer,
       duration_ms integer,
       episodes_total integer not null,
       episode_duration_ms integer not null,
@@ -96,6 +100,46 @@ export async function initSchema() {
           and column_name = 'completed'
       ) then
         alter table public.level_run add column completed boolean not null default false;
+      end if;
+
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'targets_per_wave'
+      ) then
+        alter table public.level_run add column targets_per_wave integer;
+      end if;
+
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'distractors_per_wave'
+      ) then
+        alter table public.level_run add column distractors_per_wave integer;
+      end if;
+
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'tar_diff'
+      ) then
+        alter table public.level_run add column tar_diff integer;
+      end if;
+
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'dis_diff'
+      ) then
+        alter table public.level_run add column dis_diff integer;
       end if;
     exception
       when undefined_table then

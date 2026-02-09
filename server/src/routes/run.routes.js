@@ -24,6 +24,10 @@ runRoutes.get("/leaderboard", async (req, res) => {
       select distinct on (lr.user_id, lr.level)
         lr.user_id,
         lr.level,
+        lr.targets_per_wave,
+        lr.distractors_per_wave,
+        lr.tar_diff,
+        lr.dis_diff,
         greatest(
           0,
           coalesce(lr.score_total, coalesce(lr.red_hits, 0) - coalesce(lr.green_hits, 0))
@@ -61,6 +65,10 @@ runRoutes.get("/leaderboard", async (req, res) => {
       br.user_id as user_id,
       coalesce(au.display_name, 'Player') as display_name,
       br.level,
+      br.targets_per_wave,
+      br.distractors_per_wave,
+      br.tar_diff,
+      br.dis_diff,
       br.score_total,
       br.red_hits,
       br.green_hits,
@@ -80,6 +88,10 @@ runRoutes.get("/leaderboard", async (req, res) => {
     userId: row.user_id,
     displayName: String(row.display_name || "Player").slice(0, 24),
     level: Number(row.level) || 1,
+    targetsPerWave: row.targets_per_wave === null ? null : Number(row.targets_per_wave) || 0,
+    distractorsPerWave: row.distractors_per_wave === null ? null : Number(row.distractors_per_wave) || 0,
+    tarDiff: row.tar_diff === null ? null : Number(row.tar_diff) || 0,
+    disDiff: row.dis_diff === null ? null : Number(row.dis_diff) || 0,
     scoreTotal: Number(row.score_total) || 0,
     redHits: Number(row.red_hits) || 0,
     greenHits: Number(row.green_hits) || 0,
@@ -97,14 +109,31 @@ runRoutes.post("/run/start", requireAuth, requireCsrfDevSafe, async (req, res) =
     level: z.number().int().min(1).max(30),
     episodesTotal: z.number().int().min(1).max(999),
     episodeDurationMs: z.number().int().min(2000).max(60000),
+    targetsPerWave: z.number().int().min(0).max(99),
+    distractorsPerWave: z.number().int().min(0).max(99),
+    tarDiff: z.number().int().min(0).max(20),
+    disDiff: z.number().int().min(0).max(20),
     clientBuild: z.string().max(64).optional()
   });
   const body = schema.parse(req.body);
 
   const startedAt = new Date();
   const r = await q(
-    `insert into level_run(user_id, level, started_at, episodes_total, episode_duration_ms, client_build, user_agent, ip_hash)
-     values ($1,$2,$3,$4,$5,$6,$7,$8)
+    `insert into level_run(
+       user_id,
+       level,
+       started_at,
+       episodes_total,
+       episode_duration_ms,
+       targets_per_wave,
+       distractors_per_wave,
+       tar_diff,
+       dis_diff,
+       client_build,
+       user_agent,
+       ip_hash
+     )
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
      returning id`,
     [
       req.user.id,
@@ -112,6 +141,10 @@ runRoutes.post("/run/start", requireAuth, requireCsrfDevSafe, async (req, res) =
       startedAt.toISOString(),
       body.episodesTotal,
       body.episodeDurationMs,
+      body.targetsPerWave,
+      body.distractorsPerWave,
+      body.tarDiff,
+      body.disDiff,
       body.clientBuild || null,
       String(req.headers["user-agent"] || "").slice(0, 300),
       ipHash(req)
@@ -148,7 +181,9 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
 
   // Load run + ownership
   const rr = await q(
-    `select id, started_at from level_run where id=$1 and user_id=$2`,
+    `select id, started_at, level, episodes_total, targets_per_wave, distractors_per_wave, tar_diff, dis_diff
+     from level_run
+     where id=$1 and user_id=$2`,
     [body.runId, req.user.id]
   );
   if (rr.rowCount === 0) return res.status(404).json({ error: "Run not found" });
@@ -189,9 +224,39 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
     else if (e.type === "hit_red") red += 1;
     else if (e.type === "hit_green") green += 1;
   }
-  const scoreTotal = Math.max(0, red - green);
   const denom = Math.max(1, shots);
   const accPct = (red / denom) * 100;
+
+  const meta = rr.rows[0];
+  const level = Number(meta.level) || 1;
+  const episodesTotal = Number(meta.episodes_total) || 0;
+  const targetsPerWave = meta.targets_per_wave === null ? null : Number(meta.targets_per_wave);
+  const distractorsPerWave = meta.distractors_per_wave === null ? null : Number(meta.distractors_per_wave);
+  const tarDiff = meta.tar_diff === null ? 0 : Number(meta.tar_diff) || 0;
+  const disDiff = meta.dis_diff === null ? 0 : Number(meta.dis_diff) || 0;
+
+  const expectedTargetsTotal =
+    Number.isFinite(targetsPerWave) && episodesTotal > 0 ? Math.max(0, targetsPerWave) * episodesTotal : 0;
+  const expectedDistractorsTotal =
+    Number.isFinite(distractorsPerWave) && episodesTotal > 0 ? Math.max(0, distractorsPerWave) * episodesTotal : 0;
+
+  const accuracy = Math.max(0, Math.min(1, red / denom));
+  const completionRate =
+    expectedTargetsTotal > 0 ? Math.max(0, Math.min(1.25, red / expectedTargetsTotal)) : 0;
+
+  // Score v2: weighted to make overall score the primary differentiator.
+  const levelMul = 1 + Math.max(0, level - 1) * 0.06;
+  const hitScore = red * 10 - green * 14;
+  const levelBonus = level * 25;
+  const accuracyBonus = Math.round(accuracy * 200); // 0..200
+  const completionBonus = Math.round(Math.max(0, Math.min(1, completionRate)) * 500); // 0..500
+  const volumeBonus = Math.round((expectedTargetsTotal * 2 + expectedDistractorsTotal) * 0.4);
+  const varianceBonus = Math.round((tarDiff + disDiff) * 12);
+
+  const scoreTotal = Math.max(
+    0,
+    Math.round((hitScore + levelBonus + accuracyBonus + completionBonus + volumeBonus + varianceBonus) * levelMul)
+  );
 
   await q(
     `update level_run
@@ -215,7 +280,28 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
       shots,
       accPct,
       JSON.stringify(body.events),
-      JSON.stringify(body.flags || {}),
+      JSON.stringify({
+        ...(body.flags || {}),
+        scoreV2: {
+          level,
+          episodesTotal,
+          targetsPerWave,
+          distractorsPerWave,
+          tarDiff,
+          disDiff,
+          expectedTargetsTotal,
+          expectedDistractorsTotal,
+          components: {
+            hitScore,
+            levelBonus,
+            accuracyBonus,
+            completionBonus,
+            volumeBonus,
+            varianceBonus,
+            levelMul
+          }
+        }
+      }),
       body.runId,
       req.user.id
     ]

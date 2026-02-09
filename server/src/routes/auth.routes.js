@@ -53,6 +53,15 @@ authRoutes.patch(
     });
     const body = schema.parse(req.body);
 
+    // Enforce uniqueness (case-insensitive).
+    const exists = await q(
+      `select 1 from app_user where lower(display_name) = lower($1) and id <> $2 limit 1`,
+      [body.displayName, req.user.id]
+    );
+    if (exists.rowCount > 0) {
+      return res.status(409).json({ ok: false, error: "Name is already taken" });
+    }
+
     const updated = await q(
       `
       update app_user
