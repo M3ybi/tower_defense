@@ -4,6 +4,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { securityMiddleware } from "./security.js";
@@ -21,6 +22,12 @@ const __dirname = path.dirname(__filename);
 // server/src/server.js  ->  go up two levels to reach <root>
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
 const VIEWS_DIR = path.join(ROOT_DIR, "views");
+
+function resolveHtmlPath(filename) {
+  const inViews = path.join(VIEWS_DIR, filename);
+  if (fs.existsSync(inViews)) return inViews;
+  return path.join(ROOT_DIR, filename);
+}
 
 const app = express();
 
@@ -47,12 +54,12 @@ app.use(express.static(ROOT_DIR));
 
 // Setup / login screen
 app.get(["/", "/index.html"], (_req, res) => {
-  res.sendFile(path.join(VIEWS_DIR, "index.html"));
+  res.sendFile(resolveHtmlPath("index.html"));
 });
 
 // Game page
 app.get("/tower_defense.html", (_req, res) => {
-  res.sendFile(path.join(VIEWS_DIR, "tower_defense.html"));
+  res.sendFile(resolveHtmlPath("tower_defense.html"));
 });
 
 // ---------- Auth session population ----------

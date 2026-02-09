@@ -17,7 +17,13 @@
   const authModal = document.getElementById("authModal");
   const authBackdrop = document.getElementById("authBackdrop");
   const authClose = document.getElementById("authClose");
-const btnLogout = document.getElementById("btnLogout");
+  const btnLogout = document.getElementById("btnLogout");
+  const btnGoogleAuth = document.getElementById("btnGoogleAuth");
+  const btnAmazonAuth = document.getElementById("btnAmazonAuth");
+
+  function getApi() {
+    return window.GameAPI || null;
+  }
 
   function setStatus(text) {
     if (authStatusText) authStatusText.textContent = String(text || "");
@@ -44,22 +50,26 @@ const btnLogout = document.getElementById("btnLogout");
     }
   }
 
-function setLoggedOutState() {
-  if (usernameInput) {
-    usernameInput.value = "";
-    usernameInput.readOnly = false;
+  function returnToEntry() {
+    entryScreen?.classList.remove("hidden");
+    setupScreen?.classList.add("hidden");
   }
-  if (emailInput) emailInput.value = "";
-  if (emailGroup) emailGroup.classList.add("hidden");
 
-  localStorage.removeItem("username");
-  localStorage.removeItem("user_email");
+  function setLoggedOutState() {
+    if (usernameInput) {
+      usernameInput.value = "";
+      usernameInput.readOnly = false;
+    }
+    if (emailInput) emailInput.value = "";
+    if (emailGroup) emailGroup.classList.add("hidden");
 
-  setStatus("Not signed in");
+    localStorage.removeItem("username");
+    localStorage.removeItem("user_email");
 
-  if (btnLogout) btnLogout.classList.add("hidden");
-}
+    setStatus("Not signed in");
 
+    if (btnLogout) btnLogout.classList.add("hidden");
+  }
 
   function randomGuestName() {
     return `guest${Math.floor(10000 + Math.random() * 90000)}`;
@@ -126,26 +136,23 @@ function setLoggedOutState() {
     });
   }
 
-
   if (btnLogout) {
-  btnLogout.addEventListener("click", async () => {
-    try {
-      if (window.GameAPI?.logout) {
-        await window.GameAPI.logout();
-      } else {
-        await fetch("/auth/logout", {
-          method: "POST",
-          credentials: "include"
-        });
-      }
-    } catch (_) {}
-    setLoggedOutState();
-
-    // return to entry screen
-    entryScreen?.classList.remove("hidden");
-    setupScreen?.classList.add("hidden");
-  });
-}
+    btnLogout.addEventListener("click", async () => {
+      try {
+        const api = getApi();
+        if (api?.logout) {
+          await api.logout();
+        } else {
+          await fetch("/auth/logout", {
+            method: "POST",
+            credentials: "include"
+          });
+        }
+      } catch (_) {}
+      setLoggedOutState();
+      returnToEntry();
+    });
+  }
 
   // =========================
   // AUTH FLOW (modal open)
@@ -186,44 +193,45 @@ function setLoggedOutState() {
   // Auto-detect existing session on load (cookie auth)
   // =========================
   async function tryResumeSession() {
-    if (!window.GameAPI || typeof window.GameAPI.me !== "function") return;
+    const api = getApi();
+    if (!api || typeof api.me !== "function") return;
 
     try {
-      const r = await window.GameAPI.me();
+      const r = await api.me();
       const user = r && r.user ? r.user : null;
 
       if (user && (user.id || user.email)) {
         setAuthedState(user);
         showSetup();
-        return;
       }
     } catch {
       // Ignore: backend may be offline; user can still choose guest.
     }
   }
 
+  function redirectToOAuth(url) {
+    if (!url) return;
+    window.location.href = url;
+  }
+
   // Start state
   setStatus("Not signed in");
-  tryResumeSession();
+  void tryResumeSession();
 
-    // =========================
+  // =========================
   // OAuth buttons
   // =========================
-  const btnGoogleAuth = document.getElementById("btnGoogleAuth");
-  const btnAmazonAuth = document.getElementById("btnAmazonAuth");
-
   if (btnGoogleAuth) {
     btnGoogleAuth.addEventListener("click", () => {
-      if (!window.GameAPI || !window.GameAPI.oauth?.googleStart) return;
-      window.location.href = window.GameAPI.oauth.googleStart;
+      const api = getApi();
+      redirectToOAuth(api?.oauth?.googleStart);
     });
   }
 
   if (btnAmazonAuth) {
     btnAmazonAuth.addEventListener("click", () => {
-      if (!window.GameAPI || !window.GameAPI.oauth?.amazonStart) return;
-      window.location.href = window.GameAPI.oauth.amazonStart;
+      const api = getApi();
+      redirectToOAuth(api?.oauth?.amazonStart);
     });
   }
-
 })();

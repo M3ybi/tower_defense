@@ -55,9 +55,8 @@
     return dx * dx + dy * dy;
   };
 
-  function hudSetText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = String(value);
+  function setNodeText(node, value) {
+    if (node) node.textContent = String(value);
   }
 
   const username = getString("username", "Player");
@@ -101,6 +100,20 @@
   const hudEl = document.getElementById("hudOverlay");
   const hudHintEl = document.getElementById("hudHint");
   const hudBtnEl = document.getElementById("hudToggleBtn");
+  const hudNodes = {
+    player: document.getElementById("hudPlayer"),
+    level: document.getElementById("hudLevel"),
+    wave: document.getElementById("hudWave"),
+    waveTotal: document.getElementById("hudWaveTotal"),
+    score: document.getElementById("hudScore"),
+    shots: document.getElementById("hudShots"),
+    accuracy: document.getElementById("hudAcc"),
+    redHits: document.getElementById("hudRedHits"),
+    greenHits: document.getElementById("hudGreenHits"),
+    streak: document.getElementById("hudStreak"),
+    spawnR: document.getElementById("hudSpawnR"),
+    spawnG: document.getElementById("hudSpawnG")
+  };
 
   function updateHudVisibility() {
     if (!hudEl) return;
@@ -187,22 +200,22 @@
     const accPctClamped = Math.max(0, Math.min(100, accPct));
 
     const email = localStorage.getItem("user_email");
-    hudSetText("hudPlayer", email || username);
+    setNodeText(hudNodes.player, email || username);
 
-    hudSetText("hudLevel", `Level ${levelNum}`);
-    hudSetText("hudWave", waveDisplay);
-    hudSetText("hudWaveTotal", totalEpisodes);
+    setNodeText(hudNodes.level, `Level ${levelNum}`);
+    setNodeText(hudNodes.wave, waveDisplay);
+    setNodeText(hudNodes.waveTotal, totalEpisodes);
 
-    hudSetText("hudScore", gs.score.total);
-    hudSetText("hudShots", shots);
-    hudSetText("hudAcc", `${accPctClamped}%`);
+    setNodeText(hudNodes.score, gs.score.total);
+    setNodeText(hudNodes.shots, shots);
+    setNodeText(hudNodes.accuracy, `${accPctClamped}%`);
 
-    hudSetText("hudRedHits", gs.score.redHits);
-    hudSetText("hudGreenHits", gs.score.greenHits);
-    hudSetText("hudStreak", gs.score.streak);
+    setNodeText(hudNodes.redHits, gs.score.redHits);
+    setNodeText(hudNodes.greenHits, gs.score.greenHits);
+    setNodeText(hudNodes.streak, gs.score.streak);
 
-    hudSetText("hudSpawnR", gs.wave.redSpawned);
-    hudSetText("hudSpawnG", gs.wave.greenSpawned);
+    setNodeText(hudNodes.spawnR, gs.wave.redSpawned);
+    setNodeText(hudNodes.spawnG, gs.wave.greenSpawned);
   }
 
   refreshHUD();
@@ -211,7 +224,9 @@
     const rings = document.getElementsByClassName(RING_CLASS);
     if (!rings || !rings.length) return;
     setTimeout(() => {
-      Array.from(rings).forEach((ringEl) => ringEl.setAttribute("visible", "false"));
+      for (let i = 0; i < rings.length; i += 1) {
+        rings[i].setAttribute("visible", "false");
+      }
     }, MARKER_HIDE_DELAY_MS);
   }
 
@@ -645,7 +660,7 @@
         evasive
       });
 
-      wrapsThisWave.push(`wrap_${targetsThisWave}`);
+      wrapsThisWave.push(wrap);
       frag.appendChild(wrap);
       targetsThisWave += 1;
     }
@@ -656,8 +671,7 @@
 
   function deleteTargetsAfterDelay() {
     setTimeout(() => {
-      wrapsThisWave.forEach((wrapId) => {
-        const wrapEl = document.getElementById(wrapId);
+      wrapsThisWave.forEach((wrapEl) => {
         if (wrapEl && wrapEl.parentNode) wrapEl.parentNode.removeChild(wrapEl);
       });
     }, effectiveDur + 80);
@@ -790,6 +804,8 @@
   }
 
   window.addEventListener("beforeunload", () => clearGameInterval());
+  const hudInterval = setInterval(() => refreshHUD(), HUD_REFRESH_MS);
+  window.addEventListener("beforeunload", () => clearInterval(hudInterval));
 
   // =========================================================
   // START
@@ -878,5 +894,4 @@
     }, episodeDurationFull);
   };
 
-  setInterval(() => refreshHUD(), HUD_REFRESH_MS);
 })();

@@ -4,6 +4,25 @@
 
   const DEFAULT_TAR_DIFF = 1;
   const DEFAULT_DIS_DIFF = 1;
+  const DEFAULT_TARGETS = 2;
+  const DEFAULT_DISTRACTORS = 2;
+
+  const TARGETS_BY_LEVEL = Object.freeze({
+    1: 2, 2: 2,
+    3: 3, 4: 3, 5: 3, 11: 3, 12: 3, 21: 3,
+    6: 4, 7: 4, 8: 4, 9: 4, 13: 4, 14: 4, 17: 4, 22: 4, 23: 4, 26: 4,
+    10: 5, 15: 5, 16: 5, 18: 5, 19: 5, 20: 5, 24: 5, 25: 5, 27: 5, 28: 5, 29: 5,
+    30: 6
+  });
+
+  const DISTRACTORS_BY_LEVEL = Object.freeze({
+    1: 2,
+    2: 3, 3: 3, 4: 3, 6: 3, 11: 3,
+    5: 4, 7: 4, 8: 4, 10: 4, 12: 4, 13: 4, 15: 4, 21: 4, 22: 4, 24: 4,
+    9: 5, 14: 5, 16: 5, 17: 5, 18: 5, 23: 5, 25: 5, 26: 5, 27: 5,
+    19: 6, 28: 6,
+    20: 7, 29: 7, 30: 7
+  });
 
   const getNumberFromInput = (id, fallback = 0) => {
     const el = document.getElementById(id);
@@ -32,33 +51,11 @@
       episodeDuration = 10000;
     }
 
-    const targetSettings = [
-      { levels: [1, 2], value: 2 },
-      { levels: [3, 4, 5, 11, 12, 21], value: 3 },
-      { levels: [6, 7, 8, 9, 13, 14, 17, 22, 23, 26], value: 4 },
-      { levels: [10, 15, 16, 18, 19, 20, 24, 25, 27, 28, 29], value: 5 },
-      { levels: [30], value: 6 }
-    ];
-
-    const distractorSettings = [
-      { levels: [1], value: 2 },
-      { levels: [2, 3, 4, 6, 11], value: 3 },
-      { levels: [5, 7, 8, 10, 12, 13, 15, 21, 22, 24], value: 4 },
-      { levels: [9, 14, 16, 17, 18, 23, 25, 26, 27], value: 5 },
-      { levels: [19, 28], value: 6 },
-      { levels: [20, 29, 30], value: 7 }
-    ];
-
-    const getValueForLevel = (settings) => {
-      const found = settings.find((s) => s.levels.includes(level));
-      return found ? found.value : 2;
-    };
-
     return {
       episodesCount,
       episodeDuration,
-      numberOfTargets: getValueForLevel(targetSettings),
-      numberOfDistractors: getValueForLevel(distractorSettings),
+      numberOfTargets: TARGETS_BY_LEVEL[level] || DEFAULT_TARGETS,
+      numberOfDistractors: DISTRACTORS_BY_LEVEL[level] || DEFAULT_DISTRACTORS,
       tarDiff: DEFAULT_TAR_DIFF,
       disDiff: DEFAULT_DIS_DIFF
     };

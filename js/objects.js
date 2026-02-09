@@ -1,11 +1,13 @@
 // js/objects.js
 (function () {
-  const OBJECT_IDS = ["drone-1-obj", "drone-2-obj"];
+  const OBJECT_IDS = Object.freeze(["drone-1-obj", "drone-2-obj", "drone-3-obj", "drone-4-obj"]);
 
-  const MATERIAL_BY_OBJECT = {
+  const MATERIAL_BY_OBJECT = Object.freeze({
     "drone-1-obj": "drone-1-mtl",
-    "drone-2-obj": "drone-2-mtl"
-  };
+    "drone-2-obj": "drone-2-mtl",
+    "drone-3-obj": "drone-3-mtl",
+    "drone-4-obj": "drone-4-mtl"
+  });
 
   /**
    * Picks a random object + matching material and exposes them on window:
