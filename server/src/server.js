@@ -11,6 +11,7 @@ import { securityMiddleware } from "./security.js";
 import { authRoutes } from "./routes/auth.routes.js";
 import { runRoutes } from "./routes/run.routes.js";
 import { verifySession } from "./auth/jwt.js";
+import { initSchema } from "./db.js";
 
 
 // ---------- Resolve project root & views ----------
@@ -91,6 +92,17 @@ app.use("/api", runRoutes);
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Backend listening on http://127.0.0.1:${PORT}`);
-});
+
+async function bootstrap() {
+  try {
+    await initSchema();
+    app.listen(PORT, () => {
+      console.log(`Backend listening on http://127.0.0.1:${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to initialize server:", err);
+    process.exit(1);
+  }
+}
+
+void bootstrap();

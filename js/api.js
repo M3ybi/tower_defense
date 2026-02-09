@@ -5,9 +5,22 @@
   // without changing hardcoded hostnames.
   const API_BASE = window.location.origin;
   const JSON_HEADERS = { "Content-Type": "application/json" };
+  const CSRF_COOKIE_NAME = "XSRF-TOKEN";
 
   function buildUrl(path) {
     return API_BASE + path;
+  }
+
+  function getCookieValue(name) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : "";
+  }
+
+  function withCsrf(headers = {}) {
+    const token = getCookieValue(CSRF_COOKIE_NAME);
+    if (!token) return headers;
+    return { ...headers, "X-CSRF-Token": token };
   }
 
   async function requestJson(path, options = {}) {
@@ -46,14 +59,15 @@
 
   async function logout() {
     await requestJson("/auth/logout", {
-      method: "POST"
+      method: "POST",
+      headers: withCsrf()
     });
   }
 
   async function startRun(payload) {
     return requestJson("/api/run/start", {
       method: "POST",
-      headers: JSON_HEADERS,
+      headers: withCsrf(JSON_HEADERS),
       body: JSON.stringify(payload || {})
     });
   }
@@ -61,7 +75,7 @@
   async function finishRun(payload) {
     return requestJson("/api/run/finish", {
       method: "POST",
-      headers: JSON_HEADERS,
+      headers: withCsrf(JSON_HEADERS),
       body: JSON.stringify(payload || {})
     });
   }
