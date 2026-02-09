@@ -28,6 +28,10 @@
   const scena3El = document.getElementById("scena3");
   const hudCloseEl = document.getElementById("hudCloseBtn");
   const assetLoadingEl = document.getElementById("assetLoading");
+  const finalOverlayEl = document.getElementById("finalOverlay");
+  const finalLinesEl = document.getElementById("finalLines");
+  const finalRestartBtn = document.getElementById("finalRestartBtn");
+  const finalCloseBtn = document.getElementById("finalCloseBtn");
 
   function setupAssetLoadingOverlay() {
     if (!assetLoadingEl) return;
@@ -50,6 +54,40 @@
   }
 
   setupAssetLoadingOverlay();
+
+  function setFinalOverlayVisible(isVisible) {
+    if (!finalOverlayEl) return;
+    finalOverlayEl.classList.toggle("hidden", !isVisible);
+    finalOverlayEl.setAttribute("aria-hidden", isVisible ? "false" : "true");
+  }
+
+  function setFinalOverlayLines(lines) {
+    if (!finalLinesEl) return;
+    finalLinesEl.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    (lines || []).forEach((txt) => {
+      const line = document.createElement("div");
+      line.textContent = String(txt || "");
+      frag.appendChild(line);
+    });
+    finalLinesEl.appendChild(frag);
+  }
+
+  if (finalRestartBtn) {
+    finalRestartBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setFinalOverlayVisible(false);
+      window.location.reload();
+    });
+  }
+  if (finalCloseBtn) {
+    finalCloseBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setFinalOverlayVisible(false);
+    });
+  }
 
   const getNumber = (key, defaultValue = 0) => {
     const value = Number(localStorage.getItem(key));
@@ -988,50 +1026,9 @@
       }
     }
 
-    function wrapLine(text, maxChars) {
-      const raw = String(text || "").trim();
-      if (!raw) return [];
-      if (raw.length <= maxChars) return [raw];
-
-      const out = [];
-      const tokens = raw.split(/\s+/g);
-      let cur = "";
-      for (const t of tokens) {
-        if (!cur) {
-          cur = t;
-          continue;
-        }
-        if ((cur + " " + t).length <= maxChars) {
-          cur += " " + t;
-        } else {
-          out.push(cur);
-          cur = t;
-        }
-      }
-      if (cur) out.push(cur);
-      return out;
-    }
-
-    // Flatten into render lines so long strings (Breakdown, etc) cannot auto-wrap and overlap.
-    const renderLines = [];
-    for (const l of lines) renderLines.push(...wrapLine(l, 46));
-
-    const lineStep = 0.62;
-    const lineScale = renderLines.length > 9 ? 1.75 : 1.9;
-    const startY = 2.0;
-    const startX = -6.2;
-
-    renderLines.forEach((txt, i) => {
-      const el = document.createElement("a-text");
-      el.setAttribute("font", FONT_URL);
-      el.setAttribute("value", txt);
-      // Avoid A-Frame text auto-wrapping inside a single a-text (which causes overlaps).
-      el.setAttribute("text", "wrapCount: 999; align: left; width: 12");
-      el.setAttribute("position", `${startX} ${startY - i * lineStep} -10`);
-      el.setAttribute("scale", `${lineScale} ${lineScale} 1`);
-      el.setAttribute("color", "white");
-      scena3El.appendChild(el);
-    });
+    // Render the summary as a DOM overlay (crisper + more readable than A-Frame text).
+    setFinalOverlayLines(lines);
+    setFinalOverlayVisible(true);
 
     const key = `level_${levelNum}_bestScore`;
     const prev = Number(localStorage.getItem(key) || "0");
