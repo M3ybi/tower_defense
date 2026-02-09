@@ -12,7 +12,8 @@
 
   const MARKER_HIDE_DELAY_MS = 2500;
 
-  const BASE_SPAWN = { xMin: -7.5, xMax: 7.5, yMin: 0.3, yMax: 4.2 };
+  // Slightly wider bounds (~12%) so objects can spawn a bit further out on both desktop and mobile.
+  const BASE_SPAWN = { xMin: -8.4, xMax: 8.4, yMin: 0.25, yMax: 4.7 };
   let SPAWN = { ...BASE_SPAWN };
 
   const WIGGLE = { ampMin: 0.15, ampMax: 0.33, durMin: 900, durMax: 1400 };
@@ -201,6 +202,8 @@
       startedAtIso: null,
       finishedAtIso: null,
       verified: false,
+      custom: false,
+      leaderboardEligible: false,
       accepted: null
     },
     // ✅ NEW: telemetry (created fresh each start)
@@ -727,6 +730,8 @@
     // No runId or no API => skip (offline/unauthed)
     if (!gs.run.runId || !gs.telemetry || !window.GameAPI || typeof window.GameAPI.finishRun !== "function") {
       gs.run.verified = false;
+      gs.run.custom = false;
+      gs.run.leaderboardEligible = false;
       return;
     }
 
@@ -740,7 +745,9 @@
       });
 
       gs.run.accepted = resp && resp.accepted ? resp.accepted : null;
-      gs.run.verified = !!gs.run.accepted;
+      gs.run.verified = gs.run.accepted ? !!gs.run.accepted.verified : false;
+      gs.run.custom = gs.run.accepted ? !!gs.run.accepted.custom : false;
+      gs.run.leaderboardEligible = gs.run.accepted ? !!gs.run.accepted.leaderboardEligible : false;
 
       // Overwrite client values with accepted metrics (authoritative for display)
       if (gs.run.accepted) {
@@ -760,6 +767,8 @@
     } catch (e) {
       console.warn("finishRun failed:", e);
       gs.run.verified = false;
+      gs.run.custom = false;
+      gs.run.leaderboardEligible = false;
     }
   }
 
@@ -800,12 +809,48 @@
       `Shots: ${gs.score.shots} | Accuracy: ${accuracyPct}%`
     ];
 
+    const modeTag = gs.run && gs.run.custom ? "Custom" : "Standard";
+    const modeSuffix = gs.run && gs.run.custom ? " (excluded from default leaderboard)" : "";
+    lines.splice(2, 0, `Mode: ${modeTag}${modeSuffix}`);
+
+    const breakdown =
+      gs.run && gs.run.accepted && gs.run.accepted.scoreBreakdown ? gs.run.accepted.scoreBreakdown : null;
+    if (breakdown && breakdown.components) {
+      const c = breakdown.components;
+      const parts = [
+        `Hit ${c.hitScore}`,
+        `Lvl ${c.levelBonus}`,
+        `Acc ${c.accuracyBonus}`,
+        `Comp ${c.completionBonus}`,
+        `Vol ${c.volumeBonus}`,
+        `Var ${c.varianceBonus}`
+      ];
+      const mul = typeof c.levelMul === "number" ? c.levelMul : 1;
+      lines.push(`Breakdown: ${parts.join(" + ")} x${mul.toFixed(2)}`);
+
+      if (breakdown.normalization && gs.run && gs.run.custom) {
+        const rs = Number(breakdown.normalization.redScale || 1).toFixed(2);
+        const gs2 = Number(breakdown.normalization.greenScale || 1).toFixed(2);
+        lines.push(`Normalized: red x${rs}, green x${gs2}`);
+      }
+
+      if (gs.run && gs.run.leaderboardEligible) {
+        lines.push("Leaderboard: eligible");
+      } else if (gs.run && !gs.run.custom && !gs.run.verified) {
+        lines.push("Leaderboard: not eligible (anomaly checks failed)");
+      }
+    }
+
+    const lineStep = lines.length > 7 ? 0.45 : 0.55;
+    const lineScale = lines.length > 7 ? 2.0 : 2.2;
+    const startY = lines.length > 7 ? 2.1 : 1.7;
+
     lines.forEach((txt, i) => {
       const el = document.createElement("a-text");
       el.setAttribute("font", FONT_URL);
       el.setAttribute("value", txt);
-      el.setAttribute("position", `-6.0 ${1.7 - i * 0.55} -10`);
-      el.setAttribute("scale", "2.2 2.2 1");
+      el.setAttribute("position", `-6.0 ${startY - i * lineStep} -10`);
+      el.setAttribute("scale", `${lineScale} ${lineScale} 1`);
       el.setAttribute("color", "white");
       scena3El.appendChild(el);
     });

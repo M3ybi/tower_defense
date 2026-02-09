@@ -3,9 +3,57 @@ import express from "express";
 import crypto from "crypto";
 import { z } from "zod";
 import { q } from "../db.js";
-import { requireCsrfDevSafe, ipHash } from "../security.js"; // keep or swap to requireCsrfDevSafe if you added it
+import { requireCsrfDevSafe, ipHash, runStartLimiter, runFinishLimiter } from "../security.js";
 
 export const runRoutes = express.Router();
+
+// Keep in sync with js/index.js computeGameSettingsByLevel().
+const DEFAULT_TAR_DIFF = 0;
+const DEFAULT_DIS_DIFF = 0;
+const DEFAULT_TARGETS = 2;
+const DEFAULT_DISTRACTORS = 2;
+
+const TARGETS_BY_LEVEL = Object.freeze({
+  1: 2, 2: 2,
+  3: 3, 4: 3, 5: 3, 11: 3, 12: 3, 21: 3,
+  6: 4, 7: 4, 8: 4, 9: 4, 13: 4, 14: 4, 17: 4, 22: 4, 23: 4, 26: 4,
+  10: 5, 15: 5, 16: 5, 18: 5, 19: 5, 20: 5, 24: 5, 25: 5, 27: 5, 28: 5, 29: 5,
+  30: 6
+});
+
+const DISTRACTORS_BY_LEVEL = Object.freeze({
+  1: 2,
+  2: 3, 3: 3, 4: 3, 6: 3, 11: 3,
+  5: 4, 7: 4, 8: 4, 10: 4, 12: 4, 13: 4, 15: 4, 21: 4, 22: 4, 24: 4,
+  9: 5, 14: 5, 16: 5, 17: 5, 18: 5, 23: 5, 25: 5, 26: 5, 27: 5,
+  19: 6, 28: 6,
+  20: 7, 29: 7, 30: 7
+});
+
+function computeCanonicalSettingsByLevel(level) {
+  let episodesCount;
+  let episodeDurationMs;
+
+  if (level <= 10) {
+    episodesCount = 26;
+    episodeDurationMs = 15000;
+  } else if (level <= 20) {
+    episodesCount = 32;
+    episodeDurationMs = 12000;
+  } else {
+    episodesCount = 36;
+    episodeDurationMs = 10000;
+  }
+
+  return {
+    episodesCount,
+    episodeDurationMs,
+    targetsPerWave: TARGETS_BY_LEVEL[level] || DEFAULT_TARGETS,
+    distractorsPerWave: DISTRACTORS_BY_LEVEL[level] || DEFAULT_DISTRACTORS,
+    tarDiff: DEFAULT_TAR_DIFF,
+    disDiff: DEFAULT_DIS_DIFF
+  };
+}
 
 function requireAuth(req, res, next) {
   if (!req.user?.id) return res.status(401).json({ error: "Unauthorized" });
@@ -18,12 +66,17 @@ runRoutes.get("/leaderboard", async (req, res) => {
     ? Math.max(1, Math.min(Math.floor(rawLimit), 500))
     : 10;
 
+  const includeCustom =
+    String(req.query.includeCustom || "").trim() === "1" ||
+    String(req.query.includeCustom || "").toLowerCase() === "true";
+
   const rows = await q(
     `
     with best_runs as (
       select distinct on (lr.user_id, lr.level)
         lr.user_id,
         lr.level,
+        lr.custom,
         lr.targets_per_wave,
         lr.distractors_per_wave,
         lr.tar_diff,
@@ -46,6 +99,8 @@ runRoutes.get("/leaderboard", async (req, res) => {
         lr.duration_ms
       from level_run lr
       where lr.completed is true
+        and lr.verified is true
+        and ($2::boolean is true or lr.custom is false)
         and coalesce(lr.score_total, lr.red_hits, lr.green_hits, lr.shots) is not null
       order by
         lr.user_id,
@@ -65,6 +120,7 @@ runRoutes.get("/leaderboard", async (req, res) => {
       br.user_id as user_id,
       coalesce(au.display_name, 'Player') as display_name,
       br.level,
+      br.custom,
       br.targets_per_wave,
       br.distractors_per_wave,
       br.tar_diff,
@@ -80,7 +136,7 @@ runRoutes.get("/leaderboard", async (req, res) => {
     order by br.score_total desc, br.accuracy_pct desc, br.finished_at asc, br.level desc
     limit $1
     `,
-    [limit]
+    [limit, includeCustom]
   );
 
   const leaderboard = rows.rows.map((row, index) => ({
@@ -88,6 +144,7 @@ runRoutes.get("/leaderboard", async (req, res) => {
     userId: row.user_id,
     displayName: String(row.display_name || "Player").slice(0, 24),
     level: Number(row.level) || 1,
+    custom: row.custom === true,
     targetsPerWave: row.targets_per_wave === null ? null : Number(row.targets_per_wave) || 0,
     distractorsPerWave: row.distractors_per_wave === null ? null : Number(row.distractors_per_wave) || 0,
     tarDiff: row.tar_diff === null ? null : Number(row.tar_diff) || 0,
@@ -104,7 +161,7 @@ runRoutes.get("/leaderboard", async (req, res) => {
 });
 
 // Start a run: server issues a run id + start time
-runRoutes.post("/run/start", requireAuth, requireCsrfDevSafe, async (req, res) => {
+runRoutes.post("/run/start", requireAuth, runStartLimiter, requireCsrfDevSafe, async (req, res) => {
   const schema = z.object({
     level: z.number().int().min(1).max(30),
     episodesTotal: z.number().int().min(1).max(999),
@@ -155,7 +212,7 @@ runRoutes.post("/run/start", requireAuth, requireCsrfDevSafe, async (req, res) =
 });
 
 // Finish a run: accept event stream, recompute metrics server-side
-runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) => {
+runRoutes.post("/run/finish", requireAuth, runFinishLimiter, requireCsrfDevSafe, async (req, res) => {
   const schema = z.object({
     // <= CHANGE IS HERE
     runId: z
@@ -181,7 +238,7 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
 
   // Load run + ownership
   const rr = await q(
-    `select id, started_at, level, episodes_total, targets_per_wave, distractors_per_wave, tar_diff, dis_diff
+    `select id, started_at, level, episodes_total, episode_duration_ms, targets_per_wave, distractors_per_wave, tar_diff, dis_diff
      from level_run
      where id=$1 and user_id=$2`,
     [body.runId, req.user.id]
@@ -230,28 +287,61 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
   const meta = rr.rows[0];
   const level = Number(meta.level) || 1;
   const episodesTotal = Number(meta.episodes_total) || 0;
+  const episodeDurationMsMeta = Number(meta.episode_duration_ms);
   const targetsPerWave = meta.targets_per_wave === null ? null : Number(meta.targets_per_wave);
   const distractorsPerWave = meta.distractors_per_wave === null ? null : Number(meta.distractors_per_wave);
   const tarDiff = meta.tar_diff === null ? 0 : Number(meta.tar_diff) || 0;
   const disDiff = meta.dis_diff === null ? 0 : Number(meta.dis_diff) || 0;
 
-  const expectedTargetsTotal =
+  const canonical = computeCanonicalSettingsByLevel(level);
+  const canonicalTargetsTotal = Math.max(0, canonical.targetsPerWave) * Math.max(0, canonical.episodesCount);
+  const canonicalDistractorsTotal =
+    Math.max(0, canonical.distractorsPerWave) * Math.max(0, canonical.episodesCount);
+
+  const actualTargetsTotal =
     Number.isFinite(targetsPerWave) && episodesTotal > 0 ? Math.max(0, targetsPerWave) * episodesTotal : 0;
-  const expectedDistractorsTotal =
+  const actualDistractorsTotal =
     Number.isFinite(distractorsPerWave) && episodesTotal > 0 ? Math.max(0, distractorsPerWave) * episodesTotal : 0;
+
+  const isCustom =
+    episodesTotal !== canonical.episodesCount ||
+    episodeDurationMsMeta !== canonical.episodeDurationMs ||
+    !Number.isFinite(targetsPerWave) ||
+    !Number.isFinite(distractorsPerWave) ||
+    targetsPerWave !== canonical.targetsPerWave ||
+    distractorsPerWave !== canonical.distractorsPerWave ||
+    tarDiff !== canonical.tarDiff ||
+    disDiff !== canonical.disDiff;
+
+  const anomalies = [];
+  if (shots < red + green) anomalies.push("hits_gt_shots");
+  if (durationMs <= 0 && shots > 0) anomalies.push("zero_duration_with_shots");
+
+  const seconds = Math.max(1, durationMs / 1000);
+  const shotsPerSecond = shots / seconds;
+  const hitsPerSecond = (red + green) / seconds;
+  if (shotsPerSecond > 20) anomalies.push("shots_per_second");
+  if (hitsPerSecond > 20) anomalies.push("hits_per_second");
+
+  const verified = anomalies.length === 0;
+  const leaderboardEligible = verified && !isCustom;
+
+  const redScale = actualTargetsTotal > 0 ? canonicalTargetsTotal / actualTargetsTotal : 1;
+  const greenScale = actualDistractorsTotal > 0 ? canonicalDistractorsTotal / actualDistractorsTotal : 1;
 
   const accuracy = Math.max(0, Math.min(1, red / denom));
   const completionRate =
-    expectedTargetsTotal > 0 ? Math.max(0, Math.min(1.25, red / expectedTargetsTotal)) : 0;
+    canonicalTargetsTotal > 0 ? Math.max(0, Math.min(1.25, red / canonicalTargetsTotal)) : 0;
 
   // Score v2: weighted to make overall score the primary differentiator.
   const levelMul = 1 + Math.max(0, level - 1) * 0.06;
-  const hitScore = red * 10 - green * 14;
+  const hitScore = Math.round(red * 10 * redScale - green * 14 * greenScale);
   const levelBonus = level * 25;
   const accuracyBonus = Math.round(accuracy * 200); // 0..200
   const completionBonus = Math.round(Math.max(0, Math.min(1, completionRate)) * 500); // 0..500
-  const volumeBonus = Math.round((expectedTargetsTotal * 2 + expectedDistractorsTotal) * 0.4);
-  const varianceBonus = Math.round((tarDiff + disDiff) * 12);
+  const volumeBonus = Math.round((canonicalTargetsTotal * 2 + canonicalDistractorsTotal) * 0.4);
+  // Changing diffs makes totals variable - treat as custom and avoid rewarding it.
+  const varianceBonus = tarDiff + disDiff > 0 ? -Math.round((tarDiff + disDiff) * 12) : 0;
 
   const scoreTotal = Math.max(
     0,
@@ -263,17 +353,21 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
      set finished_at=$1,
          duration_ms=$2,
          completed=true,
-         score_total=$3,
-         red_hits=$4,
-         green_hits=$5,
-         shots=$6,
-         accuracy_pct=$7,
-         events=$8,
-         flags=$9
-     where id=$10 and user_id=$11`,
+         verified=$3,
+         custom=$4,
+         score_total=$5,
+         red_hits=$6,
+         green_hits=$7,
+         shots=$8,
+         accuracy_pct=$9,
+         events=$10,
+         flags=$11
+     where id=$12 and user_id=$13`,
     [
       new Date(finishedAt).toISOString(),
       durationMs,
+      verified,
+      isCustom,
       scoreTotal,
       red,
       green,
@@ -289,8 +383,16 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
           distractorsPerWave,
           tarDiff,
           disDiff,
-          expectedTargetsTotal,
-          expectedDistractorsTotal,
+          canonical,
+          canonicalTargetsTotal,
+          canonicalDistractorsTotal,
+          actualTargetsTotal,
+          actualDistractorsTotal,
+          normalization: { redScale, greenScale },
+          verified,
+          custom: isCustom,
+          leaderboardEligible,
+          anomalies,
           components: {
             hitScore,
             levelBonus,
@@ -315,7 +417,35 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
       greenHits: green,
       shots,
       accuracyPct: Math.max(0, Math.min(100, accPct)),
-      durationMs
+      durationMs,
+      verified,
+      custom: isCustom,
+      leaderboardEligible,
+      anomalies,
+      scoreBreakdown: {
+        formula: "v2-normalized",
+        canonical,
+        canonicalTargetsTotal,
+        canonicalDistractorsTotal,
+        actual: {
+          episodesTotal,
+          episodeDurationMs: Number.isFinite(episodeDurationMsMeta) ? episodeDurationMsMeta : null,
+          targetsPerWave,
+          distractorsPerWave,
+          tarDiff,
+          disDiff
+        },
+        normalization: { redScale, greenScale },
+        components: {
+          hitScore,
+          levelBonus,
+          accuracyBonus,
+          completionBonus,
+          volumeBonus,
+          varianceBonus,
+          levelMul
+        }
+      }
     }
   });
 });

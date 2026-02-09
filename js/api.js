@@ -88,11 +88,12 @@
     });
   }
 
-  async function leaderboard(limit = 10) {
+  async function leaderboard(limit = 10, opts = {}) {
     const safeLimit = Math.max(1, Math.min(Number(limit) || 10, 50));
-    return requestJson(`/api/leaderboard?limit=${safeLimit}`, {
-      method: "GET"
-    });
+    const includeCustom = !!(opts && opts.includeCustom);
+    const qs = new URLSearchParams({ limit: String(safeLimit) });
+    if (includeCustom) qs.set("includeCustom", "1");
+    return requestJson(`/api/leaderboard?${qs.toString()}`, { method: "GET" });
   }
 
   // ========== FINAL EXPORTED OBJECT ==========

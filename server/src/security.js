@@ -130,6 +130,30 @@ export function requireCsrfDevSafe(req, res, next) {
   return next();
 }
 
+function rateKey(req) {
+  // Key on (user, ip hash) to reduce shared-IP false positives behind proxies.
+  const uid = req.user?.id ? String(req.user.id) : "anon";
+  return `${uid}:${ipHash(req)}`;
+}
+
+export const runStartLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 20, // per minute per (user, ip hash)
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: rateKey,
+  handler: (_req, res) => res.status(429).json({ ok: false, error: "Rate limit exceeded" })
+});
+
+export const runFinishLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 30, // per minute per (user, ip hash)
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: rateKey,
+  handler: (_req, res) => res.status(429).json({ ok: false, error: "Rate limit exceeded" })
+});
+
 
 /**
  * One-way hash of client IP for logging / rate-limiting without storing raw IPs.

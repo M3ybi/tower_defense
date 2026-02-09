@@ -67,6 +67,8 @@ export async function initSchema() {
       started_at timestamptz not null,
       finished_at timestamptz,
       completed boolean not null default false,
+      verified boolean not null default true,
+      custom boolean not null default false,
       targets_per_wave integer,
       distractors_per_wave integer,
       tar_diff integer,
@@ -100,6 +102,26 @@ export async function initSchema() {
           and column_name = 'completed'
       ) then
         alter table public.level_run add column completed boolean not null default false;
+      end if;
+
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'verified'
+      ) then
+        alter table public.level_run add column verified boolean not null default true;
+      end if;
+
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'custom'
+      ) then
+        alter table public.level_run add column custom boolean not null default false;
       end if;
 
       if not exists (
@@ -157,8 +179,26 @@ export async function initSchema() {
       and coalesce(score_total, red_hits, green_hits, shots) is not null;
   `);
 
+  // Backfill new columns on older rows (defensive).
+  await q(`
+    update level_run
+    set verified = true
+    where verified is null;
+  `);
+
+  await q(`
+    update level_run
+    set custom = false
+    where custom is null;
+  `);
+
   await q(`create index if not exists idx_level_run_user_id on level_run(user_id);`);
   await q(`create index if not exists idx_level_run_started_at on level_run(started_at);`);
+  await q(`
+    create index if not exists idx_level_run_leaderboard
+    on level_run (score_total desc, accuracy_pct desc, finished_at asc)
+    where completed is true and verified is true and custom is false;
+  `);
 
   // Privacy migration:
   // 1) OAuth users do not need email persisted.

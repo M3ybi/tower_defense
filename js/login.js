@@ -19,6 +19,7 @@
   const leaderboardStatus = document.getElementById("leaderboardStatus");
   const leaderboardSearchPlayer = document.getElementById("leaderboardSearchPlayer");
   const leaderboardSearchLevel = document.getElementById("leaderboardSearchLevel");
+  const leaderboardIncludeCustom = document.getElementById("leaderboardIncludeCustom");
   const btnRefreshLeaderboard = document.getElementById("btnRefreshLeaderboard");
   const leaderboardSortBtns = Array.from(document.querySelectorAll(".th-sort[data-sort]"));
 
@@ -41,6 +42,7 @@
   let leaderboardRawRows = [];
   let searchPlayerQuery = "";
   let searchLevelQuery = "";
+  let includeCustom = false;
   let sortKey = "scoreTotal";
   let sortDir = "desc";
 
@@ -324,7 +326,9 @@
       tr.appendChild(playerTd);
 
       const scoreTd = document.createElement("td");
-      scoreTd.textContent = String(score);
+      const isCustom = row && row.custom === true;
+      scoreTd.textContent = isCustom ? `${score}*` : String(score);
+      if (isCustom) scoreTd.title = "Custom settings";
       tr.appendChild(scoreTd);
 
       const levelTd = document.createElement("td");
@@ -362,10 +366,12 @@
     const api = getApi();
 
     if (api && typeof api.leaderboard === "function") {
-      return api.leaderboard(safeLimit);
+      return api.leaderboard(safeLimit, { includeCustom });
     }
 
-    const r = await fetch(`/api/leaderboard?limit=${safeLimit}`, {
+    const qs = new URLSearchParams({ limit: String(safeLimit) });
+    if (includeCustom) qs.set("includeCustom", "1");
+    const r = await fetch(`/api/leaderboard?${qs.toString()}`, {
       method: "GET",
       credentials: "include"
     });
@@ -565,6 +571,17 @@
     leaderboardSearchLevel.addEventListener("input", () => {
       searchLevelQuery = String(leaderboardSearchLevel.value || "").trim();
       renderLeaderboardRows();
+    });
+  }
+
+  if (leaderboardIncludeCustom) {
+    const saved = localStorage.getItem("leaderboard_include_custom");
+    includeCustom = saved === "1" || saved === "true";
+    leaderboardIncludeCustom.checked = includeCustom;
+    leaderboardIncludeCustom.addEventListener("change", () => {
+      includeCustom = !!leaderboardIncludeCustom.checked;
+      localStorage.setItem("leaderboard_include_custom", includeCustom ? "1" : "0");
+      void refreshLeaderboard();
     });
   }
 
