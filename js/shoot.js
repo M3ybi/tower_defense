@@ -245,7 +245,11 @@
         if (typeof window.startTutorialFlow === "function") {
           window.startTutorialFlow();
         }
-        if (this.el && this.el.parentNode) this.el.parentNode.removeChild(this.el);
+        // Remove the whole button group if present.
+        const wrap =
+          this.el && this.el.closest ? this.el.closest("#tutorialStartWrap") : null;
+        if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+        else if (this.el && this.el.parentNode) this.el.parentNode.removeChild(this.el);
         return;
       }
 

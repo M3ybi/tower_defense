@@ -8,8 +8,7 @@
   const SCENE_CONTAINER_ID = "scena";
   const REMOVE_PLAY = [
     "#start",
-    "#tutorialStart",
-    "#tutorialLabel",
+    "#tutorialStartWrap",
     "#text1",
     "#text2",
     "#text3",
