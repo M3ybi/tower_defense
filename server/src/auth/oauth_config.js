@@ -25,10 +25,10 @@ function requestOrigin(req) {
 
 export function resolveRedirectUri(req, singleEnvKey, listEnvKey) {
   const currentOrigin = requestOrigin(req);
-  const candidates = parseUriList(process.env[listEnvKey]);
-  const single = String(process.env[singleEnvKey] || "").trim();
-
-  if (single) candidates.push(single);
+  const candidates = [
+    ...parseUriList(process.env[listEnvKey]),
+    ...parseUriList(process.env[singleEnvKey])
+  ];
   if (!candidates.length) return "";
   if (!currentOrigin) return candidates[0];
 
