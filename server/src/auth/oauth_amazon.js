@@ -93,11 +93,13 @@ export async function amazonCallback(req, res) {
       union all
       select id from created
       limit 1
+    ),
+    identity as (
+      insert into app_identity(user_id, provider, provider_subject, provider_email)
+      values ((select id from resolved), 'amazon', $1, null)
+      on conflict (provider, provider_subject) do nothing
+      returning user_id
     )
-    insert into app_identity(user_id, provider, provider_subject, provider_email)
-    values ((select id from resolved), 'amazon', $1, null)
-    on conflict (provider, provider_subject) do nothing;
-
     select au.id, au.display_name
     from app_user au
     where au.id = (select id from resolved)
