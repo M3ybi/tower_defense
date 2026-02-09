@@ -26,9 +26,11 @@ export function securityMiddleware(app) {
         // JS: A-Frame + plugins + jQuery from CDNs
         scriptSrc: [
           "'self'",
+          "'unsafe-eval'",
           "https://aframe.io",
           "https://cdn.aframe.io",
           "https://ajax.googleapis.com",
+          "https://cdn.jsdelivr.net",
           "https://cdn.rawgit.com",
           "https://rawgit.com"
         ],
@@ -56,7 +58,7 @@ export function securityMiddleware(app) {
         ],
 
         // XHR / fetch targets (keep tight)
-        connectSrc: ["'self'"],
+        connectSrc: ["'self'", "https://aframe.io", "https://cdn.jsdelivr.net"],
 
         // Audio / video (if you add any)
         mediaSrc: ["'self'"],
