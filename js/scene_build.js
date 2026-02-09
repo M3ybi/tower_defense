@@ -12,7 +12,8 @@
 
   const MARKER_HIDE_DELAY_MS = 2500;
 
-  const SPAWN = { xMin: -7.5, xMax: 7.5, yMin: 0.3, yMax: 4.2 };
+  const BASE_SPAWN = { xMin: -7.5, xMax: 7.5, yMin: 0.3, yMax: 4.2 };
+  let SPAWN = { ...BASE_SPAWN };
 
   const WIGGLE = { ampMin: 0.15, ampMax: 0.33, durMin: 900, durMax: 1400 };
 
@@ -58,6 +59,34 @@
   function setNodeText(node, value) {
     if (node) node.textContent = String(value);
   }
+
+  function computeSpawnBounds() {
+    const vw = Math.min(window.innerWidth || 9999, window.screen?.width || 9999);
+    const vh = Math.min(window.innerHeight || 9999, window.screen?.height || 9999);
+    const aspect = vw / Math.max(1, vh);
+
+    // Portrait phones get tighter X bounds so targets stay on-screen.
+    const xScale = clamp(aspect / 1.6, 0.65, 1.0);
+    const yScale = clamp(vh / 720, 0.75, 1.0);
+
+    const scaleRange = (min, max, s) => {
+      const c = (min + max) * 0.5;
+      const h = (max - min) * 0.5 * s;
+      return { min: c - h, max: c + h };
+    };
+
+    const xr = scaleRange(BASE_SPAWN.xMin, BASE_SPAWN.xMax, xScale);
+    const yr = scaleRange(BASE_SPAWN.yMin, BASE_SPAWN.yMax, yScale);
+
+    return { xMin: xr.min, xMax: xr.max, yMin: yr.min, yMax: yr.max };
+  }
+
+  function refreshSpawnBounds() {
+    SPAWN = computeSpawnBounds();
+  }
+
+  refreshSpawnBounds();
+  window.addEventListener("resize", () => refreshSpawnBounds());
 
   const username = getString("username", "Player");
   const levelNum = clamp(Number(getString("level", "1")) || 1, 1, 30);
@@ -705,6 +734,7 @@
       const resp = await window.GameAPI.finishRun({
         runId: gs.run.runId,
         finishedAt: gs.run.finishedAtIso,
+        completed: true,
         events: gs.telemetry.events || [],
         flags: { penalizeGreenHits: gs.flags && gs.flags.penalizeGreenHits === true }
       });

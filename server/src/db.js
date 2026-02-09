@@ -66,6 +66,7 @@ export async function initSchema() {
       level integer not null check (level >= 1 and level <= 30),
       started_at timestamptz not null,
       finished_at timestamptz,
+      completed boolean not null default false,
       duration_ms integer,
       episodes_total integer not null,
       episode_duration_ms integer not null,
@@ -81,6 +82,25 @@ export async function initSchema() {
       ip_hash text,
       created_at timestamptz not null default now()
     );
+  `);
+
+  // Backfill/migrate existing deployments.
+  await q(`
+    do $$
+    begin
+      if not exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'level_run'
+          and column_name = 'completed'
+      ) then
+        alter table public.level_run add column completed boolean not null default false;
+      end if;
+    exception
+      when undefined_table then
+        null;
+    end $$;
   `);
 
   await q(`create index if not exists idx_level_run_user_id on level_run(user_id);`);
@@ -116,5 +136,31 @@ export async function initSchema() {
       'Player'
     )
     where display_name is not null;
+  `);
+
+  // Ensure display names are unique (case-insensitive). If duplicates exist, suffix with _<id>.
+  await q(`
+    with ranked as (
+      select
+        id,
+        display_name,
+        row_number() over (partition by lower(display_name) order by id asc) as rn
+      from app_user
+      where display_name is not null
+    )
+    update app_user u
+    set display_name =
+      left(
+        u.display_name,
+        greatest(1, 24 - (1 + length(u.id::text)))
+      ) || '_' || u.id::text
+    from ranked r
+    where u.id = r.id
+      and r.rn > 1;
+  `);
+
+  await q(`
+    create unique index if not exists idx_app_user_display_name_ci
+    on app_user (lower(display_name));
   `);
 }

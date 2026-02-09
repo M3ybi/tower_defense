@@ -21,13 +21,15 @@ runRoutes.get("/leaderboard", async (req, res) => {
   const rows = await q(
     `
     with best_runs as (
-      select distinct on (lr.user_id)
+      select distinct on (lr.user_id, lr.level)
         lr.user_id,
         lr.level,
         greatest(
           0,
           coalesce(lr.score_total, coalesce(lr.red_hits, 0) - coalesce(lr.green_hits, 0))
         ) as score_total,
+        coalesce(lr.red_hits, 0) as red_hits,
+        coalesce(lr.green_hits, 0) as green_hits,
         coalesce(
           lr.accuracy_pct,
           case
@@ -39,9 +41,11 @@ runRoutes.get("/leaderboard", async (req, res) => {
         coalesce(lr.finished_at, lr.created_at) as finished_at,
         lr.duration_ms
       from level_run lr
-      where coalesce(lr.score_total, lr.red_hits, lr.green_hits, lr.shots) is not null
+      where lr.completed is true
+        and coalesce(lr.score_total, lr.red_hits, lr.green_hits, lr.shots) is not null
       order by
         lr.user_id,
+        lr.level,
         greatest(0, coalesce(lr.score_total, coalesce(lr.red_hits, 0) - coalesce(lr.green_hits, 0))) desc,
         coalesce(
           lr.accuracy_pct,
@@ -58,12 +62,14 @@ runRoutes.get("/leaderboard", async (req, res) => {
       coalesce(au.display_name, 'Player') as display_name,
       br.level,
       br.score_total,
+      br.red_hits,
+      br.green_hits,
       br.accuracy_pct,
       br.duration_ms,
       br.finished_at
     from best_runs br
     left join app_user au on au.id = br.user_id
-    order by br.score_total desc, br.accuracy_pct desc, br.finished_at asc
+    order by br.score_total desc, br.accuracy_pct desc, br.finished_at asc, br.level desc
     limit $1
     `,
     [limit]
@@ -75,81 +81,14 @@ runRoutes.get("/leaderboard", async (req, res) => {
     displayName: String(row.display_name || "Player").slice(0, 24),
     level: Number(row.level) || 1,
     scoreTotal: Number(row.score_total) || 0,
+    redHits: Number(row.red_hits) || 0,
+    greenHits: Number(row.green_hits) || 0,
     accuracyPct: typeof row.accuracy_pct === "number" ? row.accuracy_pct : 0,
     durationMs: Number(row.duration_ms) || 0,
     finishedAt: row.finished_at
   }));
 
-  let currentUserRank = null;
-  if (req.user?.id) {
-    const meRows = await q(
-      `
-      with best_runs as (
-        select distinct on (lr.user_id)
-          lr.user_id,
-          lr.level,
-          greatest(
-            0,
-            coalesce(lr.score_total, coalesce(lr.red_hits, 0) - coalesce(lr.green_hits, 0))
-          ) as score_total,
-          coalesce(
-            lr.accuracy_pct,
-            case
-              when coalesce(lr.shots, 0) > 0
-                then (coalesce(lr.red_hits, 0)::double precision / greatest(1, lr.shots)) * 100
-              else 0
-            end
-          ) as accuracy_pct,
-          coalesce(lr.finished_at, lr.created_at) as finished_at
-        from level_run lr
-        where coalesce(lr.score_total, lr.red_hits, lr.green_hits, lr.shots) is not null
-        order by
-          lr.user_id,
-          greatest(0, coalesce(lr.score_total, coalesce(lr.red_hits, 0) - coalesce(lr.green_hits, 0))) desc,
-          coalesce(
-            lr.accuracy_pct,
-            case
-              when coalesce(lr.shots, 0) > 0
-                then (coalesce(lr.red_hits, 0)::double precision / greatest(1, lr.shots)) * 100
-              else 0
-            end
-          ) desc,
-          coalesce(lr.finished_at, lr.created_at) asc
-      ),
-      ranked as (
-        select
-          br.*,
-          rank() over (order by br.score_total desc, br.accuracy_pct desc, br.finished_at asc) as rank_pos
-        from best_runs br
-      )
-      select
-        r.rank_pos,
-        r.user_id,
-        coalesce(au.display_name, 'Player') as display_name,
-        r.level,
-        r.score_total,
-        r.accuracy_pct
-      from ranked r
-      left join app_user au on au.id = r.user_id
-      where r.user_id = $1
-      `,
-      [req.user.id]
-    );
-
-    if (meRows.rowCount > 0) {
-      const me = meRows.rows[0];
-      currentUserRank = {
-        rank: Number(me.rank_pos) || 0,
-        userId: me.user_id,
-        displayName: String(me.display_name || "Player").slice(0, 24),
-        level: Number(me.level) || 1,
-        scoreTotal: Number(me.score_total) || 0,
-        accuracyPct: typeof me.accuracy_pct === "number" ? me.accuracy_pct : 0
-      };
-    }
-  }
-
-  return res.json({ ok: true, leaderboard, currentUserRank });
+  return res.json({ ok: true, leaderboard });
 });
 
 // Start a run: server issues a run id + start time
@@ -193,6 +132,7 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
       ])
       .transform((v) => Number(v)),
     finishedAt: z.string(),
+    completed: z.boolean(),
     events: z
       .array(
         z.object({
@@ -217,6 +157,29 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
   const finishedAt = new Date(body.finishedAt).getTime();
   const durationMs = Math.max(0, finishedAt - startedAt);
 
+  // If the level wasn't completed, record timing/events but do not score it.
+  if (body.completed !== true) {
+    await q(
+      `update level_run
+       set finished_at=$1,
+           duration_ms=$2,
+           completed=false,
+           events=$3,
+           flags=$4
+       where id=$5 and user_id=$6`,
+      [
+        new Date(finishedAt).toISOString(),
+        durationMs,
+        JSON.stringify(body.events),
+        JSON.stringify(body.flags || {}),
+        body.runId,
+        req.user.id
+      ]
+    );
+
+    return res.json({ ok: true, accepted: null, skipped: "not_completed" });
+  }
+
   // Recompute metrics (reliable relative to provided events)
   let shots = 0,
     red = 0,
@@ -234,6 +197,7 @@ runRoutes.post("/run/finish", requireAuth, requireCsrfDevSafe, async (req, res) 
     `update level_run
      set finished_at=$1,
          duration_ms=$2,
+         completed=true,
          score_total=$3,
          red_hits=$4,
          green_hits=$5,
