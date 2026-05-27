@@ -780,6 +780,77 @@ a-scene > canvas,
   background: rgba(148, 163, 184, 0.22);
 }
 
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 14px 0 12px;
+  padding: 5px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.36);
+}
+
+.auth-tab {
+  min-height: 38px;
+  border: 0;
+  border-radius: 999px;
+  color: rgba(226, 232, 240, 0.72);
+  background: transparent;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.auth-tab--active {
+  color: #020617;
+  background: linear-gradient(135deg, #14b8a6, #3b82f6);
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 6px;
+  color: rgba(226, 232, 240, 0.78);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-form input {
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  border-radius: 12px;
+  color: #f8fafc;
+  background: rgba(2, 6, 23, 0.48);
+  outline: none;
+}
+
+.auth-form input:focus {
+  border-color: rgba(45, 212, 191, 0.8);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18);
+}
+
+.auth-form-status {
+  min-height: 20px;
+  margin-top: 8px;
+  color: rgba(226, 232, 240, 0.78);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.auth-form-status--error {
+  color: #fecaca;
+}
+
 
 /* Button row */
 .auth-modal__buttons {
@@ -854,6 +925,10 @@ a-scene > canvas,
 
   .auth-modal__buttons {
     flex-direction: column;
+  }
+
+  .auth-tabs {
+    border-radius: 16px;
   }
 
   .auth-modal__buttons .btn {
@@ -1258,6 +1333,47 @@ a-scene > canvas,
   color: rgba(226, 232, 240, 0.72);
 }
 
+.game-hub {
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+
+.game-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 18px;
+}
+
+.game-choice-card {
+  min-height: 280px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.78);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.game-choice-card h2 {
+  margin: 8px 0 10px;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.game-choice-card p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.72);
+  line-height: 1.55;
+}
+
+.game-choice-card .btn {
+  width: 100%;
+  text-align: center;
+}
+
 .leaderboard-row--me td {
   background: rgba(59, 130, 246, 0.16);
   font-weight: 800;
@@ -1272,6 +1388,10 @@ a-scene > canvas,
 @media (max-width: 680px) {
   .setup-shell {
     padding: 14px 10px;
+  }
+
+  .game-choice-grid {
+    grid-template-columns: 1fr;
   }
 
   .setup-sections-nav {

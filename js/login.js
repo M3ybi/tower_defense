@@ -3,6 +3,7 @@
   "use strict";
 
   const entryScreen = document.getElementById("entryScreen");
+  const gameHubScreen = document.getElementById("gameHubScreen");
   const setupScreen = document.getElementById("setupScreen");
 
   const usernameInput = document.getElementById("username");
@@ -14,6 +15,7 @@
   const btnShowLeaderboardSection = document.getElementById("btnShowLeaderboardSection");
 
   const authStatusText = document.getElementById("authStatusText");
+  const hubAuthStatusText = document.getElementById("hubAuthStatusText");
   const leaderboardRows = document.getElementById("leaderboardRows");
   const leaderboardEmpty = document.getElementById("leaderboardEmpty");
   const leaderboardStatus = document.getElementById("leaderboardStatus");
@@ -29,8 +31,22 @@
   const authBackdrop = document.getElementById("authBackdrop");
   const authClose = document.getElementById("authClose");
   const btnLogout = document.getElementById("btnLogout");
+  const btnHubLogout = document.getElementById("btnHubLogout");
+  const btnOpenTowerDefense = document.getElementById("btnOpenTowerDefense");
+  const btnOpenTaptiles = document.getElementById("btnOpenTaptiles");
+  const btnBackToGameHub = document.getElementById("btnBackToGameHub");
   const btnGoogleAuth = document.getElementById("btnGoogleAuth");
   const btnAmazonAuth = document.getElementById("btnAmazonAuth");
+  const authTabLogin = document.getElementById("authTabLogin");
+  const authTabRegister = document.getElementById("authTabRegister");
+  const authLoginForm = document.getElementById("authLoginForm");
+  const authRegisterForm = document.getElementById("authRegisterForm");
+  const authFormStatus = document.getElementById("authFormStatus");
+  const loginEmail = document.getElementById("loginEmail");
+  const loginPassword = document.getElementById("loginPassword");
+  const registerDisplayName = document.getElementById("registerDisplayName");
+  const registerEmail = document.getElementById("registerEmail");
+  const registerPassword = document.getElementById("registerPassword");
 
   const MODE_LOGGED_OUT = "logged_out";
   const MODE_GUEST = "guest";
@@ -50,6 +66,7 @@
 
   function setStatus(text) {
     if (authStatusText) authStatusText.textContent = String(text || "");
+    if (hubAuthStatusText) hubAuthStatusText.textContent = String(text || "");
   }
 
   function setUsernameSaveStatus(text) {
@@ -58,8 +75,15 @@
 
   function showSetup() {
     if (entryScreen) entryScreen.classList.add("hidden");
+    if (gameHubScreen) gameHubScreen.classList.add("hidden");
     if (setupScreen) setupScreen.classList.remove("hidden");
     switchToSection("setup");
+  }
+
+  function showGameHub() {
+    if (entryScreen) entryScreen.classList.add("hidden");
+    if (setupScreen) setupScreen.classList.add("hidden");
+    if (gameHubScreen) gameHubScreen.classList.remove("hidden");
   }
 
   function openAuthModal() {
@@ -78,8 +102,26 @@
     }
   }
 
+  function setAuthFormStatus(text, isError = false) {
+    if (!authFormStatus) return;
+    authFormStatus.textContent = String(text || "");
+    authFormStatus.classList.toggle("auth-form-status--error", !!isError);
+  }
+
+  function setAuthTab(mode) {
+    const isRegister = mode === "register";
+    authTabLogin?.classList.toggle("auth-tab--active", !isRegister);
+    authTabRegister?.classList.toggle("auth-tab--active", isRegister);
+    authTabLogin?.setAttribute("aria-selected", !isRegister ? "true" : "false");
+    authTabRegister?.setAttribute("aria-selected", isRegister ? "true" : "false");
+    authLoginForm?.classList.toggle("hidden", isRegister);
+    authRegisterForm?.classList.toggle("hidden", !isRegister);
+    setAuthFormStatus("");
+  }
+
   function returnToEntry() {
     entryScreen?.classList.remove("hidden");
+    gameHubScreen?.classList.add("hidden");
     setupScreen?.classList.add("hidden");
   }
 
@@ -124,6 +166,7 @@
     setStatus("Not signed in");
     setUsernameSaveStatus("");
     if (btnLogout) btnLogout.classList.add("hidden");
+    if (btnHubLogout) btnHubLogout.classList.add("hidden");
   }
 
   function randomGuestName() {
@@ -137,6 +180,7 @@
     const name = sanitizeDisplayName(guestName);
 
     if (btnLogout) btnLogout.classList.add("hidden");
+    if (btnHubLogout) btnHubLogout.classList.add("hidden");
 
     if (usernameInput) {
       usernameInput.value = name;
@@ -167,6 +211,7 @@
     }
 
     if (btnLogout) btnLogout.classList.remove("hidden");
+    if (btnHubLogout) btnHubLogout.classList.remove("hidden");
 
     localStorage.setItem("username", name);
     localStorage.removeItem("user_email");
@@ -447,12 +492,11 @@
     btnGuest.addEventListener("click", () => {
       const guestName = randomGuestName();
       setGuestState(guestName);
-      showSetup();
+      showGameHub();
     });
   }
 
-  if (btnLogout) {
-    btnLogout.addEventListener("click", async () => {
+  async function logoutAndReturnToEntry() {
       try {
         const api = getApi();
         if (api?.logout) {
@@ -467,8 +511,47 @@
       setLoggedOutState();
       returnToEntry();
       void refreshLeaderboard();
+  }
+
+  if (btnLogout) {
+    btnLogout.addEventListener("click", () => {
+      void logoutAndReturnToEntry();
     });
   }
+
+  if (btnHubLogout) {
+    btnHubLogout.addEventListener("click", () => {
+      void logoutAndReturnToEntry();
+    });
+  }
+
+  if (btnOpenTowerDefense) {
+    btnOpenTowerDefense.addEventListener("click", () => {
+      showSetup();
+    });
+  }
+
+  if (btnBackToGameHub) {
+    btnBackToGameHub.addEventListener("click", () => {
+      showGameHub();
+    });
+  }
+
+  async function loadGameConfig() {
+    const api = getApi();
+    if (!api || typeof api.config !== "function") return;
+    try {
+      const response = await api.config();
+      const taptilesUrl = response && response.taptilesUrl ? String(response.taptilesUrl) : "";
+      if (taptilesUrl && btnOpenTaptiles) {
+        btnOpenTaptiles.setAttribute("href", taptilesUrl);
+      }
+    } catch {
+      // Keep the same-origin default href.
+    }
+  }
+
+  void loadGameConfig();
 
   // =========================
   // AUTH FLOW (modal open)
@@ -495,8 +578,63 @@
   window.onAuthSuccess = function (user) {
     setAuthedState(user);
     closeAuthModal();
-    showSetup();
+    showGameHub();
   };
+
+  async function submitLocalLogin(event) {
+    event.preventDefault();
+    const api = getApi();
+    if (!api || typeof api.login !== "function") {
+      setAuthFormStatus("Login API unavailable.", true);
+      return;
+    }
+
+    const email = String(loginEmail?.value || "").trim();
+    const password = String(loginPassword?.value || "");
+    if (!email || !password) {
+      setAuthFormStatus("Enter email and password.", true);
+      return;
+    }
+
+    setAuthFormStatus("Signing in...");
+    try {
+      const response = await api.login(email, password);
+      if (!response || !response.user) throw new Error("Missing user");
+      setAuthedState(response.user);
+      closeAuthModal();
+      showGameHub();
+    } catch {
+      setAuthFormStatus("Invalid email or password.", true);
+    }
+  }
+
+  async function submitLocalRegister(event) {
+    event.preventDefault();
+    const api = getApi();
+    if (!api || typeof api.register !== "function") {
+      setAuthFormStatus("Registration API unavailable.", true);
+      return;
+    }
+
+    const displayName = sanitizeDisplayName(registerDisplayName?.value || "");
+    const email = String(registerEmail?.value || "").trim();
+    const password = String(registerPassword?.value || "");
+    if (!displayName || !email || password.length < 10) {
+      setAuthFormStatus("Use a player name, valid email, and 10+ character password.", true);
+      return;
+    }
+
+    setAuthFormStatus("Creating account...");
+    try {
+      const response = await api.register(email, password, displayName);
+      if (!response || !response.user) throw new Error("Missing user");
+      setAuthedState(response.user);
+      closeAuthModal();
+      showGameHub();
+    } catch {
+      setAuthFormStatus("Could not create account. Email or player name may already exist.", true);
+    }
+  }
 
   async function tryResumeSession() {
     const api = getApi();
@@ -508,7 +646,7 @@
 
       if (user && (user.id || user.email)) {
         setAuthedState(user);
-        showSetup();
+        showGameHub();
       }
     } catch {
       // Ignore: backend may be offline; user can still choose guest.
@@ -530,6 +668,15 @@
       redirectToOAuth(api?.oauth?.googleStart);
     });
   }
+
+  authTabLogin?.addEventListener("click", () => setAuthTab("login"));
+  authTabRegister?.addEventListener("click", () => setAuthTab("register"));
+  authLoginForm?.addEventListener("submit", (event) => {
+    void submitLocalLogin(event);
+  });
+  authRegisterForm?.addEventListener("submit", (event) => {
+    void submitLocalRegister(event);
+  });
 
   if (btnAmazonAuth) {
     btnAmazonAuth.addEventListener("click", () => {

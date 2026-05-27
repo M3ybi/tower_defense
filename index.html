@@ -4,16 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Tower Defense – Setup</title>
+    <title>Game Hub</title>
 
-    <meta name="description" content="Choose guest or sign-in, configure level, and play Tower Defense VR mode." />
+    <meta name="description" content="Sign in and choose Tower Defense or Taptiles." />
     <meta name="theme-color" content="#020617" />
 
-    <link rel="stylesheet" href="css/style.css?v=20260209k" />
+    <link rel="stylesheet" href="css/style.css?v=20260527a" />
 
     <!-- Keep order -->
-    <script src="js/api.js?v=20260209k" defer></script>
-    <script src="js/login.js?v=20260209k" defer></script>
+    <script src="js/api.js?v=20260527a" defer></script>
+    <script src="js/login.js?v=20260527a" defer></script>
     <script src="js/index.js?v=20260209k" defer></script>
   </head>
 
@@ -24,8 +24,8 @@
            ========================= -->
       <section id="entryScreen" class="card card--hero">
         <div class="hero-header">
-          <div class="hero-title">TOWER DEFENSE</div>
-          <div class="hero-subtitle">VR mode · Aim fast · Prioritize RED targets</div>
+          <div class="hero-title">GAME HUB</div>
+          <div class="hero-subtitle">Sign in once, then choose Tower Defense or Taptiles</div>
         </div>
 
         <div class="hero-actions">
@@ -40,7 +40,47 @@
 
         <div class="hero-footnote">
           Guest mode uses a randomized name (e.g., <span class="mono">guest70839</span>).
-          Sign-in enables your player profile and persistent scoring.
+          Sign-in enables your player profile and persistent scoring across games.
+        </div>
+      </section>
+
+      <section id="gameHubScreen" class="card card--panel game-hub hidden" aria-labelledby="gameHubTitle">
+        <div class="panel-header">
+          <div>
+            <div id="gameHubTitle" class="panel-title">Choose game</div>
+            <div class="panel-subtitle">One account, separate scoreboards.</div>
+          </div>
+          <div class="account-pill">
+            <span class="dot" aria-hidden="true"></span>
+            <span id="hubAuthStatusText" class="account-text">Not signed in</span>
+            <button id="btnHubLogout" class="btn btn--mini btn--danger hidden" type="button">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div class="game-choice-grid">
+          <article class="game-choice-card">
+            <div>
+              <p class="eyebrow">VR arena</p>
+              <h2>Tower Defense</h2>
+              <p>Configure a level, play the shooter mode, and compete on the Tower Defense leaderboard.</p>
+            </div>
+            <button id="btnOpenTowerDefense" class="btn btn--primary" type="button">
+              Open Tower Defense
+            </button>
+          </article>
+
+          <article class="game-choice-card">
+            <div>
+              <p class="eyebrow">Tile puzzle</p>
+              <h2>Taptiles</h2>
+              <p>Play KP_2019 Taptiles and submit scores to the shared account database when connected.</p>
+            </div>
+            <a id="btnOpenTaptiles" class="btn btn--secondary" href="/taptiles">
+              Open Taptiles
+            </a>
+          </article>
         </div>
       </section>
 
@@ -49,6 +89,9 @@
            ========================= -->
       <section id="setupScreen" class="hidden">
         <div class="setup-sections-nav" role="tablist" aria-label="Setup sections">
+          <button id="btnBackToGameHub" class="btn btn--secondary setup-sections-nav__btn" type="button">
+            Games
+          </button>
           <button id="btnShowSetupSection" class="btn btn--secondary setup-sections-nav__btn is-active" type="button">
             Setup
           </button>
@@ -320,13 +363,52 @@
   <div id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="auth-modal__panel">
       <button id="authClose" class="auth-modal__close" type="button" aria-label="Close">
-        ✕
+        X
       </button>
 
-      <h2 class="auth-modal__title">Sign in</h2>
+      <h2 class="auth-modal__title">Sign in / register</h2>
       <p class="auth-modal__subtitle">
         Sign in to save your score and show your profile name in the HUD.
       </p>
+
+      <div class="auth-tabs" role="tablist" aria-label="Account options">
+        <button id="authTabLogin" class="auth-tab auth-tab--active" type="button" role="tab" aria-selected="true">
+          Sign in
+        </button>
+        <button id="authTabRegister" class="auth-tab" type="button" role="tab" aria-selected="false">
+          Register
+        </button>
+      </div>
+
+      <form id="authLoginForm" class="auth-form" autocomplete="on">
+        <label>
+          Email
+          <input id="loginEmail" name="email" type="email" autocomplete="email" required />
+        </label>
+        <label>
+          Password
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <button class="btn btn--primary" type="submit">Sign in</button>
+      </form>
+
+      <form id="authRegisterForm" class="auth-form hidden" autocomplete="on">
+        <label>
+          Player name
+          <input id="registerDisplayName" name="displayName" type="text" maxlength="24" autocomplete="nickname" required />
+        </label>
+        <label>
+          Email
+          <input id="registerEmail" name="email" type="email" autocomplete="email" required />
+        </label>
+        <label>
+          Password
+          <input id="registerPassword" name="password" type="password" minlength="10" autocomplete="new-password" required />
+        </label>
+        <button class="btn btn--primary" type="submit">Create account</button>
+      </form>
+
+      <div id="authFormStatus" class="auth-form-status" aria-live="polite"></div>
 
       <div class="auth-modal__buttons">
         <button id="btnGoogleAuth" class="btn btn--primary" type="button">

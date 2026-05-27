@@ -41,11 +41,11 @@
     });
   }
 
-  async function register(email, password) {
+  async function register(email, password, displayName) {
     return requestJson("/auth/register", {
       method: "POST",
       headers: JSON_HEADERS,
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, displayName })
     });
   }
 
@@ -96,6 +96,25 @@
     return requestJson(`/api/leaderboard?${qs.toString()}`, { method: "GET" });
   }
 
+  async function config() {
+    return requestJson("/api/config", {
+      method: "GET"
+    });
+  }
+
+  async function taptilesLeaderboard(limit = 10) {
+    const safeLimit = Math.max(1, Math.min(Number(limit) || 10, 500));
+    return requestJson(`/api/taptiles/leaderboard?limit=${safeLimit}`, { method: "GET" });
+  }
+
+  async function submitTaptilesScore(payload) {
+    return requestJson("/api/taptiles/score", {
+      method: "POST",
+      headers: withCsrf(JSON_HEADERS),
+      body: JSON.stringify(payload || {})
+    });
+  }
+
   // ========== FINAL EXPORTED OBJECT ==========
 
   window.GameAPI = {
@@ -106,9 +125,12 @@
     login,
     logout,
     updateProfile,
+    config,
     startRun,
     finishRun,
     leaderboard,
+    taptilesLeaderboard,
+    submitTaptilesScore,
 
     oauth: {
       googleStart: buildUrl("/auth/google/start"),
